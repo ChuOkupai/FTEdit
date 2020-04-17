@@ -31,10 +31,10 @@ void Properties::incrementRefCount()
 }
 bool Properties::canBeRemoved()
 {
-	if (kepp)
+	if (kepp == false && refCount == 0)
 	{
-		return false;
-	}else{
 		return true;
+	}else{
+		return false;
 	}
 }
