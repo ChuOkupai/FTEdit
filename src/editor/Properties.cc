@@ -1,40 +1,31 @@
 #include "Properties.hh"
 
-namespace std;
-
-Properties::Properties(QString name) : name(name)
+Properties::Properties(QString name, bool keep) : name(name), keep(keep)
 {
-	QString desc;
-	refCount = 1;
-	keep = true;
-}
-Properties::~Properties()
-{
-
+	refCount = 0;
 }
 
-QString const Properties::getName(){return name;}
-QString const Properties::getDesc(){return desc;}
-bool const Properties::getKeep(){return keep;}
+Properties::~Properties(){}
 
-void Properties::setName(QString name) : name(name){}
-void Properties::setDesc(QString desc) : desc(desc){}
-void Properties::setKeep(bool keep) : keep(keep){}
+QString Properties::getName() const {return name;}
+QString Properties::getDesc() const {return desc;}
+bool Properties::getKeep() const {return keep;}
+
+void Properties::setName(QString name){this->name = name;}
+void Properties::setDesc(QString desc){this->desc = desc;}
+void Properties::setKeep(bool keep){this->keep = keep;}
 
 void Properties::decrementRefCount()
 {
-	refCount = refCount - 1;
+	--refCount;
 }
+
 void Properties::incrementRefCount()
 {
-	refCount = refCount + 1;
+	++refCount;
 }
+
 bool Properties::canBeRemoved()
 {
-	if (kepp == false && refCount == 0)
-	{
-		return true;
-	}else{
-		return false;
-	}
+	return (!keep && !refCount);
 }
