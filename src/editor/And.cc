@@ -23,3 +23,12 @@ bool And::check(QList<QString>& errors)
     }
     
 }
+
+void And::accept(Editor& editor,EditVisitor& visitor)
+{
+    visitor.visit(this);
+}
+void And::accept(RenderVisitor& visitor)
+{
+    visitor.visit(this);
+}

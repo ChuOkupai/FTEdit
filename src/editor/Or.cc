@@ -27,3 +27,12 @@ bool Or::check(QList<QString>& errors)
     
 
 }
+
+void Or::accept(Editor& editor,EditVisitor& visitor)
+{
+    visitor.visit(this);
+}
+void Or::accept(RenderVisitor& visitor)
+{
+    visitor.visit(this);
+}
