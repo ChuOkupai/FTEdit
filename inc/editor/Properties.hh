@@ -23,7 +23,7 @@ class Properties
 		void incrementRefCount();
 		bool canBeRemoved();
 
-	private:
+	protected:
 		QString name;
 		QString desc;
 		int refCount;
