@@ -36,3 +36,5 @@ FTEdit
 .qmake.stash
 Makefile
 .moc
+
+*.DS_Store
