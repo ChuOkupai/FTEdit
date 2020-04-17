@@ -3,6 +3,7 @@
 #define PROPERTIES_H 
 
 #include <iostream>
+#include <QString>
 
 class Properties
 {
