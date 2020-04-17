@@ -24,6 +24,7 @@ class Node{
     bool virtual check(list<QString>& output) = 0;
     void virtual accept(Editor& editor,EditVisitor& edit) = 0;
     void virtual accept(RenderVisitor& visitor) = 0;
+    virtual ~Node();
   
 }
 
