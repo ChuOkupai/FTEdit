@@ -1,9 +1,8 @@
 #include "Properties.hh"
 
-Properties::Properties(QString name, bool keep) : name(name), keep(keep)
-{
-	refCount = 0;
-}
+Properties::Properties(QString name, bool keep) :
+name(name), refCount(0), keep(keep)
+{}
 
 Properties::~Properties(){}
 
