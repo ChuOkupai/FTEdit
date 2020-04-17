@@ -46,7 +46,8 @@ void Editor::setAutoRefresh(bool value)
 
 void Editor::refresh()
 {
-	;
+	if (!autoRefresh)
+		return ;
 }
 
 bool Editor::isUnique(QString name)
@@ -95,13 +96,20 @@ void Editor::remove(Node *top)
 	(void)top;
 }
 
-void Editor::detach(Node *top)
+void Editor::detach(Gate *top)
 {
-	(void)top;
+	trees.push_back(Tree(generateName(PREFIX_TREE)));
+	trees.last().setTop(top);
+	if (top == selection->getTop())
+		selection->setTop(nullptr);
+	selection = trees.last();
 }
 
 void Editor::join(Tree *child, Gate *parent)
 {
-	(void)child;
-	(void)parent;
+	Gate *g = child->getTop();
+	parent->attach(g);
+	child->setTop(nullptr);
+	child->getProperties().setKeep(false);
+	refresh();
 }

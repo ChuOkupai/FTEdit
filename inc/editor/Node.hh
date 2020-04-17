@@ -4,13 +4,16 @@
 #include <QString>
 #include "Gate.hh"
 
+#define NODE_X	120
+#define NODE_Y	80
+
 class Node{
 	protected : 
 		Gate* parent;
 		QPoint position;
-	
+
 	private :
-		Node(QPoint position);
+		Node();
 		Gate* getParent();
 		QPoint getPosition();
 		void setPosition(QPoint position);
@@ -22,5 +25,4 @@ class Node{
 		virtual void accept(Editor& editor,EditVisitor& edit) = 0;
 		virtual void accept(RenderVisitor& visitor) = 0;
 		virtual ~Node();
-	
 };

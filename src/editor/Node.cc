@@ -1,9 +1,7 @@
 #include "Node.hh"
 
 
-Node::Node(QPoint position){
-    this->position = position; 
-}
+Node::Node() : parent(nullptr), position(0, 0) {}
 
 Gate* Node::getParent(){
   return this->parent;

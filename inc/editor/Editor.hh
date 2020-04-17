@@ -4,6 +4,11 @@
 #include "Gate.hh"
 #include "Tree.hh"
 
+#define PREFIX_DISTRIBUTION	"Distribution"
+#define PREFIX_EVENT		"Event"
+#define PREFIX_GATE			"Gate"
+#define PREFIX_TREE			"Tree"
+
 class Editor
 {
 private:
