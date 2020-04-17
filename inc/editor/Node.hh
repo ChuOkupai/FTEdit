@@ -1,6 +1,6 @@
 #pragma once
 
-#ifndef NODE_H
+#ifndef NODE_HH
 #define NODE_HH
 #include <list>
 #include <QPoint>
