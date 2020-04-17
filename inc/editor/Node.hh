@@ -26,6 +26,6 @@ class Node{
     void virtual accept(RenderVisitor& visitor) = 0;
     virtual ~Node();
   
-}
+};
 
 #endif
