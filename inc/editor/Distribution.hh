@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QString>
-#include <Properties.hh>
+#include "Properties.hh"
 
 class Distribution
 {

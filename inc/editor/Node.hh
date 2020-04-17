@@ -2,6 +2,7 @@
 #include <QList>
 #include <QPoint>
 #include <QString>
+#include "Editor.hh"
 #include "Gate.hh"
 
 #define NODE_X	120

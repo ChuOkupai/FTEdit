@@ -102,6 +102,7 @@ void Editor::detach(Gate *top)
 	trees.last().setTop(top);
 	if (top == selection->getTop())
 		selection->setTop(nullptr);
+	top->detach();
 	selection = trees.last();
 }
 
