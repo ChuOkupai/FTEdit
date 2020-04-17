@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+FTEdit
+
+# Qt
+.qmake.stash
+Makefile
+.moc
