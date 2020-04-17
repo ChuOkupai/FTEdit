@@ -1,19 +1,15 @@
 #pragma once
-#ifndef PROPERTIES_H
-#define PROPERTIES_H 
-
-#include <iostream>
 #include <QString>
 
 class Properties
 {
 	public:
-		Properties(QString name);
+		Properties(QString name, bool keep = false);
 		~Properties();
 
-		QString const getName();
-		QString const getDesc();
-		bool const getKeep();
+		QString getName() const;
+		QString getDesc() const;
+		bool getKeep() const;
 
 		void setName(QString name);
 		void setDesc(QString desc);
@@ -23,10 +19,9 @@ class Properties
 		void incrementRefCount();
 		bool canBeRemoved();
 
-	protected:
+	private:
 		QString name;
 		QString desc;
 		int refCount;
 		bool keep;
 };
-#endif
