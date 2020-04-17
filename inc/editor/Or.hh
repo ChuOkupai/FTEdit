@@ -1,6 +1,7 @@
 #pragma once
 #include <QString>
 #include <QList>
+#include "Gate.hh"
 
 class Or : public Gate
 {
