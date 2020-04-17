@@ -2,7 +2,7 @@
 
 Gate::Gate(QString name) : Properties(name)
 {
-    QList<Node*> children;
+
 }
 
 Gate::~Gate()
@@ -21,6 +21,6 @@ QList<Node*>& Gate::getChildren()
 }
 
 Node* Gate::search(QPoint around)
-{
-    if(around == getPostion()) return this; else return nullptr;
+{ 
+    if(around.x < (Position.x + 60) && around.x >(Position.x - 60) && around.y <(Position.y +40) && around.y>(Position.y -40)) return this; else return nullptr;
 }
