@@ -6,13 +6,13 @@
 #include "Properties.hh"
 
 
-class Gate : public Node, public Properties
+class Gate : public Node
 {
 protected:
 	Properties prop;
 	QList<Node*> children;
 
-private:
+public:
 	Gate(QString name);
 	~Gate();
 	Properties& getProperties();
