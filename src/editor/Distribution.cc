@@ -1,3 +1,4 @@
+#include <QtGlobal>
 #include "Distribution.hh"
 
 Distribution::Distribution(QString name) :
@@ -19,7 +20,7 @@ double Distribution::getValue()
 
 void Distribution::setValue(double value)
 {
-	this->value = value;
+	this->value = qBound(0.0, value, 1.0);
 }
 
 

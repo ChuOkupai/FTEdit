@@ -2,27 +2,26 @@
 
 And::And(QString name) : Gate(name)
 {}
+
 And::~And()
 {}
 
 double And::getProbability(double time)
 {
-	(void)time;
-	return (0);
+	double p = children[0]->getProbability(time);
+	for (int i = 1; i < children.size(); ++i)
+		p *= children.at(i)->getProbability(time);
+	return (p);
 }
 
 bool And::check(QList<QString>& errors)
 {
-	if(children.count()<2)
+	if (children.size() < 2)
 	{
-		errors << "And Gate "+ prop.getName() +" with less than 2 children";
-		return false;
+		errors << prop.getName() + ": There must be 2 or more inputs.";
+		return (false);
 	}
-	else
-	{
-		return true;
-	}
-	
+	return (true);
 }
 
 /*void And::accept(Editor& editor,EditVisitor& visitor)

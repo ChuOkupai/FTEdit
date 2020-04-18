@@ -1,3 +1,4 @@
+#include <QtGlobal>
 #include "Distribution.hh"
 
 Weibull::Weibull(QString name) :

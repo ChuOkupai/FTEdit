@@ -26,6 +26,7 @@ private:
 	~And();
 
 	double getProbability(double time);
+
 	bool check(QList<QString>& errors);
 	//void accept(Editor& editor,EditVisitor& visitor);
 	//void accept(RenderVisitor& visitor);
@@ -39,6 +40,8 @@ private:
 	Or(QString name);
 	~Or();
 
+	double getProbability(double time);
+
 	bool check(QList<QString>& errors);
 	//void accept(Editor& editor,EditVisitor& visitor);
 	//void accept(RenderVisitor& visitor);
@@ -51,6 +54,8 @@ class Xor : public Gate
 private:
 	Xor(QString name);
 	~Xor();
+
+	double getProbability(double time);
 
 	bool check(QList<QString>& errors);
 	//void accept(Editor& editor,EditVisitor& visitor);

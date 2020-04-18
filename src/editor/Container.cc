@@ -1,6 +1,5 @@
 #include "Container.hh"
-#define NODE_X    120
-#define NODE_Y    80
+#include "Node.hh"
 
 Container::Container(Event& event) :
 Node::Node(), event(event)
@@ -15,32 +14,29 @@ void Container::setEvent(Event& event)
 
 double Container::getProbability(double time)
 {
-	return event.getDistribution()->getProbability(time);
+	return (event.getDistribution()->getProbability(time));
 }
 
 Event& Container::getEvent()
 {
-	return event;
+	return (event);
 }
 
 bool Container::check(QList<QString> &errors)
 {
-	
 	if (!event.getDistribution())
 	{
-		QString error = event.getProperties().getName();
-		error.append(": Probability must be set.\n");
-		errors.append(error);
-		return false;
+		errors << event.getProperties().getName() + ": Probability must be set.";
+		return (false);
 	}
-	return true;
+	return (true);
 }
 
 
 Node* Container::search(QPoint around)
 {
 	(void)around;
-	return this;
+	return (nullptr);
 }
 
 //void accept(Editor &editor, EditVisitor &visitor) {visitor.visit(*this);}
