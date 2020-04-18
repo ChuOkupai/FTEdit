@@ -3,7 +3,8 @@
 
 void test1(void)
 {
-	Editor e;
+	QList<QString>	errors;
+	Editor			e;
 
 	e.detach();
 	e.getGates() << new And(e.generateName(PREFIX_GATE));
@@ -14,11 +15,20 @@ void test1(void)
 	c1->attach(e.getGates()[0]);
 	Container *c2 = new Container(e.getEvents()[1]);
 	c2->attach(e.getGates()[0]);
-	e.remove(e.getSelection()->getTop());
+	e.refresh();
+	e.getSelection()->getTop()->check(errors);
+	errors.removeDuplicates();
+	if (errors.size())
+	{
+		qDebug() << "Errors list:";
+		for (int i = 0; i < errors.size(); ++i)
+			qDebug() << errors.at(i);
+	}
+
 	qDebug() << "Trees size: " << e.getTrees().size();
 	qDebug() << "Events size: " << e.getEvents().size();
 	qDebug() << "Gates size: " << e.getGates().size();
-	e.refresh();
+	e.remove(e.getSelection()->getTop());
 	qDebug() << "Trees size: " << e.getTrees().size();
 	qDebug() << "Events size: " << e.getEvents().size();
 	qDebug() << "Gates size: " << e.getGates().size();

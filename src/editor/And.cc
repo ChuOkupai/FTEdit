@@ -21,7 +21,9 @@ bool And::check(QList<QString>& errors)
 		errors << prop.getName() + ": There must be 2 or more inputs.";
 		return (false);
 	}
-	return (true);
+	for (int i = 0; i < children.size(); ++i)
+		children.at(i)->check(errors);
+	return (errors.size() > 0);
 }
 
 /*void And::accept(Editor& editor,EditVisitor& visitor)
