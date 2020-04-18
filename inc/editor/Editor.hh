@@ -23,18 +23,18 @@ private:
 	bool					autoRefresh;
 
 public:
-	Editor(bool autoRefresh);
+	Editor(bool autoRefresh = true);
 	~Editor();
 
 	QList<Tree>				&getTrees();
 	QList<Event>			&getEvents();
 	QList<Distribution*>	&getDistributions();
 	QList<Gate*>			&getGates();
-	Node					*getClipboard() const;
-	Tree					*getSelection() const;
-	
+	Node					*getClipboard();
+	Tree					*getSelection();
+
 	void	setSelection(Tree *selection);
-	void	setAutoRefresh(bool value);
+	void	setAutoRefresh(bool value = true);
 
 	// Mise à jour des listes d'objets de l'éditeur
 	void	refresh();
@@ -55,7 +55,7 @@ public:
 	// Supprime récursivement un sous-arbre
 	void	remove(Node *top);
 	// Détache un sous-arbre et le déplace dans un nouvel arbre
-	void	detach(Gate *top);
+	void	detach(Gate *top = nullptr);
 	// Fusionne le contenu d'un arbre dans un autre
 	void	join(Tree *child, Gate *parent);
 };

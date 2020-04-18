@@ -29,12 +29,12 @@ QList<Gate*> &Editor::getGates()
 	return (gates);
 }
 
-Node *Editor::getClipboard() const
+Node *Editor::getClipboard()
 {
 	return (clipboard);
 }
 
-Tree *Editor::getSelection() const
+Tree *Editor::getSelection()
 {
 	return (selection);
 }
@@ -57,8 +57,22 @@ void Editor::refresh()
 
 bool Editor::isUnique(QString name)
 {
-	(void)name;
-	return (false);
+	for (int i = 0; i < trees.size(); ++i)
+		if (trees[i].getProperties().getName() == name)
+			return (false);
+	for (int i = 0; i < events.size(); ++i)
+		if (events[i].getProperties().getName() == name)
+			return (false);
+	for (int i = 0; i < distributions.size(); ++i)
+		if (distributions[i]->getProperties().getName() == name)
+			return (false);
+	for (int i = 0; i < distributions.size(); ++i)
+		if (distributions[i]->getProperties().getName() == name)
+			return (false);
+	for (int i = 0; i < gates.size(); ++i)
+		if (gates[i]->getProperties().getName() == name)
+			return (false);
+	return (true);
 }
 
 QString Editor::generateName(QString prefix)
@@ -106,9 +120,12 @@ void Editor::detach(Gate *top)
 {
 	trees.push_back(Tree(generateName(PREFIX_TREE)));
 	trees.last().setTop(top);
-	if (top == selection->getTop())
-		selection->setTop(nullptr);
-	top->detach();
+	if (top)
+	{
+		if (top == selection->getTop())
+			selection->setTop(nullptr);
+		top->detach();
+	}
 	selection = &trees.last();
 }
 
