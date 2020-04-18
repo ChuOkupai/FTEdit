@@ -1,26 +1,21 @@
 #pragma once
-#ifndef EVENT_HH
-# define EVENT_HH
-# include <QString>
-# include "Properties.hh"
-# include "Distribution.hh"
+#include "Properties.hh"
+#include "Distribution.hh"
 
 class Event
 {
 private:
-    Properties prop;
-    Distribution* distrib = nullptr;
+	Properties prop;
+	Distribution* distribution = nullptr;
 
 public:
-    Event(QString name);
+	Event(QString name);
 
-    ~Event();
-    
-    Properties& getProperties();
+	~Event();
+	
+	Properties& getProperties();
 
-    void setDistribution(Distribution* distrib);
-    
-    Distribution* getDistribution();
+	void setDistribution(Distribution *distribution);
+	
+	Distribution* getDistribution();
 };
-
-#endif

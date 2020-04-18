@@ -4,7 +4,7 @@
 
 Exponential::Exponential(QString name) : Distribution(name) {}
 
-const double Exponential::getLambda() { return value; }
+double Exponential::getLambda() const { return value; }
 
 void Exponential::setLambda(double lambda) { value = lambda; }
 

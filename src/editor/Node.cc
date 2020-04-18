@@ -1,24 +1,34 @@
 #include "Node.hh"
 
 
-Node::Node() : parent(nullptr), position(0, 0) {}
+Node::Node() :
+parent(nullptr), position(0, 0)
+{}
 
-Gate* Node::getParent(){
-  return this->parent;
+Node::~Node()
+{}
+
+Gate* Node::getParent()
+{
+	return this->parent;
 }
 
-Qpoint Node::getPosition(){
-  return this->position; 
+QPoint Node::getPosition()
+{
+	return this->position; 
 }
 
-void Node::setPostion(Qpoint position){
-    this->position = position; 
+void Node::setPosition(QPoint position)
+{
+	this->position = position;
 }
 
-void Node::attach(Gate* parent){
-    this->parent = parent; 
+void Node::attach(Gate* parent)
+{
+	this->parent = parent;
 }
 
-Node* Node::detach(){
-  
+Node* Node::detach()
+{
+	return (nullptr);
 }

@@ -2,24 +2,29 @@
 #include <limits>
 #include "Editor.hh"
 
-Editor::Editor(bool autoRefresh) : autoRefresh(autoRefresh) {};
+Editor::Editor(bool autoRefresh) :
+autoRefresh(autoRefresh)
+{}
 
-QList<Tree> &Editor::getTrees() const
+Editor::~Editor()
+{}
+
+QList<Tree> &Editor::getTrees()
 {
 	return (trees);
 }
 
-QList<Event> &Editor::getEvents() const
+QList<Event> &Editor::getEvents()
 {
 	return (events);
 }
 
-QList<Distribution> &Editor::getDistributions() const
+QList<Distribution*> &Editor::getDistributions()
 {
 	return (distributions);
 }
 
-QList<Gate> &Editor::getGates() const
+QList<Gate*> &Editor::getGates()
 {
 	return (gates);
 }
@@ -52,10 +57,11 @@ void Editor::refresh()
 
 bool Editor::isUnique(QString name)
 {
-	;
+	(void)name;
+	return (false);
 }
 
-QString	Editor::generateName(QString prefix)
+QString Editor::generateName(QString prefix)
 {
 	QString	s;
 
@@ -80,9 +86,9 @@ void Editor::cut(Node *top)
 	(void)top;
 }
 
-void Editor::paste(Node *top)
+void Editor::paste(Gate *parent)
 {
-	(void)top;
+	(void)parent;
 }
 
 void Editor::move(Node *child, Gate *parent)
@@ -103,7 +109,7 @@ void Editor::detach(Gate *top)
 	if (top == selection->getTop())
 		selection->setTop(nullptr);
 	top->detach();
-	selection = trees.last();
+	selection = &trees.last();
 }
 
 void Editor::join(Tree *child, Gate *parent)

@@ -1,10 +1,7 @@
 #pragma once
-#include <QString>
 #include <QList>
-#include <QPoint>
 #include "Node.hh"
 #include "Properties.hh"
-
 
 class Gate : public Node
 {

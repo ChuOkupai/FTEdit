@@ -1,11 +1,25 @@
 #include "Distribution.hh"
 
-Distribution::Distribution(QString name) : Properties(name) {}
+Distribution::Distribution(QString name) :
+prop(name)
+{}
 
-Properties& Distribution::getProperties() { return prop; }
+Distribution::~Distribution()
+{}
 
-double Distribution::getValue() { return value; }
+Properties& Distribution::getProperties()
+{
+	return (prop);
+}
 
-void Distribution::setValue(double value) { this->value = value; }
+double Distribution::getValue()
+{
+	return (value);
+}
+
+void Distribution::setValue(double value)
+{
+	this->value = value;
+}
 
 

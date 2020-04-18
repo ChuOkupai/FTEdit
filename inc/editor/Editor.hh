@@ -9,26 +9,29 @@
 #define PREFIX_GATE			"Gate"
 #define PREFIX_TREE			"Tree"
 
+class Node;
+
 class Editor
 {
 private:
-	QList<Tree>			trees;
-	QList<Event>		events;
-	QList<Distribution>	distributions;
-	QList<Gate>			gates;
-	Node				*clipboard;
-	Tree				*selection;
-	bool				autoRefresh;
+	QList<Tree>				trees;
+	QList<Event>			events;
+	QList<Distribution*>	distributions;
+	QList<Gate*>			gates;
+	Node					*clipboard;
+	Tree					*selection;
+	bool					autoRefresh;
 
 public:
 	Editor(bool autoRefresh);
+	~Editor();
 
-	QList<Tree>			&getTrees() const;
-	QList<Event>		&getEvents() const;
-	QList<Distribution>	&getDistributions() const;
-	QList<Gate>			&getGates() const;
-	Node				*getClipboard() const;
-	Tree				*getSelection() const;
+	QList<Tree>				&getTrees();
+	QList<Event>			&getEvents();
+	QList<Distribution*>	&getDistributions();
+	QList<Gate*>			&getGates();
+	Node					*getClipboard() const;
+	Tree					*getSelection() const;
 	
 	void	setSelection(Tree *selection);
 	void	setAutoRefresh(bool value);

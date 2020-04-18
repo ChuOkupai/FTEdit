@@ -1,22 +1,24 @@
 #include "Event.hh"
 
-Event::Event(QString name) : Properties(name){}
+Event::Event(QString name) : prop(name){}
 
 Event::~Event() {}
 
-void Event::setDistribution(Distribution* distrib);
+void Event::setDistribution(Distribution *distribution)
 {
-    if (!this->distrib)
-        this->distrib = distrib;
+	if (this->distribution)
+		this->distribution->getProperties().decrementRefCount();
+	this->distribution = distribution;
+	this->distribution->getProperties().incrementRefCount();
 }
 
 Distribution* Event::getDistribution()
 {
-    return distrib;
+	return (distribution);
 }
 
 Properties& Event::getProperties()
 {
-    return &prop;
+	return (prop);
 }
 

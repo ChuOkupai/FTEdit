@@ -1,2 +1,2 @@
 #pragma once
-#include "Editor.hh"
+#include "FTEdit_Editor.hh"

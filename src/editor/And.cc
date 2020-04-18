@@ -7,28 +7,29 @@ And::~And()
 
 double And::getProbability(double time)
 {
-    return prop.getProbability(time);
+	(void)time;
+	return (0);
 }
 
 bool And::check(QList<QString>& errors)
 {
-    if(children.count()<2)
-    {
-        errors << "And Gate "+ name +" with less than 2 children";
-        return false;
-    }
-    else
-    {
-        return true;
-    }
-    
+	if(children.count()<2)
+	{
+		errors << "And Gate "+ prop.getName() +" with less than 2 children";
+		return false;
+	}
+	else
+	{
+		return true;
+	}
+	
 }
 
-void And::accept(Editor& editor,EditVisitor& visitor)
+/*void And::accept(Editor& editor,EditVisitor& visitor)
 {
-    visitor.visit(this);
+	visitor.visit(this);
 }
 void And::accept(RenderVisitor& visitor)
 {
-    visitor.visit(this);
-}
+	visitor.visit(this);
+}*/
