@@ -1,1 +1,1 @@
-#include "VotingOR.hh"
+#include "Gate.hh"

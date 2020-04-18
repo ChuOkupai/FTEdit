@@ -1,1 +1,1 @@
-#include "Xor.hh"
+#include "Gate.hh"

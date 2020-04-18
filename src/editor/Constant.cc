@@ -1,5 +1,11 @@
-#include "Constant.hh"
+#include "Distribution.hh"
 
-Constant::Constant(QString name) : Distribution(name) {}
+Constant::Constant(QString name) :
+Distribution(name)
+{}
 
-double Constant::getProbability(double time) { (void)time; return value; }
+double Constant::getProbability(double time)
+{
+	(void)time;
+	return (value);
+}

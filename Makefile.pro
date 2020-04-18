@@ -16,23 +16,16 @@ $$PWD/inc/editor
 
 HEADERS += \
 inc/FTEdit.hh \
-inc/editor/And.hh \
-inc/editor/Constant.hh \
 inc/editor/Container.hh \
 inc/editor/Distribution.hh \
 inc/editor/Editor.hh \
 inc/editor/Event.hh \
-inc/editor/Exponential.hh \
 inc/editor/FTEdit_Editor.hh \
 inc/editor/Gate.hh \
-inc/editor/Inhibit.hh \
 inc/editor/Node.hh \
-inc/editor/Or.hh \
 inc/editor/Properties.hh \
 inc/editor/Transfert.hh \
-inc/editor/Tree.hh \
-inc/editor/VotingOR.hh \
-inc/editor/Xor.hh
+inc/editor/Tree.hh
 
 SOURCES += \
 src/editor/And.cc \
@@ -50,5 +43,6 @@ src/editor/Properties.cc \
 src/editor/Transfert.cc \
 src/editor/Tree.cc \
 src/editor/VotingOR.cc \
+src/editor/Weibull.cc \
 src/editor/Xor.cc \
 src/main.cc

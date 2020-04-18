@@ -1,4 +1,4 @@
-#include "And.hh"
+#include "Gate.hh"
 
 And::And(QString name) : Gate(name)
 {}

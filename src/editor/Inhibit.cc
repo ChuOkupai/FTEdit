@@ -1,1 +1,1 @@
-#include "Inhibit.hh"
+#include "Gate.hh"

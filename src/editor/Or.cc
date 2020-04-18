@@ -1,4 +1,4 @@
-#include "Or.hh"
+#include "Gate.hh"
 
 Or::Or(QString name) : Gate(name)
 {}

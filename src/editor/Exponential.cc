@@ -1,11 +1,22 @@
 #include <cmath>
-#include "Exponential.hh"
+#include "Distribution.hh"
 
 
-Exponential::Exponential(QString name) : Distribution(name) {}
+Exponential::Exponential(QString name) :
+Distribution(name)
+{}
 
-double Exponential::getLambda() const { return value; }
+double Exponential::getLambda()
+{
+	return (value);
+}
 
-void Exponential::setLambda(double lambda) { value = lambda; }
+double Exponential::getProbability(double time)
+{
+	return (1 - exp(-value * time));
+}
 
-double Exponential::getProbability(double time) { return 1 - exp(-value*time); }
+void Exponential::setLambda(double lambda)
+{
+	value = lambda;
+}
