@@ -7,6 +7,7 @@
 #define PREFIX_DISTRIBUTION	"Distribution"
 #define PREFIX_EVENT		"Event"
 #define PREFIX_GATE			"Gate"
+#define PREFIX_TRANSFERT	"Transfert"
 #define PREFIX_TREE			"Tree"
 
 class Node;
@@ -36,14 +37,6 @@ public:
 	void	setSelection(Tree *selection);
 	void	setAutoRefresh(bool value = true);
 
-	// Mise à jour des listes d'objets de l'éditeur
-	void	refresh();
-	// Vérifie si name est déjà utilisé dans un objet
-	bool	isUnique(QString name);
-	// Génère un nom non utilisé pour un objet
-	QString	generateName(QString prefix);
-	// Réinitialise le presse-papier
-	void	resetClipboard();
 	// Copie la structure d'un sous-arbre
 	void	copy(Node *top);
 	// Copie la structure d'un sous-arbre avec sa suppression
@@ -54,8 +47,16 @@ public:
 	void	move(Node *child, Gate *parent);
 	// Supprime récursivement un sous-arbre
 	void	remove(Node *top);
-	// Détache un sous-arbre et le déplace dans un nouvel arbre
+	// Détache un sous-arbre si il existe et le déplace dans un nouvel arbre
 	void	detach(Gate *top = nullptr);
 	// Fusionne le contenu d'un arbre dans un autre
 	void	join(Tree *child, Gate *parent);
+	// Génère un nom non utilisé pour un objet
+	QString	generateName(QString prefix);
+	// Vérifie si name est déjà utilisé dans un objet de l'éditeur
+	bool	isUnique(QString name);
+	// Mise à jour des listes d'objets de l'éditeur (détruit les objets non utilisés)
+	void	refresh();
+	// Réinitialise le presse-papier
+	void	resetClipboard();
 };

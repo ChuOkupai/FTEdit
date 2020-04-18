@@ -1,5 +1,5 @@
+#include "Gate.hh"
 #include "Node.hh"
-
 
 Node::Node() :
 parent(nullptr), position(0, 0)
@@ -10,12 +10,12 @@ Node::~Node()
 
 Gate* Node::getParent()
 {
-	return this->parent;
+	return (this->parent);
 }
 
 QPoint Node::getPosition()
 {
-	return this->position; 
+	return (this->position); 
 }
 
 void Node::setPosition(QPoint position)
@@ -25,10 +25,15 @@ void Node::setPosition(QPoint position)
 
 void Node::attach(Gate* parent)
 {
+	if (!parent || this->parent)
+		return ;
 	this->parent = parent;
+	parent->getChildren() << this;
 }
 
-Node* Node::detach()
+void Node::detach()
 {
-	return (nullptr);
+	if (parent)
+		parent->getChildren().removeOne(this);
+	parent = nullptr;
 }

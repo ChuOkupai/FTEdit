@@ -5,6 +5,9 @@ Weibull::Weibull(QString name) :
 Distribution(name)
 {}
 
+Weibull::~Weibull()
+{}
+
 double Weibull::getScale()
 {
 	return (value);
@@ -17,7 +20,7 @@ double Weibull::getShape()
 
 double Weibull::getProbability(double time)
 {
-	// A implémenter
+	// A implémenter ptdr
 	(void)time;
 	return (0);
 }

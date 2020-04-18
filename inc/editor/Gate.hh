@@ -17,11 +17,12 @@ public:
 	QList<Node*>&	getChildren();
 
 	Node*	search(QPoint around);
+	void	remove();
 };
 
 class And : public Gate
 {
-private:
+public:
 	And(QString name);
 	~And();
 
@@ -36,7 +37,7 @@ class Inhibit; // TODO
 
 class Or : public Gate
 {
-private:
+public:
 	Or(QString name);
 	~Or();
 
@@ -51,7 +52,7 @@ class VotingOR; // TODO
 
 class Xor : public Gate
 {
-private:
+public:
 	Xor(QString name);
 	~Xor();
 

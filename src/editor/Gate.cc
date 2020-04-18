@@ -1,6 +1,6 @@
 #include "Gate.hh"
 
-Gate::Gate(QString name) : prop(name)
+Gate::Gate(QString name) : prop(name, false)
 {}
 
 Gate::~Gate()
@@ -25,4 +25,11 @@ Node* Gate::search(QPoint around)
 	for (int i = 0;
 	i < children.size() && !(n = children.at(i)->search(around)); ++i);
 	return (n);
+}
+
+void Gate::remove()
+{
+	for (int i = 0; i < children.size(); ++i)
+		children[i]->remove();
+	children.clear();
 }

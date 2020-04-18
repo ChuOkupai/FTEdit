@@ -1,3 +1,4 @@
+#include "Gate.hh"
 #include "Tree.hh"
 
 Tree::Tree(QString name) :
@@ -19,5 +20,9 @@ Gate *Tree::getTop() const
 
 void Tree::setTop(Gate *top)
 {
+	if (this->top)
+		this->top->getProperties().decrementRefCount();
 	this->top = top;
+	if (top)
+		top->getProperties().incrementRefCount();
 }

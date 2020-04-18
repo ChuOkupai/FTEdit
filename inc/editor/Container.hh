@@ -4,24 +4,22 @@
 class Container : public Node
 {
 private:
-	Event& event;
+	Event &event;
 
 public:
 	Container(Event &event);
 
 	~Container();
 	
-	void setEvent(Event &event);
+	void	setEvent(Event &event);
 	
-	double getProbability(double time);
+	double	getProbability(double time);
 	
-	Event& getEvent();
+	Event	&getEvent();
 
-	bool check(QList<QString> &errors);
-
-	Node* search(QPoint around);
-	
+	bool	check(QList<QString> &errors);
+	Node*	search(QPoint around);
+	void	remove();
 	//void accept(Editor &editor, EditVisitor &visitor);
-	
 	//void accept(RenderVisitor &visitor);
 };

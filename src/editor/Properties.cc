@@ -1,3 +1,4 @@
+#include <QDebug>
 #include "Properties.hh"
 
 Properties::Properties(QString name, bool keep) :

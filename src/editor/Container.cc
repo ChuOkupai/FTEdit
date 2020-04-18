@@ -3,9 +3,14 @@
 
 Container::Container(Event& event) :
 Node::Node(), event(event)
-{}
+{
+	event.getProperties().incrementRefCount();
+}
 
-Container::~Container() {}
+Container::~Container()
+{
+	event.getProperties().decrementRefCount();
+}
 
 void Container::setEvent(Event& event)
 {
@@ -37,6 +42,11 @@ Node* Container::search(QPoint around)
 {
 	(void)around;
 	return (nullptr);
+}
+
+void Container::remove()
+{
+	delete this;
 }
 
 //void accept(Editor &editor, EditVisitor &visitor) {visitor.visit(*this);}

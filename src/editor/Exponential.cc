@@ -6,6 +6,9 @@ Exponential::Exponential(QString name) :
 Distribution(name)
 {}
 
+Exponential::~Exponential()
+{}
+
 double Exponential::getLambda()
 {
 	return (value);

@@ -9,7 +9,7 @@ protected:
 
 public:
 	Distribution(QString name);
-	~Distribution();
+	virtual ~Distribution();
 
 	Properties&	getProperties();
 	double		getValue();
@@ -23,6 +23,7 @@ class Constant : public Distribution
 {
 public:
 	Constant(QString name);
+	~Constant();
 
 	double	getProbability(double time);
 };
