@@ -1,8 +1,9 @@
 #include <QDir>
+#include <QtGlobal>
 #include <QtWidgets>
 #include "MainWindow.hh"
 
-MainWindow::MainWindow() : editor(nullptr), modified(false)
+MainWindow::MainWindow() : editor(nullptr), modified(false), zoomLevel(100)
 {
 	createActions();
 	createMenus();
@@ -10,7 +11,7 @@ MainWindow::MainWindow() : editor(nullptr), modified(false)
 	statusBar()->showMessage("A context menu is available by right-clicking");
 	setWindowTitle("FTEdit");
 	QRect r = QApplication::desktop()->screenGeometry();
-	setMinimumSize(MIN(r.width(), 460), MIN(r.height(), 320));
+	setMinimumSize(MIN(r.width(), RES_MIN_X), MIN(r.height(), RES_MIN_Y));
 	resize(r.width() / 2, r.height() / 1.5);
 	this->newFile();
 }
@@ -57,6 +58,15 @@ void MainWindow::saveAs()
 		return ;
 	// save file
 	modified = false; // si pas d'erreurs
+}
+
+void MainWindow::closeEvent(QCloseEvent* e)
+{
+	if (!maybeSave())
+		return ;
+	if (modified)
+		save(); // appeler saveAs tant que path vide
+	QMainWindow::closeEvent(e);
 }
 
 void MainWindow::cut()
@@ -107,6 +117,41 @@ void MainWindow::addEvent()
 void MainWindow::addTransfert()
 {
 	modified = true;
+}
+
+void MainWindow::zoomIn()
+{
+	if ((zoomLevel *= 1.2) > ZOOM_MAX)
+		zoomLevel = ZOOM_MAX;
+	qDebug() << "Zoom In to " << zoomLevel;
+}
+
+void MainWindow::zoomOut()
+{
+	if ((zoomLevel *= 0.8) < ZOOM_MIN)
+		zoomLevel = ZOOM_MIN;
+	qDebug() << "Zoom Out to " << zoomLevel;
+}
+
+void MainWindow::zoomReset()
+{
+	zoomLevel = 100.0;
+	qDebug() << "Zoom Reset to " << zoomLevel;
+}
+
+void MainWindow::showDistributions()
+{
+	qDebug() << "showDistributions";
+}
+
+void MainWindow::showEvents()
+{
+	qDebug() << "showEvents";
+}
+
+void MainWindow::evaluate()
+{
+	qDebug() << "Evaluate fault tree";
 }
 
 void MainWindow::about()
@@ -187,6 +232,32 @@ void MainWindow::createActions()
 	addTransfertAct->setStatusTip("Add a new transfert in gate into the current tree");
 	connect(addTransfertAct, &QAction::triggered, this, &MainWindow::addTransfert);
 
+	zoomInAct = new QAction("Zoom In", this);
+	zoomInAct->setShortcuts(QKeySequence::ZoomIn);
+	zoomInAct->setStatusTip("Zoom In");
+	connect(zoomInAct, &QAction::triggered, this, &MainWindow::zoomIn);
+
+	zoomOutAct = new QAction("Zoom Out", this);
+	zoomOutAct->setShortcuts(QKeySequence::ZoomOut);
+	zoomOutAct->setStatusTip("Zoom Out");
+	connect(zoomOutAct, &QAction::triggered, this, &MainWindow::zoomOut);
+
+	zoomResetAct = new QAction("Reset Zoom", this);
+	zoomResetAct->setStatusTip("Reset Zoom");
+	connect(zoomResetAct, &QAction::triggered, this, &MainWindow::zoomReset);
+
+	distributionsAct = new QAction("Manage distributions...", this);
+	distributionsAct->setStatusTip("Show the list of all distributions");
+	connect(distributionsAct, &QAction::triggered, this, &MainWindow::showDistributions);
+
+	eventsAct = new QAction("Manage events...", this);
+	eventsAct->setStatusTip("Show the list of all events");
+	connect(eventsAct, &QAction::triggered, this, &MainWindow::showEvents);
+
+	evaluateAct = new QAction("Evaluate...", this);
+	evaluateAct->setStatusTip("Perform a fault tree analysis");
+	connect(evaluateAct, &QAction::triggered, this, &MainWindow::evaluate);
+
 	aboutAct = new QAction("About", this);
 	aboutAct->setStatusTip("About FTEdit");
 	connect(aboutAct, &QAction::triggered, this, &MainWindow::about);
@@ -221,6 +292,18 @@ void MainWindow::createMenus()
 		addGateMenu->addAction(addXorAct);
 		addGateMenu->addAction(addTransfertAct);
 	addNodeMenu->addAction(addEventAct);
+
+	viewMenu = menuBar()->addMenu("&View");
+	viewMenu->addAction(zoomInAct);
+	viewMenu->addAction(zoomOutAct);
+	viewMenu->addAction(zoomResetAct);
+	viewMenu->addSeparator();
+	viewMenu = menuBar()->addMenu("&Show");
+	viewMenu->addAction(distributionsAct);
+	viewMenu->addAction(eventsAct);
+
+	analysisMenu = menuBar()->addMenu("&Analysis");
+	analysisMenu->addAction(evaluateAct);
 
 	helpMenu = menuBar()->addMenu("&Help");
 	helpMenu->addAction(aboutAct);

@@ -2,6 +2,10 @@
 #include <QMainWindow>
 #include "Editor.hh"
 
+#define RES_MIN_X	460
+#define RES_MIN_Y	320
+#define ZOOM_MIN	20.0
+#define ZOOM_MAX	400.0
 #define MIN(A, B) ((A) < (B) ? (A) : (B))
 
 QT_BEGIN_NAMESPACE
@@ -20,6 +24,7 @@ public:
 
 protected:
 	void contextMenuEvent(QContextMenuEvent *event) override;
+	void closeEvent(QCloseEvent* e) override;
 
 private slots:
 	// File
@@ -31,20 +36,32 @@ private slots:
 	void cut();
 	void copy();
 	void paste();
-	// Add
-	void addAnd();
-	void addInhibit();
-	void addKN();
-	void addOr();
-	void addXor();
-	void addTransfert();
-	void addEvent();
+		// Add
+		void addAnd();
+		void addInhibit();
+		void addKN();
+		void addOr();
+		void addXor();
+		void addTransfert();
+		void addEvent();
+	// View
+	void zoomIn();
+	void zoomOut();
+	void zoomReset();
+	// Show
+	void showDistributions();
+	void showEvents();
+	// Analysis
+	void evaluate();
 	// Help
 	void about();
 
 private:
-	Editor *editor;
-	bool modified;
+	Editor			*editor;
+	bool			modified;
+	double			zoomLevel;
+	//QList<Result>	results;
+	//Node			*current;
 
 	QMenu *fileMenu;
 		QAction *newAct;
@@ -65,6 +82,14 @@ private:
 				QAction *addXorAct;
 				QAction *addTransfertAct;
 			QAction *addEventAct;
+	QMenu *viewMenu;
+		QAction *zoomInAct;
+		QAction *zoomOutAct;
+		QAction *zoomResetAct;
+		QAction *distributionsAct;
+		QAction *eventsAct;
+	QMenu *analysisMenu;
+		QAction *evaluateAct;
 	QMenu *helpMenu;
 		QAction *aboutAct;
 		QAction *aboutQtAct;
