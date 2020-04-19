@@ -12,7 +12,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 INCLUDEPATH += \
 $$PWD/inc \
-$$PWD/inc/editor
+$$PWD/inc/editor \
+$$PWD/inc/gui
 
 HEADERS += \
 inc/FTEdit.hh \
@@ -25,7 +26,9 @@ inc/editor/Gate.hh \
 inc/editor/Node.hh \
 inc/editor/Properties.hh \
 inc/editor/Transfert.hh \
-inc/editor/Tree.hh
+inc/editor/Tree.hh \
+inc/gui/FTEdit_GUI.hh \
+inc/gui/MainWindow.hh
 
 SOURCES += \
 src/editor/And.cc \
@@ -45,4 +48,5 @@ src/editor/Tree.cc \
 src/editor/VotingOR.cc \
 src/editor/Weibull.cc \
 src/editor/Xor.cc \
+src/gui/MainWindow.cc \
 src/main.cc

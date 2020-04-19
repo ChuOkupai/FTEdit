@@ -1,4 +1,3 @@
-#include <QDebug>
 #include "FTEdit.hh"
 
 void test1(void)
@@ -34,8 +33,11 @@ void test1(void)
 	qDebug() << "Gates size: " << e.getGates().size();
 }
 
-int main(void)
+int main(int argc, char **argv)
 {
-	test1();
-	return (0);
+	QApplication app(argc, argv);
+	MainWindow window;
+
+	window.show();
+	return app.exec();
 }
