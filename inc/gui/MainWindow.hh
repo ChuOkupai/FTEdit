@@ -1,5 +1,18 @@
 #pragma once
+
 #include <QMainWindow>
+#include <QFrame>
+#include <QLabel>
+#include <QHBoxLayout>
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <QDockWidget>
+#include <QGridLayout>
+#include <QtWidgets>
+#include <QTabWidget>
+#include <QFrame>
+
+
 #include "Editor.hh"
 
 #define RES_MIN_X	460
@@ -27,6 +40,10 @@ protected:
 	void closeEvent(QCloseEvent* e) override;
 
 private slots:
+
+/*-----------------*/
+    void openDialog();
+/*-----------------*/
 	// File
 	void newFile();
 	void open();
@@ -93,7 +110,18 @@ private:
 	QMenu *helpMenu;
 		QAction *aboutAct;
 		QAction *aboutQtAct;
-	
+	/*---------------------------------*/
+	QVBoxLayout *v_layout;
+	QHBoxLayout *h_layout;
+    QGridLayout *grid;
+    QPushButton *m_btn;
+    QDockWidget *dock;
+    QTreeWidget* tree;
+    QPushButton *m_quit;
+    QWidget *m_mainwidget;
+    QTabWidget *onglets;
+    //QFrame *fram;
+	/*---------------------------------*/
 	void createActions();
 	void createMenus();
 	// Renvoie vrai si le projet peut être écrasé

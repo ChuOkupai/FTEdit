@@ -5,6 +5,120 @@
 
 MainWindow::MainWindow() : editor(nullptr), modified(false), zoomLevel(100)
 {
+/*---------------------------------------------------------------------------------*/
+	//setFixedSize(1000,800);
+    setWindowIcon(QIcon(":/src/gui/images/icone.ico"));
+
+    m_mainwidget = new QWidget(this);
+    setCentralWidget(m_mainwidget);
+
+    v_layout = new QVBoxLayout(this);
+   	h_layout = new QHBoxLayout();
+
+    m_btn = new QPushButton("Evaluate", m_mainwidget);
+    m_quit = new QPushButton("Quit", m_mainwidget);
+
+    h_layout->addWidget(m_btn, 1, Qt::AlignRight);
+    h_layout->addWidget(m_quit,0);
+    h_layout->addWidget(onglets,100);
+/*-----------------------------------------------*/
+      // Dock widget
+    dock = new QDockWidget(tr("Error List"), m_mainwidget);
+    tree = new QTreeWidget(m_mainwidget);
+    QStringList treeHeader;
+    treeHeader<<"Header1"<<"Header2";
+    tree->setHeaderLabels(treeHeader);
+    //Set tree on dockWidget
+    dock->setWidget(tree);
+    // Place dock
+    addDockWidget(Qt::BottomDockWidgetArea, dock);
+/*-----------------------------------------------*/
+    v_layout->addStretch(1);
+    v_layout->addLayout(h_layout);
+
+    onglets = new QTabWidget(m_mainwidget);
+    onglets->setGeometry(5,10,170,350);
+
+    QWidget *p1 = new QWidget;
+    QWidget *p2 = new QWidget;
+
+    onglets->addTab(p1, "Edition");
+    onglets->addTab(p2, "Projet Explorer");
+
+    grid = new QGridLayout;
+
+	//fram = new QFrame(m_mainwidget);
+	//fram->setGeometry(175,35,500,390);
+	//fram->setFrameStyle(QFrame::Sunken | QFrame::StyledPanel);
+	//setAcceptDrops(true);
+
+    p1->setLayout(grid);
+    p2->setLayout(grid);
+
+    m_mainwidget->setLayout(v_layout);  
+
+    connect(m_quit, SIGNAL(clicked()), qApp, SLOT(quit()));
+    connect(m_btn, SIGNAL(clicked()), this, SLOT(openDialog()));
+
+
+    QLabel *a = new QLabel(p1);
+    a->setPixmap(QPixmap(":/src/gui/images/icones/evenementDeBase.gif"));
+    a->move(10, 10);
+    a->show();
+    a->setAttribute(Qt::WA_DeleteOnClose);
+
+    QLabel *b = new QLabel(p1);
+    b->setPixmap(QPixmap(":/src/gui/images/icones/porteEt.gif"));
+    b->move(10, 80);
+    b->show();
+    b->setAttribute(Qt::WA_DeleteOnClose);
+
+    QLabel *c = new QLabel(p1);
+    c->setPixmap(QPixmap(":/src/gui/images/icones/porteKN.gif"));
+    c->move(10, 160);
+    c->show();
+    c->setAttribute(Qt::WA_DeleteOnClose);
+
+    QLabel *d = new QLabel(p1);
+    d->setPixmap(QPixmap(":/src/gui/images/icones/porteNonEt.gif"));
+    d->move(60, 10);
+    d->show();
+    d->setAttribute(Qt::WA_DeleteOnClose);
+
+    QLabel *e = new QLabel(p1);
+    e->setPixmap(QPixmap(":/src/gui/images/icones/porteNonOu.gif"));
+    e->move(60, 80);
+    e->show();
+    e->setAttribute(Qt::WA_DeleteOnClose);
+
+    QLabel *f = new QLabel(p1);
+    f->setPixmap(QPixmap(":/src/gui/images/icones/porteTransfert.gif"));
+    f->move(60, 160);
+    f->show();
+    f->setAttribute(Qt::WA_DeleteOnClose);
+
+    QLabel *g = new QLabel(p1);
+    g->setPixmap(QPixmap(":/src/gui/images/icones/porteOuEx.gif"));
+    g->move(120, 10);
+    g->show();
+    g->setAttribute(Qt::WA_DeleteOnClose);
+
+    QLabel *h = new QLabel(p1);
+    h->setPixmap(QPixmap(":/src/gui/images/icones/porteOu.gif"));
+    h->move(120, 80);
+    h->show();
+    h->setAttribute(Qt::WA_DeleteOnClose);
+
+    QLabel *i = new QLabel(p1);
+    i->setPixmap(QPixmap(":/src/gui/images/icones/evenementMaison.gif"));
+    i->move(120, 160);
+    i->show();
+    i->setAttribute(Qt::WA_DeleteOnClose);
+
+   
+   
+
+/*---------------------------------------------------------------------------------*/
 	createActions();
 	createMenus();
 
@@ -330,3 +444,29 @@ void MainWindow::reset()
 	editor = nullptr;
 	modified = false;
 }
+/*-----------------------------------------*/
+void MainWindow::openDialog()
+{
+	QDialog *dlg = new QDialog(this);
+    dlg->setWindowTitle(tr("Resultat"));
+    dlg->resize(600,400);
+    dlg->setAttribute(Qt::WA_DeleteOnClose);
+    QPushButton *m_btn = new QPushButton("Ok", dlg);
+    m_btn->move(150,0);
+
+    QVBoxLayout *v_layout = new QVBoxLayout(dlg);
+   	QHBoxLayout *h_layout = new QHBoxLayout();
+
+    h_layout->addWidget(m_btn, 0, Qt::AlignRight);
+ 
+
+    v_layout->addStretch(1);
+    v_layout->addLayout(h_layout);
+
+    dlg->setLayout(v_layout);
+
+    connect(m_btn, SIGNAL(clicked()), dlg, SLOT(accept()));
+    dlg->exec();
+
+}
+/*-----------------------------------------*/

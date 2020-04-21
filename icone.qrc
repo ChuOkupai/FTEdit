@@ -1,0 +1,14 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file>src/gui/images/icone.ico</file>
+    <file>src/gui/images/icones/evenementDeBase.gif</file>
+    <file>src/gui/images/icones/porteEt.gif</file>
+    <file>src/gui/images/icones/porteKN.gif</file>
+    <file>src/gui/images/icones/porteNonEt.gif</file>
+    <file>src/gui/images/icones/porteNonOu.gif</file>
+    <file>src/gui/images/icones/porteTransfert.gif</file>
+    <file>src/gui/images/icones/porteOuEx.gif</file>
+    <file>src/gui/images/icones/porteOu.gif</file>
+    <file>src/gui/images/icones/evenementMaison.gif</file>
+</qresource>
+</RCC>

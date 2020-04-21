@@ -9,6 +9,7 @@ MOC_DIR = .moc
 OBJECTS_DIR = .obj
 
 DEFINES += QT_DEPRECATED_WARNINGS
+RESOURCES += icone.qrc
 
 INCLUDEPATH += \
 $$PWD/inc \
