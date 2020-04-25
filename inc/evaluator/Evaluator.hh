@@ -3,6 +3,7 @@
 #include "Gate.hh"
 
 
+
 class Evaluator{
 	protected : 
 		Gate* top;
