@@ -1,11 +1,12 @@
 #pragma once
 #include "Properties.hh"
+#include "Gate.hh"
 
-class Gate;
+//class Gate;
 
 class Tree
 {
-private:
+protected:
 	Properties	prop;
 	Gate		*top;
 
