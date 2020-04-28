@@ -2,7 +2,7 @@ TEMPLATE = app
 CONFIG += object_parallel_to_source
 QMAKE_CXXFLAGS += -Wall -Wextra -Werror
 TARGET = FTEdit
-QT += widgets
+QT += widgets xml
 
 DESTDIR = bin
 MOC_DIR = .moc
@@ -13,6 +13,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 INCLUDEPATH += \
 $$PWD/inc \
 $$PWD/inc/editor \
+$$PWD/inc/fms \
 $$PWD/inc/gui
 
 HEADERS += \
@@ -27,6 +28,8 @@ inc/editor/Node.hh \
 inc/editor/Properties.hh \
 inc/editor/Transfert.hh \
 inc/editor/Tree.hh \
+inc/fms/FileManagerSystem.hh \
+inc/fms/SaveVisitor.hh \
 inc/gui/FTEdit_GUI.hh \
 inc/gui/MainWindow.hh
 
@@ -48,5 +51,7 @@ src/editor/Tree.cc \
 src/editor/VotingOR.cc \
 src/editor/Weibull.cc \
 src/editor/Xor.cc \
+src/fms/FileManagerSystem.cc \
+src/fms/SaveVisitor.cc \
 src/gui/MainWindow.cc \
 src/main.cc
