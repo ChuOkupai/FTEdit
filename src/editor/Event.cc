@@ -1,4 +1,5 @@
 #include "Event.hh"
+#include "../fms/SaveVisitor.hh"
 
 Event::Event(QString name) : prop(name){}
 
@@ -22,3 +23,7 @@ Properties& Event::getProperties()
 	return (prop);
 }
 
+void Event::accept(SaveVisitor& visitor)
+{
+	visitor.visit(*this);
+}

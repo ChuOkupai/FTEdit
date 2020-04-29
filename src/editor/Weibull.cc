@@ -1,5 +1,6 @@
 #include <QtGlobal>
 #include "Distribution.hh"
+#include "../fms/SaveVisitor.hh"
 
 Weibull::Weibull(QString name) :
 Distribution(name)
@@ -33,4 +34,9 @@ void Weibull::setScale(double scale)
 void Weibull::setShape(double shape)
 {
 	this->shape = shape;
+}
+
+void Weibull::accept(SaveVisitor& visitor)
+{
+	visitor.visit(*this);
 }

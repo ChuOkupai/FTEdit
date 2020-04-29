@@ -15,9 +15,9 @@ class SaveVisitor
 		void visit( And &andgate );
 		void visit( Or &orgate );
 		void visit( Xor &xorgate );
-		/*void visit( VotingOR &vorgate );
+		/*void visit( VotingOR &vorgate );*/
 		void visit( Transfert &transfertgate );
-		void visit( Inhibit &inhibgate );*/
+		void visit( Inhibit &inhibgate );
 		void visit( Constant &constdistrib );
 		void visit( Exponential &expdistrib );
 		void visit( Weibull &weibulldistrib );
