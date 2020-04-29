@@ -10,9 +10,9 @@ void test1(void)
 	e.getEvents() << Event(e.generateName(PREFIX_EVENT));
 	e.getEvents() << Event(e.generateName(PREFIX_EVENT));
 	e.getSelection()->setTop(e.getGates()[0]);
-	Container *c1 = new Container(e.getEvents()[0]);
+	Container *c1 = new Container(&(e.getEvents()[0]));//changed to remove compiling mismatched type
 	c1->attach(e.getGates()[0]);
-	Container *c2 = new Container(e.getEvents()[1]);
+	Container *c2 = new Container(&(e.getEvents()[1]));//changed to remove compiling mismatched type
 	c2->attach(e.getGates()[0]);
 	e.refresh();
 	e.getSelection()->getTop()->check(errors);

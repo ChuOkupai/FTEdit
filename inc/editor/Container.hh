@@ -6,18 +6,18 @@ class SaveVisitor;
 class Container : public Node
 {
 private:
-	Event &event;
+	Event *event;
 
 public:
-	Container(Event &event);
+	Container(Event *event);
 
 	~Container();
 	
-	void	setEvent(Event &event);
+	void	setEvent(Event *event);
 	
 	double	getProbability(double time);
 	
-	Event	&getEvent();
+	Event	*getEvent();
 
 	bool	check(QList<QString> &errors);
 	Node*	search(QPoint around);
