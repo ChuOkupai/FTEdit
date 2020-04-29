@@ -1,4 +1,5 @@
 #include "Transfert.hh"
+#include "../fms/SaveVisitor.hh"
 
 Transfert::Transfert() : Node()
 {}
@@ -48,6 +49,11 @@ bool Transfert::detectCycle(Node* n)
 		ret = ret || detectCycle(tmp.at(i));
 	}
 	return ret;
+}
+
+void Transfert::accept(SaveVisitor& visitor)
+{
+	visitor.visit(*this);
 }
 
 /*void Transfert::remove(Node *top)

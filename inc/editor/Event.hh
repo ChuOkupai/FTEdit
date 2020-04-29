@@ -1,6 +1,7 @@
 #pragma once
 #include "Properties.hh"
 #include "Distribution.hh"
+class SaveVisitor;
 
 class Event
 {
@@ -18,4 +19,5 @@ public:
 	void setDistribution(Distribution *distribution);
 	
 	Distribution* getDistribution();
+	void accept(SaveVisitor &visitor);
 };

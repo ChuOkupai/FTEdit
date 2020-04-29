@@ -1,5 +1,6 @@
 #include <QtGlobal>
 #include "Gate.hh"
+#include "../fms/SaveVisitor.hh"
 
 Or::Or(QString name) : Gate(name)
 {}
@@ -22,7 +23,14 @@ bool Or::check(QList<QString>& errors)
 		errors << prop.getName() + ": There must be 2 or more inputs.";
 		return (false);
 	}
-	return (true);
+	for (int i = 0; i < children.size(); ++i)
+		children.at(i)->check(errors);
+	return (errors.size() > 0);
+}
+
+void Or::accept(SaveVisitor& visitor)
+{
+	visitor.visit(*this);
 }
 
 /*void Or::accept(Editor& editor,EditVisitor& visitor)

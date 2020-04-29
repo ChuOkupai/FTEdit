@@ -1,5 +1,6 @@
 #include "Container.hh"
 #include "Node.hh"
+#include "../fms/SaveVisitor.hh"
 
 Container::Container(Event& event) :
 Node::Node(), event(event)
@@ -47,6 +48,11 @@ Node* Container::search(QPoint around)
 void Container::remove()
 {
 	delete this;
+}
+
+void Container::accept(SaveVisitor& visitor)
+{
+	visitor.visit(*this);
 }
 
 //void accept(Editor &editor, EditVisitor &visitor) {visitor.visit(*this);}

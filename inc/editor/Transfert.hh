@@ -2,6 +2,8 @@
 #include "Node.hh"
 #include "Tree.hh"
 
+class SaveVisitor;
+
 class Transfert : public Node
 {
     protected:
@@ -19,6 +21,7 @@ class Transfert : public Node
     Node* search(QPoint around);
 
     bool detectCycle(Node* n);
+	void accept(SaveVisitor& visitor);
 	//void accept(Editor& editor,EditVisitor& visitor);
 	//void accept(RenderVisitor& visitor);
     //void remove();

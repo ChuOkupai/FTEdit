@@ -1,6 +1,8 @@
 #pragma once
 #include "Editor.hh"
 
+class SaveVisitor;
+
 class Container : public Node
 {
 private:
@@ -20,6 +22,7 @@ public:
 	bool	check(QList<QString> &errors);
 	Node*	search(QPoint around);
 	void	remove();
+	void	accept(SaveVisitor& visitor);
 	//void accept(Editor &editor, EditVisitor &visitor);
 	//void accept(RenderVisitor &visitor);
 };

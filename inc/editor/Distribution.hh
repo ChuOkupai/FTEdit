@@ -1,6 +1,8 @@
 #pragma once
 #include "Properties.hh"
 
+class SaveVisitor;
+
 class Distribution
 {
 protected:
@@ -17,6 +19,7 @@ public:
 	void	setValue(double value);
 
 	virtual double	getProbability(double time) = 0;
+	//virtual void 	accept(SaveVisitor& visitor) = 0;
 };
 
 class Constant : public Distribution
@@ -26,6 +29,7 @@ public:
 	~Constant();
 
 	double	getProbability(double time);
+	void 	accept(SaveVisitor& visitor);
 };
 
 class Exponential : public Distribution
@@ -38,6 +42,7 @@ public:
 	double	getProbability(double time);
 
 	void	setLambda(double lambda);
+	void 	accept(SaveVisitor& visitor);
 };
 
 class Weibull : public Distribution
@@ -54,4 +59,5 @@ public:
 
 	void	setScale(double scale);
 	void	setShape(double shape);
+	void	accept(SaveVisitor& visitor);
 };

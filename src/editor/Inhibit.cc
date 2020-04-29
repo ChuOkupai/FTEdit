@@ -1,4 +1,5 @@
 #include "Gate.hh"
+#include "../fms/SaveVisitor.hh"
 
 
 Inhibit::Inhibit(QString name) : Gate(name)
@@ -32,4 +33,9 @@ bool Inhibit::check (QList<QString>& errors)
     }
     children.at(0)->check(errors);
     return (errors.size() > 0);
+}
+
+void Inhibit::accept(SaveVisitor& visitor)
+{
+	visitor.visit(*this);
 }
