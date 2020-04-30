@@ -3,39 +3,24 @@
 #include <QList>
 
 Result::Result(Gate* top,bool useMCS,bool useBoolean,double missionTime,double step){
+    if(!top->check( this->errors )){
+
+    }else{
     if(useMCS){
         resultMCS = new ResultMCS(top,missionTime,step);
 
     }
     if(useBoolean){
         EvalVisitor eval ;
-        resultBoolean = new ResultBoolean(top,missionTime,step,eval);
-
+        resultBoolean = new ResultBoolean(top,missionTime,step);
     }
-
-}
-
-Result::~Result(){
-    delete this;
-}
-
-QList<QString>& Result::getErrors(){
-    QList<QString>* qq = new QList<QString>;
-
-    return *qq;
-    
-}
-
-ResultMCS* Result::getResultMCS(){
-    if(this->resultMCS != nullptr){
-        return this->resultMCS;
     }
-    return nullptr;
 }
 
-ResultBoolean* Result::getResultBoolean(){
-    if(this->resultBoolean != nullptr){
-        return this->resultBoolean;
-    }
-    return nullptr;
-}
+Result::~Result(){delete this;}
+
+QList<QString>& Result::getErrors(){return errors; }
+
+ResultMCS* Result::getResultMCS(){return this->resultMCS;}
+
+ResultBoolean* Result::getResultBoolean(){return this->resultBoolean;}

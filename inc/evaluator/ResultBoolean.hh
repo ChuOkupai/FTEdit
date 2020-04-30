@@ -6,11 +6,13 @@
 class ResultBoolean : public Evaluator
 {
 	private :
-	EvalVisitor eval;
-public:
-	ResultBoolean(Gate* top, double missionTime,double step,EvalVisitor eval);
-	~ResultBoolean();
-	QList<double> getProbabilities();
+		QString topEventName;
+	
+	public:
+		ResultBoolean(Gate* top, double missionTime,double step);
+		~ResultBoolean();
+		QString getTopEventName();
+		QList<double> getProbabilities();
 
 	
 };
