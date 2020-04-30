@@ -8,7 +8,7 @@ ResultMCS::ResultMCS(Gate* top,double missionTime,double step) : Evaluator(top,m
 }
 
 QList<double> ResultMCS::getProbabilities(){
-    QList<double> tab;
-    return tab;
+    
+    return probabilities;
 
 }

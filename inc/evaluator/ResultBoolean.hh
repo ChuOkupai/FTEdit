@@ -9,7 +9,7 @@ class ResultBoolean : public Evaluator
 		QString topEventName;
 	
 	public:
-		ResultBoolean(Gate* top, double missionTime,double step,EvalVisitor eval);
+		ResultBoolean(Gate* top, double missionTime,double step);
 		~ResultBoolean();
 		QString getTopEventName();
 		QList<double> getProbabilities();

@@ -3,16 +3,18 @@
 #include <QList>
 
 Result::Result(Gate* top,bool useMCS,bool useBoolean,double missionTime,double step){
-    //verifier si l'arbre est bon TODO
+    if(!top->check( this->errors )){
+
+    }else{
     if(useMCS){
         resultMCS = new ResultMCS(top,missionTime,step);
 
     }
     if(useBoolean){
         EvalVisitor eval ;
-        resultBoolean = new ResultBoolean(top,missionTime,step,eval);
+        resultBoolean = new ResultBoolean(top,missionTime,step);
     }
-
+    }
 }
 
 Result::~Result(){delete this;}
