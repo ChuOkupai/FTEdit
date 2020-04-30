@@ -1,6 +1,6 @@
 #include <QtGlobal>
 #include "Gate.hh"
-#include "../fms/SaveVisitor.hh"
+#include "FTEdit_FMS.hh"
 
 Or::Or(QString name) : Gate(name)
 {}

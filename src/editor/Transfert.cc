@@ -1,5 +1,5 @@
 #include "Transfert.hh"
-#include "../fms/SaveVisitor.hh"
+#include "FTEdit_FMS.hh"
 
 Transfert::Transfert() : Node()
 {}
@@ -42,12 +42,15 @@ bool Transfert::detectCycle(Node* n)
 {
 	bool ret = false;
 	if(n == this)  ret = true;
-	Gate * g = dynamic_cast<Gate*>(n);
-	QList<Node*> tmp = g->getChildren();
-	for(int i=0; i < tmp.size();i++)
+	//Gate * g = dynamic_cast<Gate*>(n);
+	QList<Node*>* tmp = n->getChildren();
+	if(tmp)
 	{
-		ret = ret || detectCycle(tmp.at(i));
-	}
+		for(int i=0; i < tmp->size();i++)
+		{
+			ret = ret || detectCycle(tmp->at(i));
+		}
+	}	
 	return ret;
 }
 

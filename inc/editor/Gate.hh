@@ -16,7 +16,8 @@ public:
 	~Gate();
 
 	Properties&		getProperties();
-	QList<Node*>&	getChildren();
+	QList<Node*>*	getChildren();
+	Event* getEvent();//defined to prevent the class to be abstract
 
 	Node*	search(QPoint around);
 	void	remove();

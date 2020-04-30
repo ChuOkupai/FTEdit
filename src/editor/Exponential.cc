@@ -1,7 +1,7 @@
 #include <cmath>
 #include <QtGlobal>
 #include "Distribution.hh"
-#include "../fms/SaveVisitor.hh"
+#include "FTEdit_FMS.hh"
 
 Exponential::Exponential(QString name) :
 Distribution(name)
