@@ -3,6 +3,7 @@
 #include <QList>
 
 Result::Result(Gate* top,bool useMCS,bool useBoolean,double missionTime,double step){
+    //verifier si l'arbre est bon TODO
     if(useMCS){
         resultMCS = new ResultMCS(top,missionTime,step);
 
@@ -10,32 +11,14 @@ Result::Result(Gate* top,bool useMCS,bool useBoolean,double missionTime,double s
     if(useBoolean){
         EvalVisitor eval ;
         resultBoolean = new ResultBoolean(top,missionTime,step,eval);
-
     }
 
 }
 
-Result::~Result(){
-    delete this;
-}
+Result::~Result(){delete this;}
 
-QList<QString>& Result::getErrors(){
-    QList<QString>* qq = new QList<QString>;
+QList<QString>& Result::getErrors(){return errors; }
 
-    return *qq;
-    
-}
+ResultMCS* Result::getResultMCS(){return this->resultMCS;}
 
-ResultMCS* Result::getResultMCS(){
-    if(this->resultMCS != nullptr){
-        return this->resultMCS;
-    }
-    return nullptr;
-}
-
-ResultBoolean* Result::getResultBoolean(){
-    if(this->resultBoolean != nullptr){
-        return this->resultBoolean;
-    }
-    return nullptr;
-}
+ResultBoolean* Result::getResultBoolean(){return this->resultBoolean;}
