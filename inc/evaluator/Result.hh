@@ -12,7 +12,7 @@ class Result
     ResultBoolean *resultBoolean;
 
 	public:
-	Result(Gate* top, bool useMCS,bool useBoolean);
+	Result(Gate* top, bool useMCS,bool useBoolean,double missionTime,double step);
 	~Result();
 	QList<QString>& getErrors();
 	ResultMCS* getResultMCS();

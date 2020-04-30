@@ -5,11 +5,12 @@
 
 class EvalVisitor{
 	public :
-		void visit(And const& andVisitor);
-		void visit(Or const& orVisitor);
-		void visit(Inhibit const& inVisitor);
+		EvalVisitor();
+		void visit(And& andVisitor);
+		void visit(Or& orVisitor);
+		void visit(Inhibit& inVisitor);
         //void visit(VotingOr const& vorVisitor);
-		void visit(Transfert const& transVisitor);
-		void visit(Container const& eventVisitor);
+		void visit(Transfert& transVisitor);
+		void visit(Container& eventVisitor);
 
 };
