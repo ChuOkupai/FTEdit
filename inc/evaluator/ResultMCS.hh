@@ -16,7 +16,7 @@ class ResultMCS : public Evaluator
 
 	ResultMCS(Gate* top, double missionTime, double step);
 	~ResultMCS();
-	void convertCS(QList<QList<Node*>>);
+    void convertCS(QList<QList<Node*>> cs);
 	QList<QList<Event>> getMCS();
 	QList<double> getProbabilities();
 
