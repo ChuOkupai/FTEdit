@@ -3,6 +3,7 @@
 #include <QtWidgets>
 #include "Editor.hh"
 
+#define ICON_SIZE	48
 #define RES_MIN_X	460
 #define RES_MIN_Y	320
 #define ZOOM_MIN	20.0
