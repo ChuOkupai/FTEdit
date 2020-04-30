@@ -31,7 +31,9 @@ inc/editor/Tree.hh \
 inc/fms/FileManagerSystem.hh \
 inc/fms/SaveVisitor.hh \
 inc/gui/FTEdit_GUI.hh \
-inc/gui/MainWindow.hh
+inc/gui/EditContainerDialog.hh \
+inc/gui/MainWindow.hh \
+inc/gui/WidgetLinker.hh
 
 SOURCES += \
 src/editor/And.cc \
@@ -53,5 +55,7 @@ src/editor/Weibull.cc \
 src/editor/Xor.cc \
 src/fms/FileManagerSystem.cc \
 src/fms/SaveVisitor.cc \
+src/gui/EditContainerDialog.cc \
 src/gui/MainWindow.cc \
+src/gui/WidgetLinker.cc \
 src/main.cc
