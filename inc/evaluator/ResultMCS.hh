@@ -6,17 +6,19 @@ class ResultMCS : public Evaluator
 {
 	private : 
 		QList<QList<Event>> mcs;
+        QList<QList<Node*>> cs;
+
+        QList<int> sieveOfAtkin(int n);
 		void computeCS();
 		void reduceCS();
-		void sortCut();
-		void sieveOfAtkin(int n);
+        void sortCut(QMap<QList<Event>, int> mapMul);
+        void convertCS();
 
 
 	public :
 
 	ResultMCS(Gate* top, double missionTime, double step);
 	~ResultMCS();
-    void convertCS(QList<QList<Node*>> cs);
 	QList<QList<Event>> getMCS();
 	QList<double> getProbabilities();
 

@@ -2,6 +2,7 @@
 #include <QList>
 #include <QPoint>
 #include <QString>
+#include <Event.hh>
 
 #define NODE_X	120
 #define NODE_Y	80
@@ -21,6 +22,8 @@ public:
 
 	Gate*	getParent();
 	QPoint	getPosition();
+    virtual QList<Node*>&	getChildren() = 0;
+    virtual Event& getEvent() = 0;
 
 	void	setPosition(QPoint position);
 
