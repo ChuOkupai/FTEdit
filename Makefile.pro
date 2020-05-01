@@ -9,7 +9,8 @@ MOC_DIR = .moc
 OBJECTS_DIR = .obj
 
 DEFINES += QT_DEPRECATED_WARNINGS
-RESOURCES += icons.qrc
+RESOURCES += assets/icons.qrc
+RCC_DIR = src
 
 INCLUDEPATH += \
 $$PWD/inc \

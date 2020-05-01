@@ -1,0 +1,14 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+	<file>icons/new.png</file>
+	<file>icons/open.png</file>
+	<file>icons/save.png</file>
+	<file>icons/saveAs.png</file>
+	<file>icons/exit.png</file>
+	<file>icons/cut.png</file>
+	<file>icons/copy.png</file>
+	<file>icons/paste.png</file>
+	<file>icons/zoomIn.png</file>
+	<file>icons/zoomOut.png</file>
+</qresource>
+</RCC>
