@@ -3,6 +3,7 @@
 
 ResultBoolean::ResultBoolean(Gate* top,double missionTime,double step,EvalVisitor eval) : Evaluator(top,missionTime,step)
 {
+    this->eval = eval;
 }
 
 ResultBoolean::~ResultBoolean(){
