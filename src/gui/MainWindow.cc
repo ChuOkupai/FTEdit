@@ -256,7 +256,7 @@ void MainWindow::createActions()
 	newAct->setShortcuts(QKeySequence::New);
 	newAct->setStatusTip("Create a new project");
 	newAct->setToolTip(newAct->statusTip());
-	newAct->setIcon(QIcon("assets/icons/new.png"));
+	newAct->setIcon(QIcon(":assets/icons/new.png"));
 	toolBar->addAction(newAct);
 	connect(newAct, &QAction::triggered, this, &MainWindow::newFile);
 
@@ -264,7 +264,7 @@ void MainWindow::createActions()
 	openAct->setShortcuts(QKeySequence::Open);
 	openAct->setStatusTip("Open an existing project");
 	openAct->setToolTip(openAct->statusTip());
-	openAct->setIcon(QIcon("assets/icons/open.png"));
+	openAct->setIcon(QIcon(":assets/icons/open.png"));
 	toolBar->addAction(openAct);
 	connect(openAct, &QAction::triggered, this, &MainWindow::open);
 
@@ -272,7 +272,7 @@ void MainWindow::createActions()
 	saveAct->setShortcuts(QKeySequence::Save);
 	saveAct->setStatusTip("Save the project to disk");
 	saveAct->setToolTip(saveAct->statusTip());
-	saveAct->setIcon(QIcon("assets/icons/save.png"));
+	saveAct->setIcon(QIcon(":assets/icons/save.png"));
 	toolBar->addAction(saveAct);
 	connect(saveAct, &QAction::triggered, this, &MainWindow::save);
 
@@ -280,7 +280,7 @@ void MainWindow::createActions()
 	saveAsAct->setShortcuts(QKeySequence::SaveAs);
 	saveAsAct->setStatusTip("Save the project to disk with a different name");
 	saveAsAct->setToolTip(saveAsAct->statusTip());
-	saveAsAct->setIcon(QIcon("assets/icons/saveAs.png"));
+	saveAsAct->setIcon(QIcon(":assets/icons/saveAs.png"));
 	toolBar->addAction(saveAsAct);
 	connect(saveAsAct, &QAction::triggered, this, &MainWindow::saveAs);
 
@@ -288,7 +288,7 @@ void MainWindow::createActions()
 	exitAct->setShortcuts(QKeySequence::Quit);
 	exitAct->setStatusTip("Exit the application");
 	exitAct->setToolTip(exitAct->statusTip());
-	exitAct->setIcon(QIcon("assets/icons/exit.png"));
+	exitAct->setIcon(QIcon(":assets/icons/exit.png"));
 	toolBar->addAction(exitAct);
 	connect(exitAct, &QAction::triggered, this, &QWidget::close);
 
@@ -297,7 +297,7 @@ void MainWindow::createActions()
 	cutAct->setStatusTip("Cut the current selected node to the clipboard");
 	cutAct->setToolTip(cutAct->statusTip());
 	toolBar->addSeparator();
-	cutAct->setIcon(QIcon("assets/icons/cut.png"));
+	cutAct->setIcon(QIcon(":assets/icons/cut.png"));
 	toolBar->addAction(cutAct);
 	connect(cutAct, &QAction::triggered, this, &MainWindow::cut);
 
@@ -305,7 +305,7 @@ void MainWindow::createActions()
 	copyAct->setShortcuts(QKeySequence::Copy);
 	copyAct->setStatusTip("Copy the current selected node to the clipboard");
 	copyAct->setToolTip(copyAct->statusTip());
-	copyAct->setIcon(QIcon("assets/icons/copy.png"));
+	copyAct->setIcon(QIcon(":assets/icons/copy.png"));
 	toolBar->addAction(copyAct);
 	connect(copyAct, &QAction::triggered, this, &MainWindow::copy);
 
@@ -313,68 +313,68 @@ void MainWindow::createActions()
 	pasteAct->setShortcuts(QKeySequence::Paste);
 	pasteAct->setStatusTip("Paste the clipboard's contents into the current node");
 	pasteAct->setToolTip(pasteAct->statusTip());
-	pasteAct->setIcon(QIcon("assets/icons/paste.png"));
+	pasteAct->setIcon(QIcon(":assets/icons/paste.png"));
 	toolBar->addAction(pasteAct);
 	connect(pasteAct, &QAction::triggered, this, &MainWindow::paste);
 
 	addAndAct = new QAction("And", this);
 	addAndAct->setStatusTip("Add a new and gate into the current tree");
 	addAndAct->setToolTip(addAndAct->statusTip());
-	addAndAct->setIcon(QIcon("assets/icons/gate/and.png"));
+	addAndAct->setIcon(QIcon(":assets/icons/gate/and.png"));
 	connect(addAndAct, &QAction::triggered, this, &MainWindow::addAnd);
 
 	addInhibitAct = new QAction("Inhibit", this);
 	addInhibitAct->setStatusTip("Add a new inhibit gate into the current tree");
 	addInhibitAct->setToolTip(addInhibitAct->statusTip());
-	addInhibitAct->setIcon(QIcon("assets/icons/gate/inhibit.png"));
+	addInhibitAct->setIcon(QIcon(":assets/icons/gate/inhibit.png"));
 	connect(addInhibitAct, &QAction::triggered, this, &MainWindow::addInhibit);
 
 	addOrAct = new QAction("Or", this);
 	addOrAct->setStatusTip("Add a new or gate into the current tree");
 	addOrAct->setToolTip(addOrAct->statusTip());
-	addOrAct->setIcon(QIcon("assets/icons/gate/or.png"));
+	addOrAct->setIcon(QIcon(":assets/icons/gate/or.png"));
 	connect(addOrAct, &QAction::triggered, this, &MainWindow::addOr);
 
 	addKNAct = new QAction("Voting or", this);
 	addKNAct->setStatusTip("Add a new voting or gate into the current tree");
 	addKNAct->setToolTip(addKNAct->statusTip());
-	addKNAct->setIcon(QIcon("assets/icons/gate/kn.png"));
+	addKNAct->setIcon(QIcon(":assets/icons/gate/kn.png"));
 	connect(addKNAct, &QAction::triggered, this, &MainWindow::addKN);
 
 	addXorAct = new QAction("Xor", this);
 	addXorAct->setStatusTip("Add a new xor gate into the current tree");
 	addXorAct->setToolTip(addXorAct->statusTip());
-	addXorAct->setIcon(QIcon("assets/icons/gate/xor.png"));
+	addXorAct->setIcon(QIcon(":assets/icons/gate/xor.png"));
 	connect(addXorAct, &QAction::triggered, this, &MainWindow::addXor);
 
 	addTransfertAct = new QAction("Transfert in", this);
 	addTransfertAct->setStatusTip("Add a new transfert in gate into the current tree");
 	addTransfertAct->setToolTip(addTransfertAct->statusTip());
-	addTransfertAct->setIcon(QIcon("assets/icons/gate/transfert.png"));
+	addTransfertAct->setIcon(QIcon(":assets/icons/gate/transfert.png"));
 	connect(addTransfertAct, &QAction::triggered, this, &MainWindow::addTransfert);
 
 	addEventAct = new QAction("Basic event", this);
 	addEventAct->setStatusTip("Add a new basic event into the current tree");
 	addEventAct->setToolTip(addEventAct->statusTip());
-	addEventAct->setIcon(QIcon("assets/icons/gate/basicEvent.png"));
+	addEventAct->setIcon(QIcon(":assets/icons/gate/basicEvent.png"));
 	connect(addEventAct, &QAction::triggered, this, &MainWindow::addEvent);
 
 	zoomInAct = new QAction("Zoom In", this); zoomInAct->setShortcuts(QKeySequence::ZoomIn);
 	zoomInAct->setStatusTip("Zoom In");
 	toolBar->addSeparator();
-	zoomInAct->setIcon(QIcon("assets/icons/zoomIn.png"));
+	zoomInAct->setIcon(QIcon(":assets/icons/zoomIn.png"));
 	toolBar->addAction(zoomInAct);
 	connect(zoomInAct, &QAction::triggered, this, &MainWindow::zoomIn);
 
 	zoomOutAct = new QAction("Zoom Out", this); zoomOutAct->setShortcuts(QKeySequence::ZoomOut);
 	zoomOutAct->setStatusTip("Zoom Out");
-	zoomOutAct->setIcon(QIcon("assets/icons/zoomOut.png"));
+	zoomOutAct->setIcon(QIcon(":assets/icons/zoomOut.png"));
 	toolBar->addAction(zoomOutAct);
 	connect(zoomOutAct, &QAction::triggered, this, &MainWindow::zoomOut);
 
 	zoomResetAct = new QAction("Reset Zoom", this);
 	zoomResetAct->setStatusTip("Reset Zoom");
-	zoomResetAct->setIcon(QIcon("assets/icons/zoomReset.png"));
+	zoomResetAct->setIcon(QIcon(":assets/icons/zoomReset.png"));
 	toolBar->addAction(zoomResetAct);
 	connect(zoomResetAct, &QAction::triggered, this, &MainWindow::zoomReset);
 
