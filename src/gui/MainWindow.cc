@@ -83,7 +83,7 @@ void MainWindow::open()
 {
 	if (!maybeSave())
 		return ;
-	QString path = QFileDialog::getSaveFileName(this, "Open project", QDir::homePath(),
+	QString path = QFileDialog::getOpenFileName(this, "Open project", QDir::homePath(),
 	"Open-PSA project (*.opsa);;All Files (*)");
 	if (path.isEmpty())
 		return ;
