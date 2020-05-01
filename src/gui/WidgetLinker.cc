@@ -27,6 +27,14 @@ QLayoutItem *WidgetLinker::addLayoutItem(QLayoutItem *item)
 	return (item);
 }
 
+QLineEdit *WidgetLinker::addLineEdit(const QString &content)
+{
+	auto *lineEdit = new QLineEdit(parent);
+	lineEdit->setText(content);
+	layout->addWidget(lineEdit);
+	return (lineEdit);
+}
+
 QPushButton *WidgetLinker::addPushButton(const QString &content)
 {
 	auto *button = new QPushButton(parent);
@@ -35,12 +43,12 @@ QPushButton *WidgetLinker::addPushButton(const QString &content)
 	return (button);
 }
 
-QLineEdit *WidgetLinker::addLineEdit(const QString &content)
+QRadioButton *WidgetLinker::addRadioButton(const QString &content)
 {
-	auto *lineEdit = new QLineEdit(parent);
-	lineEdit->setText(content);
-	layout->addWidget(lineEdit);
-	return (lineEdit);
+	auto *button = new QRadioButton(parent);
+	button->setText(content);
+	layout->addWidget(button);
+	return (button);
 }
 
 QTextEdit *WidgetLinker::addTextEdit(const QString &content)

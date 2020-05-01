@@ -31,8 +31,11 @@ inc/editor/Tree.hh \
 inc/fms/FileManagerSystem.hh \
 inc/fms/SaveVisitor.hh \
 inc/gui/FTEdit_GUI.hh \
+inc/gui/ChooseDistributionDialog.hh \
 inc/gui/EditContainerDialog.hh \
 inc/gui/MainWindow.hh \
+inc/gui/ManageDistributionsDialog.hh \
+inc/gui/ManageEventsDialog.hh \
 inc/gui/WidgetLinker.hh
 
 SOURCES += \
@@ -55,7 +58,10 @@ src/editor/Weibull.cc \
 src/editor/Xor.cc \
 src/fms/FileManagerSystem.cc \
 src/fms/SaveVisitor.cc \
+src/gui/ChooseDistributionDialog.cc \
 src/gui/EditContainerDialog.cc \
 src/gui/MainWindow.cc \
+src/gui/ManageDistributionsDialog.cc \
+src/gui/ManageEventsDialog.cc \
 src/gui/WidgetLinker.cc \
 src/main.cc

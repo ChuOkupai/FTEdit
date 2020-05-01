@@ -22,9 +22,11 @@ public:
 
 	QLayoutItem *addLayoutItem(QLayoutItem *item);
 
+	QLineEdit *addLineEdit(const QString &content);
+
 	QPushButton *addPushButton(const QString &content);
 
-	QLineEdit *addLineEdit(const QString &content);
+	QRadioButton *addRadioButton(const QString &content);
 
 	QTextEdit *addTextEdit(const QString &content);
 

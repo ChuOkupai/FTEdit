@@ -49,6 +49,7 @@ private slots:
 	void zoomIn();
 	void zoomOut();
 	void zoomReset();
+	void showToolBar();
 	void toggleExplorer();
 	void toggleErrorList();
 	// Show
@@ -83,6 +84,7 @@ private:
 	QAction *zoomInAct;
 	QAction *zoomOutAct;
 	QAction *zoomResetAct;
+	QAction *showToolBarAct;
 	QAction *toggleExplorerAct;
 	QAction *toggleErrorListAct;
 	QAction *distributionsAct;

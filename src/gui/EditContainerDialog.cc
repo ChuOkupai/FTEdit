@@ -1,6 +1,7 @@
 #include <QtGlobal>
 #include <QDebug>
 #include "Editor.hh"
+#include "ChooseDistributionDialog.hh"
 #include "EditContainerDialog.hh"
 #include "WidgetLinker.hh"
 
@@ -83,7 +84,8 @@ void EditContainerDialog::addDistribution()
 {
 	QList<Distribution*> &l = editor.getDistributions();
 	// Ajouter pop-up pour choisir le type de distribution
-	auto *dist = new Constant(editor.generateName("Model"));
+	Distribution *dist;
+	ChooseDistributionDialog(this, editor, &dist).exec();
 	l << dist;
 	distributions->addItem(dist->getProperties().getName());
 	distributions->setCurrentIndex(distributions->count() - 1);
@@ -92,18 +94,18 @@ void EditContainerDialog::addDistribution()
 EditContainerDialog::EditContainerDialog(QWidget *parent, Editor &editor, Container &cont)
 : QDialog(parent), editor(editor), cont(cont), valid(true)
 {
-	this->setWindowTitle("Edit event");
-	this->resize(360, 480);
+	setWindowTitle("Edit event");
+	resize(360, 480);
 	auto layout = new QVBoxLayout(this);
 	WidgetLinker linker(this, layout);
-	linker.addLabel("Event");
+	linker.addLabel("Event:");
 	events = linker.addComboBox();
 	linker.addLayoutItem(new QSpacerItem(0, 20, QSizePolicy::Minimum, QSizePolicy::Maximum));
-	linker.addLabel("Name");
+	linker.addLabel("Name:");
 	name = linker.addLineEdit("");
-	linker.addLabel("Description");
-	desc = linker.addTextEdit(cont.getEvent()->getProperties().getDesc());
-	linker.addLabel("Distribution");
+	linker.addLabel("Description:");
+	desc = linker.addTextEdit("");
+	linker.addLabel("Distribution:");
 	linker.set(new QHBoxLayout());
 	distributions = linker.addComboBox();
 	distributions->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);

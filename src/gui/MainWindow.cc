@@ -3,12 +3,14 @@
 #include <QDebug>
 #include "MainWindow.hh"
 #include "EditContainerDialog.hh"
+#include "ManageDistributionsDialog.hh"
+#include "ManageEventsDialog.hh"
 #include "WidgetLinker.hh"
 
 MainWindow::MainWindow() : editor(nullptr), modified(false), zoomLevel(100)
 {
 	toolBar = new QToolBar;
-	toolBar->setMovable(false);
+	toolBar->setFloatable(false);
 	toolBar->setIconSize(QSize(ICON_SIZE, ICON_SIZE));
 	toolBar->setContextMenuPolicy(Qt::PreventContextMenu);
 	addToolBar(Qt::TopToolBarArea, toolBar);
@@ -193,6 +195,14 @@ void MainWindow::zoomReset()
 	qDebug() << "Zoom Reset to " << zoomLevel;
 }
 
+void MainWindow::showToolBar()
+{
+	if (showToolBarAct->isChecked())
+		toolBar->show();
+	else
+		toolBar->hide();
+}
+
 void MainWindow::toggleExplorer()
 {
 	if (explorer->width())
@@ -219,12 +229,12 @@ void MainWindow::toggleErrorList()
 
 void MainWindow::showDistributions()
 {
-	qDebug() << "showDistributions";
+	ManageDistributionsDialog(this, editor->getDistributions()).exec();
 }
 
 void MainWindow::showEvents()
 {
-	qDebug() << "showEvents";
+	ManageEventsDialog(this, editor->getEvents()).exec();
 }
 
 void MainWindow::evaluate()
@@ -368,6 +378,12 @@ void MainWindow::createActions()
 	toolBar->addAction(zoomResetAct);
 	connect(zoomResetAct, &QAction::triggered, this, &MainWindow::zoomReset);
 
+	showToolBarAct = new QAction("Show Toolbar", this);
+	showToolBarAct->setStatusTip("Enable or disable Toolbar");
+	showToolBarAct->setCheckable(true);
+	showToolBarAct->setChecked(true);
+	connect(showToolBarAct, &QAction::triggered, this, &MainWindow::showToolBar);
+
 	toggleExplorerAct = new QAction("Toggle Project Explorer", this);
 	toggleExplorerAct->setStatusTip("Display or hide Project Explorer section");
 	connect(toggleExplorerAct, &QAction::triggered, this, &MainWindow::toggleExplorer);
@@ -434,6 +450,7 @@ void MainWindow::createMenus()
 	m->addAction(zoomOutAct);
 	m->addAction(zoomResetAct);
 	m->addSeparator();
+	m->addAction(showToolBarAct);
 	m->addAction(toggleExplorerAct);
 	m->addAction(toggleErrorListAct);
 
