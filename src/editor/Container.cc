@@ -22,7 +22,7 @@ double Container::getProbability(double time)
 	return (event.getDistribution()->getProbability(time));
 }
 
-Event& Container::getEvent()
+Event* Container::getEvent()
 {
 	return (event);
 }
