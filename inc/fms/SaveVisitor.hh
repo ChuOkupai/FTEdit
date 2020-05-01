@@ -8,10 +8,11 @@ class SaveVisitor
 {
 	private :
 		QDomDocument dom;
+		void writeGateProperties(QDomElement &elem, Gate& gate);
 	public :
 		SaveVisitor();
 		~SaveVisitor();
-		QDomDocument getDomFile();
+		QDomDocument& getDomFile();
 		void visit( And &andgate );
 		void visit( Or &orgate );
 		void visit( Xor &xorgate );

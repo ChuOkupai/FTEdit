@@ -1,4 +1,5 @@
 #include <QFile>
+#include <QTextStream>
 #include "FileManagerSystem.hh"
 #include "SaveVisitor.hh"
 
@@ -16,15 +17,28 @@ int FileManagerSystem::save(Editor* editor)
 {
 	(void) editor;
 	
-	QFile file(path); SaveVisitor sv;
+	QFile file(path); SaveVisitor svisitor;
 	
 	if(!file.open(QIODevice::WriteOnly))
 	{
 		errorMessage = "Failed to open the file in write mode";
 		return -1;
 	}
+	QTextStream saveStream(&file); QDomDocument& domref = svisitor.getDomFile();
 	
-	//visit  
+	//create root node of xml file
+	QDomElement root = domref.createElement("open-psa");
+	root.setAttribute("author", "FTEdit");
+	domref.appendChild(root);
+
+	//visit
+	for(Event e :  editor->getEvents())
+		e.accept(svisitor);
+	for(Gate* g :  editor->getGates())
+		g->accept(svisitor);
+
+	saveStream << domref.toString();
+	file.close();
 	return 0;
 }
 
