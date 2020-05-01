@@ -21,4 +21,9 @@ Properties& Event::getProperties()
 {
 	return (prop);
 }
-
+bool Event::operator==(const Event& e1) const{
+    return prop.getName()==e1.prop.getName();
+}
+bool Event::operator <(const Event& e1) const{
+    return prop.getName()<e1.prop.getName();
+}

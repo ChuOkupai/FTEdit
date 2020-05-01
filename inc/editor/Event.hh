@@ -18,4 +18,7 @@ public:
 	void setDistribution(Distribution *distribution);
 	
 	Distribution* getDistribution();
+
+    bool operator==(const Event&) const;
+    bool operator <(const Event&) const;
 };
