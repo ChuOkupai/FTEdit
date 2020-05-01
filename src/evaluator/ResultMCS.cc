@@ -191,7 +191,7 @@ QList<QList<Event>> ResultMCS::getMCS(){
     return mcs;
 }
 QList<double> ResultMCS::getProbabilities(){
-    
-    return probabilities;
+    QList<double> tab;
+    return tab;
 
 }
