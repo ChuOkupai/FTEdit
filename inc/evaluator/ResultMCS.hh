@@ -11,7 +11,8 @@ class ResultMCS : public Evaluator
         QList<int> sieveOfAtkin(int n);
 		void computeCS();
 		void reduceCS();
-        void sortCut(QMap<QList<Event>, int> mapMul);
+        void sortCut();
+//        QMap<QList<Event>, int> mapMul
         void convertCS();
 
 
