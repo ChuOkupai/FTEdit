@@ -1,12 +1,12 @@
 #include "Transfert.hh"
 
-Transfert::Transfert(QString name) : Gate(name)
-{
+//Transfert::Transfert(QString name) : Gate(name)
+//{
 	
-}
-Transfert::~Transfert(){
+//}
+//Transfert::~Transfert(){
 
-}
+//}
 
 
 /*void Transfert::remove(Node *top)
