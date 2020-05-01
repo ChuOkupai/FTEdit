@@ -15,7 +15,8 @@ public:
 	
 	double	getProbability(double time);
 	
-	Event	&getEvent();
+    QList<Node*>* getChildren();//defined to prevent the class to be abstract
+    Event*	getEvent();
 
 	bool	check(QList<QString> &errors);
 	Node*	search(QPoint around);

@@ -22,8 +22,8 @@ public:
 
 	Gate*	getParent();
 	QPoint	getPosition();
-    virtual QList<Node*>&	getChildren() = 0;
-    virtual Event& getEvent() = 0;
+    virtual QList<Node*>* getChildren() = 0;
+    virtual Event* getEvent() = 0;
 
 	void	setPosition(QPoint position);
 
