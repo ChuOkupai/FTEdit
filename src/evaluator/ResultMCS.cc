@@ -19,7 +19,7 @@ ResultMCS::ResultMCS(Gate* top,double missionTime,double step) : Evaluator(top,m
 
 ResultMCS::~ResultMCS(){}
 
-//void ResultMCS::computeCS(){/*trouver tous les coupes*/
+void ResultMCS::computeCS(){/*trouver tous les coupes*/
 
 //    QList<Node*> *lstcopy;/*un pointer pointe les nouvelle liste vide*/
 
@@ -55,18 +55,18 @@ ResultMCS::~ResultMCS(){}
 
 //        }
 //    }
-//}
+}
 
-//void ResultMCS::convertCS(){/*Convertit la liste de liste de Node en liste de liste d'évènements*/
-//    for(int i=0; i<cs.size(); i++){
-//        mcs.append(QList<Event>());
-//        for(int j=0; j<cs[i].size();j++){
-//            mcs[i].append(*cs[i][j]->getEvent());
-//        }
-//    }
-//}
+void ResultMCS::convertCS(){/*Convertit la liste de liste de Node en liste de liste d'évènements*/
+    for(int i=0; i<cs.size(); i++){
+        mcs.append(QList<Event>());
+        for(int j=0; j<cs[i].size();j++){
+            mcs[i].append(*cs[i][j]->getEvent());
+        }
+    }
+}
 
-//void ResultMCS::reduceCS(){/*enlever les doublons et reduire */
+void ResultMCS::reduceCS(){/*enlever les doublons et reduire */
 //    QList<int> premiers;
 //    QList<Event> lstEvent;/*contient tous les events non-doublons dans cet arbre*/
 //    QMap<Event, int> mapEvent;/*lier chaque event avec un nombre premier*/
@@ -114,11 +114,12 @@ ResultMCS::~ResultMCS(){}
 //        }
 //    }
 
-//}
+}
 
 
 /*Trie les coupes en triant par ordre croissant selon l'assignation des nombres premiers */
-//void ResultMCS::sortCut(QMap<QList<Event>, int> mapMul){
+void ResultMCS::sortCut(){
+//    QMap<QList<Event>, int> mapMul
 //    QList<Event> temp;
 
 //    for(int j=mcs.size(); j>=1; j--){/*sort croissant*/
@@ -133,7 +134,7 @@ ResultMCS::~ResultMCS(){}
 
 
 
-//}
+}
 
 QList<int> ResultMCS::sieveOfAtkin(int limit){/*Génère un nombre de nombres premiers selon le nombre limite n.*/
     QList<int> premiers;
