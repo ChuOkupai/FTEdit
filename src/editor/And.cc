@@ -1,5 +1,5 @@
 #include "Gate.hh"
-#include "../fms/SaveVisitor.hh"
+#include "Visitor.hh"
 
 And::And(QString name) : Gate(name)
 {}
@@ -26,15 +26,7 @@ bool And::check(QList<QString>& errors)
 		children.at(i)->check(errors);
 	return (errors.size() > 0);
 }
-void And::accept(SaveVisitor& visitor)
+void And::accept(Visitor& visitor)
 {
 	visitor.visit(*this);
 }
-/*void And::accept(Editor& editor,EditVisitor& visitor)
-{
-	visitor.visit(this);
-}
-void And::accept(RenderVisitor& visitor)
-{
-	visitor.visit(this);
-}*/

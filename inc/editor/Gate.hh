@@ -3,7 +3,7 @@
 #include "Node.hh"
 #include "Properties.hh"
 
-class SaveVisitor;
+class Visitor;
 
 class Gate : public Node
 {
@@ -31,9 +31,7 @@ public:
 	double getProbability(double time);
 
 	bool check(QList<QString>& errors);
-	void accept(SaveVisitor& visitor);
-	//void accept(Editor& editor,EditVisitor& visitor);
-	//void accept(RenderVisitor& visitor);
+	void accept(Visitor& visitor);
 };
 
 class Inhibit : public Gate
@@ -50,10 +48,7 @@ class Inhibit : public Gate
 	double getProbability(double time);
 
 	bool check(QList<QString>& errors);
-	void accept(SaveVisitor& visitor);
-	//void accept(Editor& editor,EditVisitor& visitor);
-	//void accept(RenderVisitor& visitor);
-
+	void accept(Visitor& visitor);
 
 }; 
 
@@ -66,9 +61,7 @@ public:
 	double getProbability(double time);
 
 	bool check(QList<QString>& errors);
-	void accept(SaveVisitor& visitor);
-	//void accept(Editor& editor,EditVisitor& visitor);
-	//void accept(RenderVisitor& visitor);
+	void accept(Visitor& visitor);
 };
 
 class VotingOR : public Gate // TODO
@@ -88,9 +81,7 @@ class VotingOR : public Gate // TODO
 	Gate* getSubTree() const;
 	double getProbability(double time);
 	bool check(QList<QString>& errors);
-	//void accept(SaveVisitor& visitor);
-	//void accept(Editor& editor,EditVisitor& visitor);
-	//void accept(RenderVisitor& visitor);
+	void accept(Visitor& visitor);
 };
 
 class Xor : public Gate
@@ -102,7 +93,5 @@ public:
 	double getProbability(double time);
 
 	bool check(QList<QString>& errors);
-	void accept(SaveVisitor& visitor);
-	//void accept(Editor& editor,EditVisitor& visitor);
-	//void accept(RenderVisitor& visitor);
+	void accept(Visitor& visitor);
 };

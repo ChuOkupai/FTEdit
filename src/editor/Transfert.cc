@@ -1,7 +1,7 @@
 #include "Transfert.hh"
-#include "../fms/SaveVisitor.hh"
+#include "Visitor.hh"
 
-Transfert::Transfert() : Node()
+Transfert::Transfert(QString name) : Node() , link(nullptr) , prop(name,false)
 {}
 
 Transfert::~Transfert()
@@ -13,7 +13,10 @@ Tree* Transfert::getLink() const
 }
 void Transfert::setLink(Tree* link)
 {
-	this->link = link;
+	if(link)
+	{	
+		this->link = link;
+	}
 }
 
 double Transfert::getProbability(double time)
@@ -51,12 +54,14 @@ bool Transfert::detectCycle(Node* n)
 	return ret;
 }
 
-void Transfert::accept(SaveVisitor& visitor)
+void Transfert::accept(Visitor& visitor)
 {
 	visitor.visit(*this);
 }
 
-/*void Transfert::remove(Node *top)
+void Transfert::remove()
 {
+	link->getTop()->remove();
+	link = nullptr;
 	delete this;
-}*/
+}

@@ -1,6 +1,6 @@
 #include <QtGlobal>
 #include "Gate.hh"
-#include "../fms/SaveVisitor.hh"
+#include "Visitor.hh"
 
 Or::Or(QString name) : Gate(name)
 {}
@@ -28,16 +28,7 @@ bool Or::check(QList<QString>& errors)
 	return (errors.size() > 0);
 }
 
-void Or::accept(SaveVisitor& visitor)
+void Or::accept(Visitor& visitor)
 {
 	visitor.visit(*this);
 }
-
-/*void Or::accept(Editor& editor,EditVisitor& visitor)
-{
-	visitor.visit(this);
-}
-void Or::accept(RenderVisitor& visitor)
-{
-	visitor.visit(this);
-}*/

@@ -1,5 +1,5 @@
 #include "Gate.hh"
-#include "../fms/SaveVisitor.hh"
+#include "Visitor.hh"
 
 VotingOR::VotingOR(QString name) : Gate(name)
 {}
@@ -39,9 +39,8 @@ bool VotingOR::check(QList<QString>& errors)
 	return (errors.size() > 0);
 }
 
-/*
-void VotingOR::accept(SaveVisitor& visitor)
+
+void VotingOR::accept(Visitor& visitor)
 {
 	visitor.visit(*this);
 }
-*/

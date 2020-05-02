@@ -1,7 +1,7 @@
 #include <cmath>
 #include <QtGlobal>
 #include "Distribution.hh"
-#include "../fms/SaveVisitor.hh"
+#include "Visitor.hh"
 
 Exponential::Exponential(QString name) :
 Distribution(name)
@@ -25,7 +25,7 @@ void Exponential::setLambda(double lambda)
 	value = qBound(0.0, lambda, 1.0);
 }
 
-void Exponential::accept(SaveVisitor& visitor)
+void Exponential::accept(Visitor& visitor)
 {
 	visitor.visit(*this);
 }

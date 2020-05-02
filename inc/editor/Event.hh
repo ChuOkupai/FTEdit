@@ -1,13 +1,13 @@
 #pragma once
 #include "Properties.hh"
 #include "Distribution.hh"
-class SaveVisitor;
+class Visitor;
 
 class Event
 {
 private:
 	Properties prop;
-	Distribution* distribution = nullptr;
+	Distribution* distribution ;
 
 public:
 	Event(QString name);
@@ -19,5 +19,9 @@ public:
 	void setDistribution(Distribution *distribution);
 	
 	Distribution* getDistribution();
-	void accept(SaveVisitor &visitor);
+
+	bool operator==(const Event&)const;
+	bool operator <(const Event&)const;
+	
+	void accept(Visitor &visitor);
 };

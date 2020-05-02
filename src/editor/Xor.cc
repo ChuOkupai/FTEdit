@@ -1,6 +1,6 @@
 #include <QtGlobal>
 #include "Gate.hh"
-#include "../fms/SaveVisitor.hh"
+#include "Visitor.hh"
 
 Xor::Xor(QString name) : Gate(name)
 {}
@@ -25,16 +25,7 @@ bool Xor::check(QList<QString>& errors)
 	return (true);
 }
 
-void Xor::accept(SaveVisitor& visitor)
+void Xor::accept(Visitor& visitor)
 {
 	visitor.visit(*this);
 }
-
-/*void Xor::accept(Editor& editor,EditVisitor& visitor)
-{
-	visitor.visit(this);
-}
-void Xor::accept(RenderVisitor& visitor)
-{
-	visitor.visit(this);
-}*/

@@ -1,6 +1,6 @@
 #include "Container.hh"
 #include "Node.hh"
-#include "../fms/SaveVisitor.hh"
+#include "Visitor.hh"
 
 Container::Container(Event* event) :
 Node::Node(), event(event)
@@ -10,12 +10,20 @@ Node::Node(), event(event)
 
 Container::~Container()
 {
-	event->getProperties().decrementRefCount();
+	if(this->event)
+		event->getProperties().decrementRefCount();
 }
+
+
+
 
 void Container::setEvent(Event* event)
 {
-	this->event = event;
+	if(this->event)//décrémente si event non null
+			this->event->getProperties().decrementRefCount();
+	this->event = event;		this->event = event;
+	if(this->event)//incrémente si event non null
+		this->event->getProperties().incrementRefCount();
 }
 
 double Container::getProbability(double time)
@@ -50,11 +58,7 @@ void Container::remove()
 	delete this;
 }
 
-void Container::accept(SaveVisitor& visitor)
+void Container::accept(Visitor& visitor)
 {
 	visitor.visit(*this);
 }
-
-//void accept(Editor &editor, EditVisitor &visitor) {visitor.visit(*this);}
-
-//void accept(RenderVisitor &visitor) {visitor.visit(*this);}
