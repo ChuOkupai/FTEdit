@@ -1,6 +1,7 @@
 #include <QtGlobal>
 #include "Gate.hh"
 #include "FTEdit_FMS.hh"
+//#include "EvalVisitor.hh"
 
 Or::Or(QString name) : Gate(name)
 {}
@@ -32,6 +33,13 @@ void Or::accept(SaveVisitor& visitor)
 {
 	visitor.visit(*this);
 }
+
+/* remove commentary when header is added
+void Or::accept(EvalVisitor& visitor)
+{
+	visitor.visit(*this);
+}
+*/
 
 /*void Or::accept(Editor& editor,EditVisitor& visitor)
 {

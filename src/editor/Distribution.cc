@@ -2,7 +2,7 @@
 #include "Distribution.hh"
 
 Distribution::Distribution(QString name) :
-prop(name)
+prop(name,false), value(0)
 {}
 
 Distribution::~Distribution()

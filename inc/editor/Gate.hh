@@ -4,6 +4,7 @@
 #include "Properties.hh"
 
 class SaveVisitor;
+class EvalVisitor;
 
 class Gate : public Node
 {
@@ -33,6 +34,7 @@ public:
 
 	bool check(QList<QString>& errors);
 	void accept(SaveVisitor& visitor);
+	void accept(EvalVisitor& visitor);
 	//void accept(Editor& editor,EditVisitor& visitor);
 	//void accept(RenderVisitor& visitor);
 };
@@ -52,6 +54,7 @@ class Inhibit : public Gate
 
 	bool check(QList<QString>& errors);
 	void accept(SaveVisitor& visitor);
+	void accept(EvalVisitor& visitor);
 	//void accept(Editor& editor,EditVisitor& visitor);
 	//void accept(RenderVisitor& visitor);
 
@@ -68,6 +71,7 @@ public:
 
 	bool check(QList<QString>& errors);
 	void accept(SaveVisitor& visitor);
+	void accept(EvalVisitor& visitor);
 	//void accept(Editor& editor,EditVisitor& visitor);
 	//void accept(RenderVisitor& visitor);
 };
@@ -90,6 +94,7 @@ class VotingOR : public Gate // TODO
 	double getProbability(double time);
 	bool check(QList<QString>& errors);
 	//void accept(SaveVisitor& visitor);
+	//void accept(EvalVisitor& visitor);
 	//void accept(Editor& editor,EditVisitor& visitor);
 	//void accept(RenderVisitor& visitor);
 };
@@ -104,6 +109,7 @@ public:
 
 	bool check(QList<QString>& errors);
 	void accept(SaveVisitor& visitor);
+	void accept(EvalVisitor& visitor);
 	//void accept(Editor& editor,EditVisitor& visitor);
 	//void accept(RenderVisitor& visitor);
 };

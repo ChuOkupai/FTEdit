@@ -1,5 +1,6 @@
 #include "Gate.hh"
 #include "FTEdit_FMS.hh"
+//#include "EvalVisitor.hh"
 
 VotingOR::VotingOR(QString name) : Gate(name)
 {}
@@ -45,3 +46,11 @@ void VotingOR::accept(SaveVisitor& visitor)
 	visitor.visit(*this);
 }
 */
+
+/*
+void VotingOR::accept(EvalVisitor& visitor)
+{
+	visitor.visit(*this);
+}
+*/
+

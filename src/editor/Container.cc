@@ -1,6 +1,7 @@
 #include "Container.hh"
 #include "Node.hh"
 #include "FTEdit_FMS.hh"
+//#include "EvalVisitor.hh"
 
 Container::Container(Event* event) :
 Node::Node(), event(event)
@@ -10,7 +11,8 @@ Node::Node(), event(event)
 
 Container::~Container()
 {
-	event->getProperties().decrementRefCount();
+	if(this->event)
+		event->getProperties().decrementRefCount();
 }
 
 void Container::setEvent(Event* event)
@@ -65,6 +67,12 @@ void Container::accept(SaveVisitor& visitor)
 	visitor.visit(*this);
 }
 
+/* remove commentary when header is added
+void Container::accept(EvalVisitor& visitor)
+{
+	visitor.visit(*this);
+}
+*/
 //void accept(Editor &editor, EditVisitor &visitor) {visitor.visit(*this);}
 
 //void accept(RenderVisitor &visitor) {visitor.visit(*this);}

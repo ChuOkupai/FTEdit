@@ -1,5 +1,6 @@
 #include "Gate.hh"
 #include "FTEdit_FMS.hh"
+//#include "EvalVisitor.hh"
 
 And::And(QString name) : Gate(name)
 {}
@@ -30,6 +31,12 @@ void And::accept(SaveVisitor& visitor)
 {
 	visitor.visit(*this);
 }
+/* remove commentary when header is added
+void And::accept(EvalVisitor& visitor)
+{
+	visitor.visit(*this);
+}
+*/
 /*void And::accept(Editor& editor,EditVisitor& visitor)
 {
 	visitor.visit(this);

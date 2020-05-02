@@ -1,6 +1,7 @@
 #include <QtGlobal>
 #include "Gate.hh"
 #include "FTEdit_FMS.hh"
+//#include "EvalVisitor.hh"
 
 Xor::Xor(QString name) : Gate(name)
 {}
@@ -29,7 +30,12 @@ void Xor::accept(SaveVisitor& visitor)
 {
 	visitor.visit(*this);
 }
-
+/* remove commentary when header is added
+void Xor::accept(EvalVisitor& visitor)
+{
+	visitor.visit(*this);
+}
+*/
 /*void Xor::accept(Editor& editor,EditVisitor& visitor)
 {
 	visitor.visit(this);
