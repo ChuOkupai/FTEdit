@@ -34,7 +34,13 @@ inc/fms/SaveVisitor.hh \
 inc/gui/FTEdit_GUI.hh \
 inc/gui/EditContainerDialog.hh \
 inc/gui/MainWindow.hh \
-inc/gui/WidgetLinker.hh
+inc/gui/WidgetLinker.hh \
+inc/evaluator/FTEdit_Evaluator.hh \ 
+inc/evaluator/Evaluator.hh \
+inc/evaluator/ResultMCS.hh \
+inc/evaluator/ResultBoolean.hh \ 
+inc/evaluator/Result.hh \
+inc/evaluator/EvalVisitor.hh 
 
 SOURCES += \
 src/editor/And.cc \
@@ -59,4 +65,9 @@ src/fms/SaveVisitor.cc \
 src/gui/EditContainerDialog.cc \
 src/gui/MainWindow.cc \
 src/gui/WidgetLinker.cc \
+src/evaluator/Evaluator.cc \
+src/evaluator/ResultMCS.cc \
+src/evaluator/ResultBoolean.cc \
+src/evaluator/Result.cc \
+src/evaluator/EvalVisitor.cc \
 src/main.cc

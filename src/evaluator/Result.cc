@@ -11,7 +11,6 @@ Result::Result(Gate* top,bool useMCS,bool useBoolean,double missionTime,double s
 
     }
     if(useBoolean){
-        EvalVisitor eval ;
         resultBoolean = new ResultBoolean(top,missionTime,step);
     }
     }

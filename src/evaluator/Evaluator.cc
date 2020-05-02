@@ -1,6 +1,5 @@
-
+#include "Gate.hh"
 #include "Evaluator.hh"
-
 
 
 Evaluator::Evaluator(Gate* top,double missionTime, double step)
