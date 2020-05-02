@@ -2,14 +2,15 @@
 #include "Node.hh"
 #include "Tree.hh"
 
-class SaveVisitor;
+class VisitorNode;
 
 class Transfert : public Node
 {
     protected:
     Tree* link;
+    Properties prop;
     public:
-    Transfert();
+    Transfert(QString name);
     ~Transfert();
 
     Tree* getLink() const;
@@ -21,10 +22,8 @@ class Transfert : public Node
     Node* search(QPoint around);
 
     bool detectCycle(Node* n);
-	void accept(SaveVisitor& visitor);
-	//void accept(Editor& editor,EditVisitor& visitor);
-	//void accept(RenderVisitor& visitor);
-    //void remove();
+	void accept(VisitorNode& visitor);
+    void remove();
 
 
 };
