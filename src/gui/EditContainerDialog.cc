@@ -49,7 +49,7 @@ void EditContainerDialog::setDistribution(int index)
 	edit->setEnabled(index); // enabled if index > 0
 	if (!index)
 	{
-		//cont.getEvent()->setDistribution(nullptr); (segfault)
+		cont.getEvent()->setDistribution(nullptr);
 		return ;
 	}
 	Distribution *dist = editor.getDistributions()[index - 1];
