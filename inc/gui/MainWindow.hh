@@ -1,7 +1,7 @@
 #pragma once
 #include <QMainWindow>
 #include <QtWidgets>
-#include "Editor.hh"
+#include "FTEdit_Editor.hh"
 
 #define ICON_SIZE	48
 #define RES_MIN_X	460

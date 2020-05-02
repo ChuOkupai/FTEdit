@@ -1,6 +1,3 @@
-#include <QtGlobal>
-#include <QDebug>
-#include "Editor.hh"
 #include "ManageEventsDialog.hh"
 #include "WidgetLinker.hh"
 

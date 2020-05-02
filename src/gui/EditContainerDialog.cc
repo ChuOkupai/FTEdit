@@ -1,6 +1,6 @@
 #include "ChooseDistributionDialog.hh"
-#include "EditDistributionDialog.hh"
 #include "EditContainerDialog.hh"
+#include "EditDistributionDialog.hh"
 
 void EditContainerDialog::closeEvent(QCloseEvent *event)
 {

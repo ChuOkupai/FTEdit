@@ -39,7 +39,8 @@ inc/gui/EditDistributionDialog.hh \
 inc/gui/MainWindow.hh \
 inc/gui/ManageDistributionsDialog.hh \
 inc/gui/ManageEventsDialog.hh \
-inc/gui/WidgetLinker.hh
+inc/gui/WidgetLinker.hh \
+inc/gui/Widgets.hh
 
 SOURCES += \
 src/editor/And.cc \
@@ -68,4 +69,5 @@ src/gui/MainWindow.cc \
 src/gui/ManageDistributionsDialog.cc \
 src/gui/ManageEventsDialog.cc \
 src/gui/WidgetLinker.cc \
+src/gui/Widgets.cc \
 src/main.cc

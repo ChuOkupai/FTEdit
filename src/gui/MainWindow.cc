@@ -1,11 +1,7 @@
-#include <QDir>
-#include <QList>
-#include <QDebug>
 #include "MainWindow.hh"
 #include "EditContainerDialog.hh"
 #include "ManageDistributionsDialog.hh"
 #include "ManageEventsDialog.hh"
-#include "WidgetLinker.hh"
 
 MainWindow::MainWindow() : editor(nullptr), modified(false), zoomLevel(100)
 {
