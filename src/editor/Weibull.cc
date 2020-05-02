@@ -1,7 +1,7 @@
 #include <cmath>
 #include <QtGlobal>
 #include "Distribution.hh"
-#include "Visitor.hh"
+#include "VisitorDistribution.hh"
 
 Weibull::Weibull(QString name) :
 Distribution(name)
@@ -35,7 +35,7 @@ void Weibull::setShape(double shape)
 	this->shape = shape;
 }
 
-void Weibull::accept(Visitor& visitor)
+void Weibull::accept(VisitorDistribution& visitor)
 {
 	visitor.visit(*this);
 }

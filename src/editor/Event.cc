@@ -1,5 +1,4 @@
 #include "Event.hh"
-#include "Visitor.hh"
 
 Event::Event(QString name) : prop(name,false), distribution(nullptr)
 {}
@@ -35,7 +34,4 @@ bool Event::operator <(const Event& e1) const
 	return prop.getName()<e1.prop.getName();
 }
 
-void Event::accept(Visitor& visitor)
-{
-	visitor.visit(*this);
-}
+

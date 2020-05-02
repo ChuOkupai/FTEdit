@@ -1,6 +1,6 @@
 #include <QtGlobal>
 #include "Gate.hh"
-#include "Visitor.hh"
+#include "VisitorNode.hh"
 
 Or::Or(QString name) : Gate(name)
 {}
@@ -28,7 +28,7 @@ bool Or::check(QList<QString>& errors)
 	return (errors.size() > 0);
 }
 
-void Or::accept(Visitor& visitor)
+void Or::accept(VisitorNode& visitor)
 {
 	visitor.visit(*this);
 }

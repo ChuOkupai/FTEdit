@@ -1,5 +1,5 @@
 #include "Distribution.hh"
-#include "Visitor.hh"
+#include "VisitorDistribution.hh"
 
 Constant::Constant(QString name) :
 Distribution(name)
@@ -14,7 +14,7 @@ double Constant::getProbability(double time)
 	return (value);
 }
 
-void Constant::accept(Visitor& visitor)
+void Constant::accept(VisitorDistribution& visitor)
 {
 	visitor.visit(*this);
 }

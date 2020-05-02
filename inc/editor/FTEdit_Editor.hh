@@ -4,4 +4,5 @@
 #include "Node.hh"
 #include "Transfert.hh"
 #include "Tree.hh"
-#include "Visitor.hh"//i guess?
+#include "VisitorNode.hh"//i guess?
+#include "VisitorDistribution.hh"//still guessing...

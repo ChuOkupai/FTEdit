@@ -1,5 +1,5 @@
 #include "Transfert.hh"
-#include "Visitor.hh"
+#include "VisitorNode.hh"
 
 Transfert::Transfert(QString name) : Node() , link(nullptr) , prop(name,false)
 {}
@@ -54,7 +54,7 @@ bool Transfert::detectCycle(Node* n)
 	return ret;
 }
 
-void Transfert::accept(Visitor& visitor)
+void Transfert::accept(VisitorNode& visitor)
 {
 	visitor.visit(*this);
 }

@@ -1,7 +1,7 @@
 #pragma once
 #include "Editor.hh"
 
-class Visitor;
+class VisitorNode;
 
 class Container : public Node
 {
@@ -22,5 +22,5 @@ public:
 	bool	check(QList<QString> &errors);
 	Node*	search(QPoint around);
 	void	remove();
-	void	accept(Visitor& visitor);
+	void	accept(VisitorNode& visitor);
 };

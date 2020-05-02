@@ -8,7 +8,7 @@
 
 class Editor;
 class Gate;
-class Visitor;
+class VisitorNode;
 
 class Node
 {
@@ -32,5 +32,5 @@ public:
 	virtual double	getProbability(double time) = 0;
 	virtual bool	check(QList<QString>& output) = 0;
 	virtual void	remove() = 0;
-	virtual void 	accept(Visitor& visitor) = 0;
+	virtual void 	accept(VisitorNode& visitor) = 0;
 };

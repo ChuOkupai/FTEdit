@@ -1,7 +1,7 @@
 #pragma once
 #include "Properties.hh"
 
-class Visitor;
+class VisitorDistribution;
 
 class Distribution
 {
@@ -29,7 +29,7 @@ public:
 	~Constant();
 
 	double	getProbability(double time);
-	void 	accept(Visitor& visitor);
+	void 	accept(VisitorDistribution& visitor);
 };
 
 class Exponential : public Distribution
@@ -42,7 +42,7 @@ public:
 	double	getProbability(double time);
 
 	void	setLambda(double lambda);
-	void 	accept(Visitor& visitor);
+	void 	accept(VisitorDistribution& visitor);
 };
 
 class Weibull : public Distribution
@@ -59,5 +59,5 @@ public:
 
 	void	setScale(double scale);
 	void	setShape(double shape);
-	void	accept(Visitor& visitor);
+	void	accept(VisitorDistribution& visitor);
 };

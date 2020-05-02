@@ -1,5 +1,5 @@
 #include "Gate.hh"
-#include "Visitor.hh"
+#include "VisitorNode.hh"
 
 And::And(QString name) : Gate(name)
 {}
@@ -26,7 +26,7 @@ bool And::check(QList<QString>& errors)
 		children.at(i)->check(errors);
 	return (errors.size() > 0);
 }
-void And::accept(Visitor& visitor)
+void And::accept(VisitorNode& visitor)
 {
 	visitor.visit(*this);
 }

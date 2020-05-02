@@ -1,7 +1,6 @@
 #pragma once
 #include "Properties.hh"
 #include "Distribution.hh"
-class Visitor;
 
 class Event
 {
@@ -23,5 +22,4 @@ public:
 	bool operator==(const Event&)const;
 	bool operator <(const Event&)const;
 	
-	void accept(Visitor &visitor);
 };

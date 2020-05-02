@@ -1,6 +1,6 @@
 #include "Container.hh"
 #include "Node.hh"
-#include "Visitor.hh"
+#include "VisitorNode.hh"
 
 Container::Container(Event* event) :
 Node::Node(), event(event)
@@ -21,7 +21,7 @@ void Container::setEvent(Event* event)
 {
 	if(this->event)//décrémente si event non null
 			this->event->getProperties().decrementRefCount();
-	this->event = event;		this->event = event;
+	this->event = event;
 	if(this->event)//incrémente si event non null
 		this->event->getProperties().incrementRefCount();
 }
@@ -58,7 +58,7 @@ void Container::remove()
 	delete this;
 }
 
-void Container::accept(Visitor& visitor)
+void Container::accept(VisitorNode& visitor)
 {
 	visitor.visit(*this);
 }

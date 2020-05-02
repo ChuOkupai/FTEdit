@@ -2,7 +2,7 @@
 #include "Node.hh"
 #include "Tree.hh"
 
-class Visitor;
+class VisitorNode;
 
 class Transfert : public Node
 {
@@ -22,7 +22,7 @@ class Transfert : public Node
     Node* search(QPoint around);
 
     bool detectCycle(Node* n);
-	void accept(Visitor& visitor);
+	void accept(VisitorNode& visitor);
     void remove();
 
 

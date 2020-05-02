@@ -3,7 +3,7 @@
 #include "Node.hh"
 #include "Properties.hh"
 
-class Visitor;
+class VisitorNode;
 
 class Gate : public Node
 {
@@ -31,7 +31,7 @@ public:
 	double getProbability(double time);
 
 	bool check(QList<QString>& errors);
-	void accept(Visitor& visitor);
+	void accept(VisitorNode& visitor);
 };
 
 class Inhibit : public Gate
@@ -48,7 +48,7 @@ class Inhibit : public Gate
 	double getProbability(double time);
 
 	bool check(QList<QString>& errors);
-	void accept(Visitor& visitor);
+	void accept(VisitorNode& visitor);
 
 }; 
 
@@ -61,7 +61,7 @@ public:
 	double getProbability(double time);
 
 	bool check(QList<QString>& errors);
-	void accept(Visitor& visitor);
+	void accept(VisitorNode& visitor);
 };
 
 class VotingOR : public Gate // TODO
@@ -81,7 +81,7 @@ class VotingOR : public Gate // TODO
 	Gate* getSubTree() const;
 	double getProbability(double time);
 	bool check(QList<QString>& errors);
-	void accept(Visitor& visitor);
+	void accept(VisitorNode& visitor);
 };
 
 class Xor : public Gate
@@ -93,5 +93,5 @@ public:
 	double getProbability(double time);
 
 	bool check(QList<QString>& errors);
-	void accept(Visitor& visitor);
+	void accept(VisitorNode& visitor);
 };
