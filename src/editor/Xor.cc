@@ -1,6 +1,6 @@
 #include <QtGlobal>
 #include "Gate.hh"
-#include "FTEdit_FMS.hh"
+#include "../fms/SaveVisitor.hh"
 
 Xor::Xor(QString name) : Gate(name)
 {}

@@ -1,5 +1,5 @@
 #include "Gate.hh"
-#include "FTEdit_FMS.hh"
+#include "../fms/SaveVisitor.hh"
 
 And::And(QString name) : Gate(name)
 {}

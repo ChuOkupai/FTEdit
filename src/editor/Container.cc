@@ -1,6 +1,6 @@
 #include "Container.hh"
 #include "Node.hh"
-#include "FTEdit_FMS.hh"
+#include "../fms/SaveVisitor.hh"
 
 Container::Container(Event* event) :
 Node::Node(), event(event)
@@ -15,11 +15,7 @@ Container::~Container()
 
 void Container::setEvent(Event* event)
 {
-	if(this->event)//décrémente si event non null
-		this->event->getProperties().decrementRefCount();
 	this->event = event;
-	if(this->event)//incrémente si event non null
-		this->event->getProperties().incrementRefCount();
 }
 
 double Container::getProbability(double time)
@@ -53,12 +49,6 @@ void Container::remove()
 {
 	delete this;
 }
-
-QList<Node*>* Container::getChildren()
-{
-	return nullptr;
-}
-
 
 void Container::accept(SaveVisitor& visitor)
 {

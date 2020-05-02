@@ -28,12 +28,12 @@ void Node::attach(Gate* parent)
 	if (!parent || this->parent)
 		return ;
 	this->parent = parent;
-	(*parent->getChildren()) << this;
+	parent->getChildren() << this;
 }
 
 void Node::detach()
 {
 	if (parent)
-		parent->getChildren()->removeOne(this);
+		parent->getChildren().removeOne(this);
 	parent = nullptr;
 }

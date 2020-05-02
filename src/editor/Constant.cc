@@ -1,5 +1,5 @@
 #include "Distribution.hh"
-#include "FTEdit_FMS.hh"
+#include "../fms/SaveVisitor.hh"
 
 Constant::Constant(QString name) :
 Distribution(name)

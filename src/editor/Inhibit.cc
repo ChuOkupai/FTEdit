@@ -1,5 +1,5 @@
 #include "Gate.hh"
-#include "FTEdit_FMS.hh"
+#include "../fms/SaveVisitor.hh"
 
 
 Inhibit::Inhibit(QString name) : Gate(name)

@@ -7,7 +7,7 @@ class Event
 {
 private:
 	Properties prop;
-	Distribution* distribution;
+	Distribution* distribution = nullptr;
 
 public:
 	Event(QString name);

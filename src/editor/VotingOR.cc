@@ -1,5 +1,5 @@
 #include "Gate.hh"
-#include "FTEdit_FMS.hh"
+#include "../fms/SaveVisitor.hh"
 
 VotingOR::VotingOR(QString name) : Gate(name)
 {}

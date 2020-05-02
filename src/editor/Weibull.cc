@@ -1,7 +1,6 @@
-#include <cmath>
 #include <QtGlobal>
 #include "Distribution.hh"
-#include "FTEdit_FMS.hh"
+#include "../fms/SaveVisitor.hh"
 
 Weibull::Weibull(QString name) :
 Distribution(name)
@@ -22,7 +21,9 @@ double Weibull::getShape()
 
 double Weibull::getProbability(double time)
 {
-	return (1-exp(-pow((time/value),shape)));
+	// A implémenter ptdr
+	(void)time;
+	return (0);
 }
 
 void Weibull::setScale(double scale)

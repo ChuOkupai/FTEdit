@@ -1,17 +1,16 @@
 #include "Event.hh"
-#include "FTEdit_FMS.hh"
+#include "../fms/SaveVisitor.hh"
 
-Event::Event(QString name) : prop(name),distribution(nullptr){}
+Event::Event(QString name) : prop(name){}
 
 Event::~Event() {}
 
 void Event::setDistribution(Distribution *distribution)
 {
-	if (this->distribution)//decrement if distribution not null
+	if (this->distribution)
 		this->distribution->getProperties().decrementRefCount();
 	this->distribution = distribution;
-	if(this->distribution)//increment if distribution not null
-		this->distribution->getProperties().incrementRefCount();
+	this->distribution->getProperties().incrementRefCount();
 }
 
 Distribution* Event::getDistribution()
