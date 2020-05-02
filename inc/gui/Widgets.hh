@@ -2,6 +2,18 @@
 #include <QtWidgets>
 #include "FTEdit_Editor.hh"
 
+class GraphicsView : public QGraphicsView
+{
+	Q_OBJECT
+
+protected Q_SLOTS:
+	// Zoom view (rescale)
+	void wheelEvent(QWheelEvent *event);
+
+public:
+	GraphicsView(QWidget *parent);
+};
+
 class LineEditName : public QLineEdit
 {
 private:

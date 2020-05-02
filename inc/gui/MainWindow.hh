@@ -1,7 +1,6 @@
 #pragma once
 #include <QMainWindow>
-#include <QtWidgets>
-#include "FTEdit_Editor.hh"
+#include "Widgets.hh"
 
 #define ICON_SIZE	48
 #define RES_MIN_X	460
@@ -9,13 +8,6 @@
 #define ZOOM_MIN	20.0
 #define ZOOM_MAX	400.0
 #define MIN(A, B) ((A) < (B) ? (A) : (B))
-
-QT_BEGIN_NAMESPACE
-class QAction;
-class QActionGroup;
-class QLabel;
-class QMenu;
-QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow
 {
@@ -95,7 +87,8 @@ private:
 
 	QToolBar		*toolBar;
 	QTreeWidget		*explorer;
-	QGraphicsView	*graphicsView;
+	GraphicsView	*view;
+	QGraphicsScene	*scene;
 	QListWidget		*errorList;
 	QSplitter		*vSplitter; // vertical split: graphicsView <-> errorList
 	QSplitter		*hSplitter; // horizontal split: explorer <-> vSplitter

@@ -1,5 +1,17 @@
 #include "Widgets.hh"
 
+GraphicsView::GraphicsView(QWidget *parent) :
+QGraphicsView(parent)
+{
+	setDragMode(QGraphicsView::ScrollHandDrag);
+}
+
+void GraphicsView::wheelEvent(QWheelEvent *event)
+{
+	qreal factor = event->delta() > 0 ? 1.25 : 0.75;
+	scale(factor, factor);
+}
+
 LineEditName::LineEditName(QWidget *parent, Editor &editor) :
 QLineEdit(parent), editor(editor), isValid(true)
 {}

@@ -13,6 +13,7 @@ MainWindow::MainWindow() : editor(nullptr), modified(false), zoomLevel(100)
 	statusBar(); // barre de status
 	createActions();
 	createMenus();
+	menuBar()->setContextMenuPolicy(Qt::PreventContextMenu);
 
 	setWindowTitle("FTEdit");
 	QRect r = QGuiApplication::primaryScreen()->geometry();
@@ -38,11 +39,16 @@ MainWindow::MainWindow() : editor(nullptr), modified(false), zoomLevel(100)
 	vSplitter = new QSplitter(hSplitter);
 	vSplitter->setOrientation(Qt::Vertical);
 	auto verticalLayout = new QWidget(vSplitter);
-	auto graphicsViewLayout = new QVBoxLayout(verticalLayout);
-	graphicsView = new QGraphicsView(verticalLayout);
-	graphicsViewLayout->setContentsMargins(0, 0, 0, 0);
+	auto viewLayout = new QVBoxLayout(verticalLayout);
+	view = new GraphicsView(verticalLayout);
+	viewLayout->setContentsMargins(0, 0, 0, 0);
+	scene = new QGraphicsScene(this);
+	view->setScene(scene);
+	scene->setBackgroundBrush(Qt::white);
+	scene->addSimpleText("Hello World!");
+	view->show();
 
-	graphicsViewLayout->addWidget(graphicsView);
+	viewLayout->addWidget(view);
 
 	vSplitter->addWidget(verticalLayout);
 	auto verticalLayout2 = new QWidget(vSplitter);
@@ -63,7 +69,7 @@ MainWindow::MainWindow() : editor(nullptr), modified(false), zoomLevel(100)
 	gridLayout->addWidget(hSplitter, 0, 0, 1, 1);
 	explorer->resize(0, explorer->height());
 	toggleExplorer();
-	errorList->resize(errorList->width(), 0);
+	errorList->resize(errorList->width(), 1);
 	toggleErrorList();
 	this->newFile();
 }
@@ -215,7 +221,7 @@ void MainWindow::toggleErrorList()
 {
 	if (errorList->height())
 	{
-		resizeSplitter(vSplitter, graphicsView->height(), 0);
+		resizeSplitter(vSplitter, view->height(), 0);
 		return ;
 	}
 	QSize size = this->size();
