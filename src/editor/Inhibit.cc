@@ -1,5 +1,5 @@
 #include "Gate.hh"
-#include "../fms/SaveVisitor.hh"
+#include "VisitorNode.hh"
 
 
 Inhibit::Inhibit(QString name) : Gate(name)
@@ -35,7 +35,7 @@ bool Inhibit::check (QList<QString>& errors)
     return (errors.size() > 0);
 }
 
-void Inhibit::accept(SaveVisitor& visitor)
+void Inhibit::accept(VisitorNode& visitor)
 {
 	visitor.visit(*this);
 }
