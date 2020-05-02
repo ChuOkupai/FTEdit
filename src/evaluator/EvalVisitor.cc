@@ -27,10 +27,8 @@ void EvalVisitor::reset(){
 }
 
 double EvalVisitor::visit(And& andVisitor){
-    for(int i = 0; i < andVisitor.getChildren()->size() ; i++){
-        if(this->proba == 0){
-            this->proba = andVisitor.getChildren()->at(i)->accept(this);
-        }
+    this->proba = andVisitor.getChildren()->at(i)->accept(this);
+    for(int i = 1; i < andVisitor.getChildren()->size() ; i++){
          this->proba = this->proba * andVisitor.getChildren()->at(i)->accept(this);
         
     }
@@ -60,6 +58,6 @@ double EvalVisitor::visit(VotingOr& vorVisitor){
 }
 
 double EvalVisitor::visit(Container& eventVisitor){
-   this->proba = eventVisitor.getProbability(time);
+   this->proba = eventVisitor.getEvent()->getDistribution(time);
 
 }
