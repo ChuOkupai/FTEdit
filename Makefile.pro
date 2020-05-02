@@ -14,7 +14,8 @@ INCLUDEPATH += \
 $$PWD/inc \
 $$PWD/inc/editor \
 $$PWD/inc/fms \
-$$PWD/inc/gui
+$$PWD/inc/gui \
+$$PWD/inc/evaluator
 
 HEADERS += \
 inc/FTEdit.hh \

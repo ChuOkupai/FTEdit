@@ -14,7 +14,7 @@ class EvalVisitor{
 		double visit(And& andVisitor);
 		double visit(Or& orVisitor);
 		double visit(Inhibit& inVisitor);
-        double visit(VotingOr const& vorVisitor);
+        double visit(VotingOR& vorVisitor);
 		double visit(Transfert& transVisitor);
 		double visit(Container& eventVisitor);
 		double getProba();

@@ -11,12 +11,11 @@ ResultBoolean::~ResultBoolean(){
 
 //TODO
 QList<double> ResultBoolean::getProbabilities(){
-    EvalVisitor eval = new EvalVisitor(0,0);
+    EvalVisitor *eval = new EvalVisitor(0,0);
     for(int i = 0; i < missionTime; i = i + step){
-        eval.setTime(i);
-        top->accept(eval);
-        this->probabilities.insert(i,eval.getProba());
-        eval.reset();
+        eval->setTime(i);
+        //this->probabilities.at(i) = top->accept(eval);
+        eval->reset();
     }
     delete eval;
     return probabilities;;
