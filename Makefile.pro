@@ -2,7 +2,7 @@ TEMPLATE = app
 CONFIG += object_parallel_to_source
 QMAKE_CXXFLAGS += -Wall -Wextra -Werror
 TARGET = FTEdit
-QT += widgets xml
+QT += widgets
 
 DESTDIR = bin
 MOC_DIR = .moc
@@ -14,8 +14,9 @@ OBJECTS_DIR = .obj
 INCLUDEPATH += \
 $$PWD/inc \
 $$PWD/inc/editor \
-$$PWD/inc/fms \
-$$PWD/inc/gui
+$$PWD/inc/gui \
+$$PWD/inc/evaluator \
+$$PWD/inc/fms
 
 HEADERS += \
 inc/FTEdit.hh \
@@ -40,7 +41,7 @@ inc/evaluator/Evaluator.hh \
 inc/evaluator/ResultMCS.hh \
 inc/evaluator/ResultBoolean.hh \ 
 inc/evaluator/Result.hh \
-inc/evaluator/EvalVisitor.hh 
+inc/evaluator/EvalVisitor.hh \ 
 
 SOURCES += \
 src/editor/And.cc \
@@ -65,9 +66,9 @@ src/fms/SaveVisitor.cc \
 src/gui/EditContainerDialog.cc \
 src/gui/MainWindow.cc \
 src/gui/WidgetLinker.cc \
+src/main.cc \
 src/evaluator/Evaluator.cc \
 src/evaluator/ResultMCS.cc \
 src/evaluator/ResultBoolean.cc \
 src/evaluator/Result.cc \
-src/evaluator/EvalVisitor.cc \
-src/main.cc
+src/evaluator/EvalVisitor.cc 
