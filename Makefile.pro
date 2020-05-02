@@ -35,6 +35,7 @@ inc/fms/SaveVisitor.hh \
 inc/gui/FTEdit_GUI.hh \
 inc/gui/ChooseDistributionDialog.hh \
 inc/gui/EditContainerDialog.hh \
+inc/gui/EditDistributionDialog.hh \
 inc/gui/MainWindow.hh \
 inc/gui/ManageDistributionsDialog.hh \
 inc/gui/ManageEventsDialog.hh \
@@ -62,6 +63,7 @@ src/fms/FileManagerSystem.cc \
 src/fms/SaveVisitor.cc \
 src/gui/ChooseDistributionDialog.cc \
 src/gui/EditContainerDialog.cc \
+src/gui/EditDistributionDialog.cc \
 src/gui/MainWindow.cc \
 src/gui/ManageDistributionsDialog.cc \
 src/gui/ManageEventsDialog.cc \

@@ -2,6 +2,7 @@
 #include <QDebug>
 #include "Editor.hh"
 #include "ChooseDistributionDialog.hh"
+#include "EditDistributionDialog.hh"
 #include "EditContainerDialog.hh"
 #include "WidgetLinker.hh"
 
@@ -73,10 +74,10 @@ void EditContainerDialog::setDistribution(int index)
 
 void EditContainerDialog::editDistribution()
 {
+	Distribution *dist = cont.getEvent()->getDistribution();
+    EditDistributionDialog(this, dist);
 	if (!distributions->currentIndex())
 		return ;
-	Distribution *dist = cont.getEvent()->getDistribution();
-	// EditDistributionDialog(this, editor, dist);
 	distributions->setItemText(distributions->currentIndex(), dist->getProperties().getName());
 }
 
