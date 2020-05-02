@@ -1,5 +1,6 @@
 #include <QtGlobal>
 #include "Gate.hh"
+#include "VisitorNode.hh"
 
 Xor::Xor(QString name) : Gate(name)
 {}
@@ -24,11 +25,7 @@ bool Xor::check(QList<QString>& errors)
 	return (true);
 }
 
-/*void Xor::accept(Editor& editor,EditVisitor& visitor)
+void Xor::accept(VisitorNode& visitor)
 {
-	visitor.visit(this);
+	visitor.visit(*this);
 }
-void Xor::accept(RenderVisitor& visitor)
-{
-	visitor.visit(this);
-}*/

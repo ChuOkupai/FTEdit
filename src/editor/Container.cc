@@ -1,25 +1,34 @@
 #include "Container.hh"
 #include "Node.hh"
+#include "VisitorNode.hh"
 
-Container::Container(Event& event) :
+Container::Container(Event* event) :
 Node::Node(), event(event)
 {
-    event.getProperties().incrementRefCount();
+	event->getProperties().incrementRefCount();
 }
 
 Container::~Container()
 {
-    event.getProperties().decrementRefCount();
+	if(this->event)
+		event->getProperties().decrementRefCount();
 }
 
-void Container::setEvent(Event& event)
+
+
+
+void Container::setEvent(Event* event)
 {
-    this->event = event;
+	if(this->event)//décrémente si event non null
+			this->event->getProperties().decrementRefCount();
+	this->event = event;
+	if(this->event)//incrémente si event non null
+		this->event->getProperties().incrementRefCount();
 }
 
 double Container::getProbability(double time)
 {
-    return (event.getDistribution()->getProbability(time));
+	return (event->getDistribution()->getProbability(time));
 }
 
 Event* Container::getEvent()
@@ -34,12 +43,12 @@ QList<Node*>* Container::getChildren()
 
 bool Container::check(QList<QString> &errors)
 {
-    if (!event.getDistribution())
-    {
-        errors << event.getProperties().getName() + ": Probability must be set.";
-        return (false);
-    }
-    return (true);
+	if (!event->getDistribution())
+	{
+		errors << event->getProperties().getName() + ": Probability must be set.";
+		return (false);
+	}
+	return (true);
 }
 
 
@@ -54,6 +63,7 @@ void Container::remove()
     delete this;
 }
 
-//void accept(Editor &editor, EditVisitor &visitor) {visitor.visit(*this);}
-
-//void accept(RenderVisitor &visitor) {visitor.visit(*this);}
+void Container::accept(VisitorNode& visitor)
+{
+	visitor.visit(*this);
+}

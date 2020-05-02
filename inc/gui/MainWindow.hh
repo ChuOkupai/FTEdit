@@ -24,8 +24,7 @@ public:
 	MainWindow();
 
 protected:
-	void contextMenuEvent(QContextMenuEvent *event) override;
-	void closeEvent(QCloseEvent* e) override;
+	void closeEvent(QCloseEvent* e);
 
 private slots:
 	// File
@@ -63,42 +62,35 @@ private:
 	Editor			*editor;
 	bool			modified;
 	double			zoomLevel;
-	//QList<Result>	results;
-	//Node			*current;
+	Node			*current;
 
-	QMenu *fileMenu;
-		QAction *newAct;
-		QAction *openAct;
-		QAction *saveAct;
-		QAction *saveAsAct;
-		QAction *exitAct;
-	QMenu *editMenu;
-		QAction *cutAct;
-		QAction *copyAct;
-		QAction *pasteAct;
-		QMenu *addNodeMenu;
-			QMenu *addGateMenu;
-				QAction *addAndAct;
-				QAction *addInhibitAct;
-				QAction *addOrAct;
-				QAction *addKNAct;
-				QAction *addXorAct;
-				QAction *addTransfertAct;
-			QAction *addEventAct;
-	QMenu *viewMenu;
-		QAction *zoomInAct;
-		QAction *zoomOutAct;
-		QAction *zoomResetAct;
-		QAction *distributionsAct;
-		QAction *eventsAct;
-		QAction *toggleExplorerAct;
-		QAction *toggleErrorListAct;
-	QMenu *analysisMenu;
-		QAction *evaluateAct;
-	QMenu *helpMenu;
-		QAction *aboutAct;
-		QAction *aboutQtAct;
+	QAction *newAct;
+	QAction *openAct;
+	QAction *saveAct;
+	QAction *saveAsAct;
+	QAction *exitAct;
+	QAction *cutAct;
+	QAction *copyAct;
+	QAction *pasteAct;
+	QAction *addAndAct;
+	QAction *addInhibitAct;
+	QAction *addOrAct;
+	QAction *addKNAct;
+	QAction *addXorAct;
+	QAction *addTransfertAct;
+	QAction *addEventAct;
+	QAction *zoomInAct;
+	QAction *zoomOutAct;
+	QAction *zoomResetAct;
+	QAction *toggleExplorerAct;
+	QAction *toggleErrorListAct;
+	QAction *distributionsAct;
+	QAction *eventsAct;
+	QAction *evaluateAct;
+	QAction *aboutAct;
+	QAction *aboutQtAct;
 
+	QToolBar		*toolBar;
 	QTreeWidget		*explorer;
 	QGraphicsView	*graphicsView;
 	QListWidget		*errorList;

@@ -6,7 +6,7 @@ class Event
 {
 private:
 	Properties prop;
-	Distribution* distribution = nullptr;
+	Distribution* distribution ;
 
 public:
 	Event(QString name);
@@ -19,6 +19,7 @@ public:
 	
 	Distribution* getDistribution();
 
-    bool operator==(const Event&) const;
-    bool operator <(const Event&) const;
+	bool operator==(const Event&)const;
+	bool operator <(const Event&)const;
+	
 };

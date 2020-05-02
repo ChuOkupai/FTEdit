@@ -1,5 +1,6 @@
 #include <QtGlobal>
 #include "Gate.hh"
+#include "VisitorNode.hh"
 
 Or::Or(QString name) : Gate(name)
 {}
@@ -22,14 +23,12 @@ bool Or::check(QList<QString>& errors)
 		errors << prop.getName() + ": There must be 2 or more inputs.";
 		return (false);
 	}
-	return (true);
+	for (int i = 0; i < children.size(); ++i)
+		children.at(i)->check(errors);
+	return (errors.size() > 0);
 }
 
-/*void Or::accept(Editor& editor,EditVisitor& visitor)
+void Or::accept(VisitorNode& visitor)
 {
-	visitor.visit(this);
+	visitor.visit(*this);
 }
-void Or::accept(RenderVisitor& visitor)
-{
-	visitor.visit(this);
-}*/

@@ -1,7 +1,9 @@
 #include <QDir>
 #include <QList>
-#include <QtGlobal>
+#include <QDebug>
 #include "MainWindow.hh"
+#include "EditContainerDialog.hh"
+#include "WidgetLinker.hh"
 
 MainWindow::MainWindow() : editor(nullptr), modified(false), zoomLevel(100)
 {
@@ -12,60 +14,60 @@ MainWindow::MainWindow() : editor(nullptr), modified(false), zoomLevel(100)
 	QRect r = QGuiApplication::primaryScreen()->geometry();
 	setMinimumSize(MIN(r.width(), RES_MIN_X), MIN(r.height(), RES_MIN_Y));
 	resize(r.width() / 1.5, r.height() / 1.5);
-	this->newFile();
 
 	auto centralwidget = new QWidget(this);
 	setCentralWidget(centralwidget);
+	centralwidget->setStyleSheet("selection-background-color: #4684e3;"
+	"background-color:0xfcfcfc;");
 	auto gridLayout = new QGridLayout(centralwidget);
+	gridLayout->setMargin(0);
 	hSplitter = new QSplitter(centralwidget);
 	hSplitter->setOrientation(Qt::Horizontal);
-	auto horizontalLayoutWidget = new QWidget(hSplitter);
-	auto explorerLayout = new QHBoxLayout(horizontalLayoutWidget);
+	auto horizontalLayout = new QWidget(hSplitter);
+	auto explorerLayout = new QHBoxLayout(horizontalLayout);
 	explorerLayout->setContentsMargins(0, 0, 0, 0);
-	explorer = new QTreeWidget(horizontalLayoutWidget);
+	explorer = new QTreeWidget(horizontalLayout);
 	explorer->headerItem()->setText(0, "Project Explorer");
 	explorerLayout->addWidget(explorer);
 
-	hSplitter->addWidget(horizontalLayoutWidget);
+	hSplitter->addWidget(horizontalLayout);
 	vSplitter = new QSplitter(hSplitter);
 	vSplitter->setOrientation(Qt::Vertical);
-	auto verticalLayoutWidget = new QWidget(vSplitter);
-	auto graphicsViewLayout = new QVBoxLayout(verticalLayoutWidget);
-	graphicsView = new QGraphicsView(verticalLayoutWidget);
+	auto verticalLayout = new QWidget(vSplitter);
+	auto graphicsViewLayout = new QVBoxLayout(verticalLayout);
+	graphicsView = new QGraphicsView(verticalLayout);
 	graphicsViewLayout->setContentsMargins(0, 0, 0, 0);
 
 	graphicsViewLayout->addWidget(graphicsView);
 
-	vSplitter->addWidget(verticalLayoutWidget);
-	auto verticalLayoutWidget2 = new QWidget(vSplitter);
-	auto groupBoxLayout = new QVBoxLayout(verticalLayoutWidget2);
+	vSplitter->addWidget(verticalLayout);
+	auto verticalLayout2 = new QWidget(vSplitter);
+	auto groupBoxLayout = new QVBoxLayout(verticalLayout2);
 	groupBoxLayout->setContentsMargins(0, 0, 0, 0);
-	auto groupBox = new QGroupBox(verticalLayoutWidget2);
+	auto groupBox = new QGroupBox(verticalLayout2);
 	groupBox->setTitle("Error list");
+	groupBoxLayout->addWidget(groupBox);
 	auto gridLayout2 = new QGridLayout(groupBox);
 	gridLayout2->setContentsMargins(2, 2, 2, 2);
 	errorList = new QListWidget(groupBox);
-	errorList->setEnabled(true);
-	errorList->setMinimumSize(QSize(0, 0));
+	errorList->setStyleSheet("selection-background-color: #d62b2b;"
+	"background-color:#ffe3e3;");
 	gridLayout2->addWidget(errorList, 0, 0, 1, 1);
-	groupBoxLayout->addWidget(groupBox);
 
-	vSplitter->addWidget(verticalLayoutWidget2);
+	vSplitter->addWidget(verticalLayout2);
 	hSplitter->addWidget(vSplitter);
+	gridLayout->addWidget(hSplitter, 0, 0, 1, 1);
 	explorer->resize(0, explorer->height());
 	toggleExplorer();
 	errorList->resize(errorList->width(), 0);
 	toggleErrorList();
-	gridLayout->addWidget(hSplitter, 0, 0, 1, 1);
-}
 
-void MainWindow::contextMenuEvent(QContextMenuEvent *event)
-{
-	QMenu menu(this);
-	menu.addAction(cutAct);
-	menu.addAction(copyAct);
-	menu.addAction(pasteAct);
-	menu.exec(event->globalPos());
+	toolBar = new QToolBar;
+	toolBar->setMovable(false);
+	addToolBar(Qt::TopToolBarArea, toolBar);
+	statusBar(); // barre de status
+
+	this->newFile();
 }
 
 void MainWindow::newFile()
@@ -73,6 +75,8 @@ void MainWindow::newFile()
 	if (!maybeSave())
 		return ;
 	reset();
+	current = nullptr;
+	editor = new Editor();
 }
 
 void MainWindow::open()
@@ -84,7 +88,7 @@ void MainWindow::open()
 	if (path.isEmpty())
 		return ;
 	// chargement du projet
-	reset();
+	reset(); // a enlever si implémenté
 }
 
 void MainWindow::save()
@@ -158,6 +162,10 @@ void MainWindow::addXor()
 void MainWindow::addEvent()
 {
 	modified = true;
+	QList<Event> &events = editor->getEvents();
+	events << Event(editor->generateName(PREFIX_EVENT));
+	Container c(&events.last()); // test
+	EditContainerDialog(this, *editor, c).exec();
 }
 
 void MainWindow::addTransfert()
@@ -193,7 +201,7 @@ void MainWindow::toggleExplorer()
 		return ;
 	}
 	QSize size = this->size();
-	int width = size.width() / 5;
+	int width = size.width() / 6;
 	resizeSplitter(hSplitter, width, 4 * width);
 }
 
@@ -302,13 +310,11 @@ void MainWindow::createActions()
 	addTransfertAct->setStatusTip("Add a new transfert in gate into the current tree");
 	connect(addTransfertAct, &QAction::triggered, this, &MainWindow::addTransfert);
 
-	zoomInAct = new QAction("Zoom In", this);
-	zoomInAct->setShortcuts(QKeySequence::ZoomIn);
+	zoomInAct = new QAction("Zoom In", this); zoomInAct->setShortcuts(QKeySequence::ZoomIn);
 	zoomInAct->setStatusTip("Zoom In");
 	connect(zoomInAct, &QAction::triggered, this, &MainWindow::zoomIn);
 
-	zoomOutAct = new QAction("Zoom Out", this);
-	zoomOutAct->setShortcuts(QKeySequence::ZoomOut);
+	zoomOutAct = new QAction("Zoom Out", this); zoomOutAct->setShortcuts(QKeySequence::ZoomOut);
 	zoomOutAct->setStatusTip("Zoom Out");
 	connect(zoomOutAct, &QAction::triggered, this, &MainWindow::zoomOut);
 
@@ -347,48 +353,50 @@ void MainWindow::createActions()
 
 void MainWindow::createMenus()
 {
-	fileMenu = menuBar()->addMenu("&File");
-	fileMenu->addAction(newAct);
-	fileMenu->addAction(openAct);
-	fileMenu->addAction(saveAct);
-	fileMenu->addAction(saveAsAct);
-	fileMenu->addSeparator();
-	fileMenu->addAction(exitAct);
+	QMenu *m, *m2, *m3;
 
-	editMenu = menuBar()->addMenu("&Edit");
-	editMenu->addAction(cutAct);
-	editMenu->addAction(copyAct);
-	editMenu->addAction(pasteAct);
-	editMenu->addSeparator();
+	m = menuBar()->addMenu("&File");
+	m->addAction(newAct);
+	m->addAction(openAct);
+	m->addAction(saveAct);
+	m->addAction(saveAsAct);
+	m->addSeparator();
+	m->addAction(exitAct);
 
-	addNodeMenu = editMenu->addMenu("Add...");
-	addGateMenu = addNodeMenu->addMenu("Gate...");
-		addGateMenu->addAction(addAndAct);
-		addGateMenu->addAction(addInhibitAct);
-		addGateMenu->addAction(addOrAct);
-		addGateMenu->addAction(addKNAct);
-		addGateMenu->addAction(addXorAct);
-		addGateMenu->addAction(addTransfertAct);
-	addNodeMenu->addAction(addEventAct);
+	m = menuBar()->addMenu("&Edit");
+	m->addAction(cutAct);
+	m->addAction(copyAct);
+	m->addAction(pasteAct);
+	m->addSeparator();
 
-	viewMenu = menuBar()->addMenu("&View");
-	viewMenu->addAction(zoomInAct);
-	viewMenu->addAction(zoomOutAct);
-	viewMenu->addAction(zoomResetAct);
-	viewMenu->addSeparator();
-	viewMenu->addAction(toggleExplorerAct);
-	viewMenu->addAction(toggleErrorListAct);
+	m2 = m->addMenu("Add...");
+		m3 = m2->addMenu("Gate...");
+		m3->addAction(addAndAct);
+		m3->addAction(addInhibitAct);
+		m3->addAction(addOrAct);
+		m3->addAction(addKNAct);
+		m3->addAction(addXorAct);
+		m3->addAction(addTransfertAct);
+	m2->addAction(addEventAct);
 
-	viewMenu = menuBar()->addMenu("&Show");
-	viewMenu->addAction(distributionsAct);
-	viewMenu->addAction(eventsAct);
+	m = menuBar()->addMenu("&View");
+	m->addAction(zoomInAct);
+	m->addAction(zoomOutAct);
+	m->addAction(zoomResetAct);
+	m->addSeparator();
+	m->addAction(toggleExplorerAct);
+	m->addAction(toggleErrorListAct);
 
-	analysisMenu = menuBar()->addMenu("&Analysis");
-	analysisMenu->addAction(evaluateAct);
+	m = menuBar()->addMenu("&Show");
+	m->addAction(distributionsAct);
+	m->addAction(eventsAct);
 
-	helpMenu = menuBar()->addMenu("&Help");
-	helpMenu->addAction(aboutAct);
-	helpMenu->addAction(aboutQtAct);
+	m = menuBar()->addMenu("&Analysis");
+	m->addAction(evaluateAct);
+
+	m = menuBar()->addMenu("&Help");
+	m->addAction(aboutAct);
+	m->addAction(aboutQtAct);
 }
 
 bool MainWindow::maybeSave()

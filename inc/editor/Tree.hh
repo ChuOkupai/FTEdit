@@ -5,7 +5,7 @@ class Gate;
 
 class Tree
 {
-private:
+protected:
 	Properties	prop;
 	Gate		*top;
 
