@@ -1,15 +1,11 @@
-#include <QtGlobal>
-#include <QDebug>
-#include "Editor.hh"
 #include "ChooseDistributionDialog.hh"
 #include "EditDistributionDialog.hh"
 #include "EditContainerDialog.hh"
-#include "WidgetLinker.hh"
 
 void EditContainerDialog::closeEvent(QCloseEvent *event)
 {
 	checkName();
-	if (valid)
+	if (name->valid())
 	{
 		cont.getEvent()->getProperties().setDesc(desc->toPlainText());
 		event->accept();
@@ -20,27 +16,13 @@ void EditContainerDialog::closeEvent(QCloseEvent *event)
 
 void EditContainerDialog::checkName()
 {
-	QString s = name->text().trimmed();
-	if (!s.compare(cont.getEvent()->getProperties().getName()) || (s.size() > 0 && editor.isUnique(s)))
-	{
-		valid = true;
-		name->setToolTip("");
-		name->setStyleSheet(styleSheet());
-		cont.getEvent()->getProperties().setName(s);
-	}
-	else
-	{
-		valid = false;
-		name->setToolTip(s.size() ? "This name is invalid" : "This name already exists");
-		name->setStyleSheet("border: 1px solid red;background-color: #ffe3e3;");
-	}
-	events->setItemText(index, s);
-	name->setText(s);
+	QString s = name->check(cont.getEvent()->getProperties());
+	events->setItemText(index, (name->valid() ? s : "* " + s));
 }
 
 void EditContainerDialog::setEvent(int index)
 {
-	if (valid)
+	if (name->valid())
 	{
 		this->index = index;
 		Properties *p = &cont.getEvent()->getProperties();
@@ -55,6 +37,7 @@ void EditContainerDialog::setEvent(int index)
 		distributions->blockSignals(true);
 		distributions->setCurrentIndex(index);
 		distributions->blockSignals(false);
+		edit->setEnabled(index); // enabled if index > 0
 	}
 	else
 		events->setCurrentIndex(this->index);
@@ -63,6 +46,7 @@ void EditContainerDialog::setEvent(int index)
 void EditContainerDialog::setDistribution(int index)
 {
 	distributions->setCurrentIndex(index);
+	edit->setEnabled(index); // enabled if index > 0
 	if (!index)
 	{
 		//cont.getEvent()->setDistribution(nullptr); (segfault)
@@ -75,9 +59,7 @@ void EditContainerDialog::setDistribution(int index)
 void EditContainerDialog::editDistribution()
 {
 	Distribution *dist = cont.getEvent()->getDistribution();
-    EditDistributionDialog(this, dist);
-	if (!distributions->currentIndex())
-		return ;
+	EditDistributionDialog(this, dist);
 	distributions->setItemText(distributions->currentIndex(), dist->getProperties().getName());
 }
 
@@ -93,7 +75,7 @@ void EditContainerDialog::addDistribution()
 }
 
 EditContainerDialog::EditContainerDialog(QWidget *parent, Editor &editor, Container &cont)
-: QDialog(parent), editor(editor), cont(cont), valid(true)
+: QDialog(parent), editor(editor), cont(cont)
 {
 	setWindowTitle("Edit event");
 	resize(360, 480);
@@ -103,14 +85,14 @@ EditContainerDialog::EditContainerDialog(QWidget *parent, Editor &editor, Contai
 	events = linker.addComboBox();
 	linker.addLayoutItem(new QSpacerItem(0, 20, QSizePolicy::Minimum, QSizePolicy::Maximum));
 	linker.addLabel("Name:");
-	name = linker.addLineEdit("");
+	name = linker.addLineEditName(editor);
 	linker.addLabel("Description:");
 	desc = linker.addTextEdit("");
 	linker.addLabel("Distribution:");
 	linker.set(new QHBoxLayout());
 	distributions = linker.addComboBox();
 	distributions->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-	auto edit = linker.addPushButton("Edit");
+	edit = linker.addPushButton("Edit");
 	edit->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
 	auto add = linker.addPushButton("+");
 	add->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);

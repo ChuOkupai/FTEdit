@@ -1,6 +1,7 @@
 #pragma once
 #include <QtWidgets>
 #include "FTEdit_Editor.hh"
+#include "WidgetLinker.hh"
 
 class EditContainerDialog : public QDialog
 {
@@ -17,12 +18,12 @@ private slots:
 private:
 	Editor &editor;
 	Container &cont;
-	bool valid;
 	int index;
 	QComboBox *events;
-	QLineEdit *name;
+	LineEditName *name;
 	QTextEdit *desc;
 	QComboBox *distributions;
+	QPushButton *edit;
 
 public:
 	EditContainerDialog(QWidget *parent, Editor &editor, Container &cont);
