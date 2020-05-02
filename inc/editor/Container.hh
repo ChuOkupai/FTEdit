@@ -2,7 +2,6 @@
 #include "Editor.hh"
 
 class SaveVisitor;
-class EvalVisitor;
 
 class Container : public Node
 {
@@ -25,7 +24,6 @@ public:
 	Node*	search(QPoint around);
 	void	remove();
 	void	accept(SaveVisitor& visitor);
-	void	accept(EvalVisitor& visitor);
 	//void accept(Editor &editor, EditVisitor &visitor);
 	//void accept(RenderVisitor &visitor);
 };

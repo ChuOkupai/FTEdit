@@ -1,7 +1,7 @@
 #include "Transfert.hh"
 #include "FTEdit_FMS.hh"
 
-Transfert::Transfert(QString name) : Node(),  link(nullptr),prop(name,false)
+Transfert::Transfert() : Node()
 {}
 
 Transfert::~Transfert()
@@ -13,21 +13,7 @@ Tree* Transfert::getLink() const
 }
 void Transfert::setLink(Tree* link)
 {
-
-	if(link)
-	{	
-		this->link = link;
-
-		if(!this->child.isEmpty())
-		{
-			this->child.replace(0,link->getTop());
-		}
-		else
-		{
-			this->child.append(link->getTop());
-		}
-
-	}	
+	this->link = link;
 }
 
 double Transfert::getProbability(double time)
@@ -56,6 +42,7 @@ bool Transfert::detectCycle(Node* n)
 {
 	bool ret = false;
 	if(n == this)  ret = true;
+	//Gate * g = dynamic_cast<Gate*>(n);
 	QList<Node*>* tmp = n->getChildren();
 	if(tmp)
 	{
@@ -67,23 +54,6 @@ bool Transfert::detectCycle(Node* n)
 	return ret;
 }
 
-QList<Node*>* Transfert::getChildren()//child is top Gate returned as QList.
-{ 
-	return (&child);
-}
-
-
-Event* Transfert::getEvent()
-{
-	return nullptr;
-}
-
-void Transfert::remove()
-{
-	link->getTop()->remove();
-	link = nullptr;
-	child.clear();
-}
 void Transfert::accept(SaveVisitor& visitor)
 {
 	visitor.visit(*this);

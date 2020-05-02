@@ -1,6 +1,5 @@
 #include "Gate.hh"
 #include "FTEdit_FMS.hh"
-//#include "EvalVisitor.hh"
 
 
 Inhibit::Inhibit(QString name) : Gate(name)
@@ -40,10 +39,3 @@ void Inhibit::accept(SaveVisitor& visitor)
 {
 	visitor.visit(*this);
 }
-
-/* remove commentary when header is added
-void Inhibit::accept(EvalVisitor& visitor)
-{
-	visitor.visit(*this);
-}
-*/

@@ -1,13 +1,9 @@
 #include "Event.hh"
 #include "FTEdit_FMS.hh"
 
-Event::Event(QString name) : prop(name,false),distribution(nullptr){}
+Event::Event(QString name) : prop(name),distribution(nullptr){}
 
-Event::~Event() 
-{
-	if(this->distribution)
-		distribution->getProperties().decrementRefCount();
-}
+Event::~Event() {}
 
 void Event::setDistribution(Distribution *distribution)
 {
@@ -26,16 +22,6 @@ Distribution* Event::getDistribution()
 Properties& Event::getProperties()
 {
 	return (prop);
-}
-
-bool Event::operator==(const Event& e1) const
-{
-	return prop.getName() == e1.prop.getName();
-}
-
-bool Event:: operator<(const Event& e1) const
-{
-	return prop.getName()<e1.prop.getName();
 }
 
 void Event::accept(SaveVisitor& visitor)

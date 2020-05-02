@@ -20,13 +20,9 @@ Gate *Tree::getTop() const
 
 void Tree::setTop(Gate *top)
 {
-	
 	if (this->top)
 		this->top->getProperties().decrementRefCount();
-	
 	this->top = top;
-	
-	if (this->top)
+	if (top)
 		top->getProperties().incrementRefCount();
-	
 }
