@@ -27,6 +27,11 @@ Event* Container::getEvent()
     return (&event);
 }
 
+QList<Node*>* Container::getChildren()
+{
+    return nullptr;
+}
+
 bool Container::check(QList<QString> &errors)
 {
     if (!event.getDistribution())

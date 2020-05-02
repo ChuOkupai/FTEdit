@@ -12,7 +12,6 @@ class ResultMCS : public Evaluator
 		void computeCS();
 		void reduceCS();
         void sortCut();
-//        QMap<QList<Event>, int> mapMul
         void convertCS();
 
 
