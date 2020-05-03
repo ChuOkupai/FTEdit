@@ -29,6 +29,8 @@ inc/editor/Node.hh \
 inc/editor/Properties.hh \
 inc/editor/Transfert.hh \
 inc/editor/Tree.hh \
+inc/editor/VisitorNode.hh \
+inc/editor/VisitorDistribution.hh \
 inc/evaluator/FTEdit_Evaluator.hh \
 inc/evaluator/EvalVisitor.hh\
 inc/evaluator/Evaluator.hh \
