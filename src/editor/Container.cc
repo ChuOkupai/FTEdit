@@ -1,6 +1,7 @@
 #include "Container.hh"
 #include "Node.hh"
 #include "VisitorNode.hh"
+#include "EvalVisitor.hh"
 
 Container::Container(Event* event) :
 Node::Node(), event(event)
@@ -24,11 +25,6 @@ void Container::setEvent(Event* event)
 	this->event = event;
 	if(this->event)//incrémente si event non null
 		this->event->getProperties().incrementRefCount();
-}
-
-double Container::getProbability(double time)
-{
-	return (event->getDistribution()->getProbability(time));
 }
 
 Event* Container::getEvent()
@@ -66,4 +62,9 @@ void Container::remove()
 void Container::accept(VisitorNode& visitor)
 {
 	visitor.visit(*this);
+}
+
+double Container::accept(EvalVisitor& eval)
+{
+	return eval.visit(*this);
 }
