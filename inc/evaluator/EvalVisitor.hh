@@ -10,6 +10,7 @@ public :
 	EvalVisitor(double time,double proba);
 	double visit(And& andVisitor);
 	double visit(Or& orVisitor);
+	double visit(Xor& xorVisitor);
 	double visit(Inhibit& inVisitor);
 	double visit(VotingOR& vorVisitor);
 	double visit(Transfert& transVisitor);
