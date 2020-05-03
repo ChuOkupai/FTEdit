@@ -13,6 +13,13 @@ QComboBox *WidgetLinker::addComboBox()
 	return (comboBox);
 }
 
+QDoubleSpinBox *WidgetLinker::addDoubleSpinBox()
+{
+	auto *spinBox = new QDoubleSpinBox(parent);
+	layout->addWidget(spinBox);
+	return (spinBox);
+}
+
 QLabel *WidgetLinker::addLabel(const QString &content)
 {
 	auto *label = new QLabel(parent);
@@ -33,6 +40,20 @@ QLineEdit *WidgetLinker::addLineEdit(const QString &content)
 	lineEdit->setText(content);
 	layout->addWidget(lineEdit);
 	return (lineEdit);
+}
+
+QPushButton *WidgetLinker::addOKButton()
+{
+	layout->addItem(new QSpacerItem(0, 20, QSizePolicy::Minimum, QSizePolicy::Minimum));
+	auto hLayout = new QHBoxLayout();
+	layout->addLayout(hLayout);
+	hLayout->addItem(new QSpacerItem(20, 0, QSizePolicy::Expanding, QSizePolicy::Maximum));
+	auto *button = new QPushButton(parent);
+	button->setText("OK");
+	hLayout->addWidget(button);
+	button->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Minimum);
+	parent->connect(button, SIGNAL(released()), parent, SLOT(close()));
+	return (button);
 }
 
 QPushButton *WidgetLinker::addPushButton(const QString &content)

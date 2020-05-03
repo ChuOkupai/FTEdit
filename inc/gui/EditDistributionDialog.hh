@@ -1,6 +1,5 @@
 #pragma once
-#include "FTEdit_Editor.hh"
-#include "WidgetLinker.hh"
+#include "Dialog.hh"
 
 // Le visiteur (pour automatiquement choisir le bon dialogue)
 class VisitorEditDistribution : public VisitorDistribution
@@ -17,50 +16,43 @@ public:
 	void visit(Weibull &distribution);
 };
 
-/*class EditConstantDialog : public QDialog
+class EditConstantDialog : public PropertiesDialog
 {
 	Q_OBJECT
 
 private:
 	Editor &editor;
 	Constant &dist;
-
-private slots:
-	void closeEvent(QCloseEvent *event);
-	void checkName();
+	QDoubleSpinBox *value;
 
 public:
 	EditConstantDialog(QWidget *parent, Editor &editor, Constant &dist);
 };
 
-class EditExponentialDialog : public QDialog
+/*
+class EditExponentialDialog : public PropertiesDialog
 {
 	Q_OBJECT
 
 private:
 	Editor &editor;
-	Exponential &dist;
-
-private slots:
-	void closeEvent(QCloseEvent *event);
-	void checkName();
+	Constant &dist;
+	// Add required QDoubleSpinBox fields
 
 public:
-	EditExponentialDialog(QWidget *parent, Editor &editor, Exponential &dist);
+	EditExponentialDialog(QWidget *parent, Editor &editor, Constant &dist);
 };
 
-class EditWeibullDialog : public QDialog
+class EditWeibullDialog : public PropertiesDialog
 {
 	Q_OBJECT
 
 private:
 	Editor &editor;
-	Weibull &dist;
-
-private slots:
-	void closeEvent(QCloseEvent *event);
-	void checkName();
+	Constant &dist;
+	// Add required QDoubleSpinBox fields
 
 public:
-	EditWeibullDialog(QWidget *parent, Editor &editor, Weibull &dist);
-};*/
+	EditWeibullDialog(QWidget *parent, Editor &editor, Constant &dist);
+};
+*/

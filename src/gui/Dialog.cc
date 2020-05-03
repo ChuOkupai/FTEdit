@@ -15,22 +15,16 @@ void ChooseDistributionDialog::closeEvent(QCloseEvent *event)
 	event->accept();
 }
 
-void ChooseDistributionDialog::confirm()
-{
-	this->close();
-}
-
 ChooseDistributionDialog::ChooseDistributionDialog(QWidget *parent, Editor &editor)
 : QDialog(parent), editor(editor)
 {
 	setWindowTitle("New model");
-	setFixedSize(260, 180);
 	auto layout = new QVBoxLayout(this);
 	WidgetLinker linker(this, layout);
-	linker.addLayoutItem(new QSpacerItem(0, 20, QSizePolicy::Minimum, QSizePolicy::Expanding));
+	linker.addLayoutItem(new QSpacerItem(0, 20, QSizePolicy::Minimum, QSizePolicy::Maximum));
 	auto hLayout = new QHBoxLayout();
 	linker.set(hLayout);
-	linker.addLayoutItem(new QSpacerItem(20, 0, QSizePolicy::Expanding, QSizePolicy::Minimum));
+	linker.addLayoutItem(new QSpacerItem(60, 0, QSizePolicy::Maximum, QSizePolicy::Minimum));
 	linker.set(new QVBoxLayout());
 	linker.addLabel("Law of probability:");
 	laws = new QButtonGroup(this);
@@ -40,15 +34,9 @@ ChooseDistributionDialog::ChooseDistributionDialog(QWidget *parent, Editor &edit
 	laws->addButton(linker.addRadioButton("Exponential"), 2);
 	laws->addButton(linker.addRadioButton("Weibull"), 3);
 	linker.set(hLayout);
-	linker.addLayoutItem(new QSpacerItem(20, 0, QSizePolicy::Expanding, QSizePolicy::Minimum));
+	linker.addLayoutItem(new QSpacerItem(60, 0, QSizePolicy::Maximum, QSizePolicy::Minimum));
 	linker.set(layout);
-	linker.addLayoutItem(new QSpacerItem(0, 20, QSizePolicy::Minimum, QSizePolicy::Expanding));
-	linker.replace(new QHBoxLayout(), layout);
-	linker.addLayoutItem(new QSpacerItem(20, 0, QSizePolicy::Expanding, QSizePolicy::Minimum));
-	auto ok = linker.addPushButton("OK");
-	ok->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
-
-	connect(ok, SIGNAL(released()), this, SLOT(confirm()));
+	linker.addOKButton();
 }
 
 PropertiesDialog::PropertiesDialog(QWidget *parent, Editor &editor, Properties *prop, bool initialized) :
@@ -56,7 +44,6 @@ QDialog(parent), prop(prop), isValid(true), editor(editor)
 {
 	if (!initialized)
 		return ;
-	setLayout(new QVBoxLayout(this));
 	init();
 }
 
@@ -93,7 +80,7 @@ void PropertiesDialog::editDesc()
 void PropertiesDialog::init()
 {
 	if (!this->layout())
-		setLayout(new QVBoxLayout(this));
+		new QVBoxLayout(this);
 	WidgetLinker linker(this, (QBoxLayout*)this->layout());
 	linker.addLabel("Name:");
 	nameWidget = linker.addLineEdit(prop->getName());

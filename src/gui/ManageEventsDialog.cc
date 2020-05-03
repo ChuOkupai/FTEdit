@@ -10,5 +10,4 @@ ManageEventsDialog::ManageEventsDialog(QWidget *parent, QList<Event> &list)
 : QDialog(parent), list(list)
 {
 	setWindowTitle("Events list");
-	resize(300, 200);
 }

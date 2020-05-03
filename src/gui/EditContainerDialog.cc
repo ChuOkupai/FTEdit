@@ -1,26 +1,28 @@
-#include "Dialog.hh"
 #include "EditContainerDialog.hh"
 #include "EditDistributionDialog.hh"
+#include "WidgetLinker.hh"
 
 EditContainerDialog::EditContainerDialog(QWidget *parent, Editor &editor, Container &cont) :
 PropertiesDialog(parent, editor, &cont.getEvent()->getProperties(), false), cont(cont)
 {
 	setWindowTitle("Edit event");
-	resize(360, 480);
+	resize(320, 380);
 	auto layout = new QVBoxLayout(this);
 	WidgetLinker linker(this, layout);
 	linker.addLabel("Event:");
 	events = linker.addComboBox();
-	linker.addLayoutItem(new QSpacerItem(0, 20, QSizePolicy::Minimum, QSizePolicy::Maximum));
+	linker.addLayoutItem(new QSpacerItem(0, 20, QSizePolicy::Minimum, QSizePolicy::Minimum));
 	init();
 	linker.addLabel("Distribution:");
 	linker.set(new QHBoxLayout());
 	distributions = linker.addComboBox();
-	distributions->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+	distributions->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 	edit = linker.addPushButton("Edit");
 	edit->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
 	auto add = linker.addPushButton("+");
 	add->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
+	linker.set(layout);
+	linker.addOKButton();
 
 	QList<Distribution*> &l = editor.getDistributions();
 	distributions->addItem(""); // Empty distribution

@@ -13,11 +13,16 @@ public:
 
 	QComboBox *addComboBox();
 
+	QDoubleSpinBox *addDoubleSpinBox();
+
 	QLabel *addLabel(const QString &content);
 
 	QLayoutItem *addLayoutItem(QLayoutItem *item);
 
 	QLineEdit *addLineEdit(const QString &content);
+
+	// Add an OK button and link its signal to closeEvent()
+	QPushButton *addOKButton();
 
 	QPushButton *addPushButton(const QString &content);
 

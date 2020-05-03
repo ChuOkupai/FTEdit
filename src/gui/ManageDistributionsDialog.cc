@@ -10,5 +10,4 @@ ManageDistributionsDialog::ManageDistributionsDialog(QWidget *parent, QList<Dist
 : QDialog(parent), list(list)
 {
 	setWindowTitle("Distributions list");
-	resize(300, 200);
 }

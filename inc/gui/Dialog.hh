@@ -10,8 +10,6 @@ class ChooseDistributionDialog : public QDialog
 private slots:
 	// Add a new distribution to the Editor's distributions list.
 	void closeEvent(QCloseEvent *event);
-	// Calls closeEvent
-	void confirm();
 
 private:
 	Editor &editor;
