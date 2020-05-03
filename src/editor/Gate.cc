@@ -11,14 +11,9 @@ Properties& Gate::getProperties()
 	return (prop);
 }
 
-QList<Node*>* Gate::getChildren()
+QList<Node*>& Gate::getChildren()
 {
-    return (&children);
-}
-
-Event* Gate::getEvent()
-{
-    return nullptr;
+	return (children);
 }
 
 Node* Gate::search(QPoint around)

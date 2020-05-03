@@ -1,6 +1,7 @@
 #include "Container.hh"
 #include "Node.hh"
 #include "VisitorNode.hh"
+#include "EvalVisitor.hh"
 
 Container::Container(Event* event) :
 Node::Node(), event(event)
@@ -26,19 +27,9 @@ void Container::setEvent(Event* event)
 		this->event->getProperties().incrementRefCount();
 }
 
-double Container::getProbability(double time)
-{
-	return (event->getDistribution()->getProbability(time));
-}
-
 Event* Container::getEvent()
 {
-    return (&event);
-}
-
-QList<Node*>* Container::getChildren()
-{
-    return nullptr;
+	return (event);
 }
 
 bool Container::check(QList<QString> &errors)
@@ -54,16 +45,21 @@ bool Container::check(QList<QString> &errors)
 
 Node* Container::search(QPoint around)
 {
-    (void)around;
-    return (nullptr);
+	(void)around;
+	return (nullptr);
 }
 
 void Container::remove()
 {
-    delete this;
+	delete this;
 }
 
 void Container::accept(VisitorNode& visitor)
 {
 	visitor.visit(*this);
+}
+
+double Container::accept(EvalVisitor& eval)
+{
+	return eval.visit(*this);
 }
