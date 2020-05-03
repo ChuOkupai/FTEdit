@@ -35,13 +35,6 @@ QLineEdit *WidgetLinker::addLineEdit(const QString &content)
 	return (lineEdit);
 }
 
-LineEditName *WidgetLinker::addLineEditName(Editor &editor)
-{
-	auto *lineEdit = new LineEditName(parent, editor);
-	layout->addWidget(lineEdit);
-	return (lineEdit);	
-}
-
 QPushButton *WidgetLinker::addPushButton(const QString &content)
 {
 	auto *button = new QPushButton(parent);
@@ -82,4 +75,16 @@ void WidgetLinker::replace(QBoxLayout *layout, QBoxLayout *with)
 {
 	with->addLayout(layout);
 	this->layout = layout;
+}
+
+GraphicsView::GraphicsView(QWidget *parent) :
+QGraphicsView(parent)
+{
+	setDragMode(QGraphicsView::ScrollHandDrag);
+}
+
+void GraphicsView::wheelEvent(QWheelEvent *event)
+{
+	qreal factor = event->delta() > 0 ? 1.25 : 0.75;
+	scale(factor, factor);
 }

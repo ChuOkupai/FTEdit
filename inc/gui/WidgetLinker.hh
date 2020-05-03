@@ -1,10 +1,5 @@
 #pragma once
-#include "Widgets.hh"
-
-/*
-** Classe qui sert d'interface temporaire pour simplifier la création des
-** éléments disposés sur la fenêtre.
-*/
+#include <QtWidgets>
 
 class WidgetLinker
 {
@@ -24,9 +19,6 @@ public:
 
 	QLineEdit *addLineEdit(const QString &content);
 
-	// Custom widget
-	LineEditName *addLineEditName(Editor &editor);
-
 	QPushButton *addPushButton(const QString &content);
 
 	QRadioButton *addRadioButton(const QString &content);
@@ -39,4 +31,18 @@ public:
 	void set(QBoxLayout *layout);
 	// Use another layout
 	void replace(QBoxLayout *layout, QBoxLayout *with);
+};
+
+// Custom QGraphicsView widget for smooth edition
+
+class GraphicsView : public QGraphicsView
+{
+	Q_OBJECT
+
+protected Q_SLOTS:
+	// Zoom view (rescale)
+	void wheelEvent(QWheelEvent *event);
+
+public:
+	GraphicsView(QWidget *parent);
 };

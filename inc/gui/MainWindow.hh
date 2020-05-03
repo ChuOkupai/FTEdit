@@ -1,6 +1,7 @@
 #pragma once
 #include <QMainWindow>
-#include "Widgets.hh"
+#include "FTEdit_Editor.hh"
+#include "WidgetLinker.hh"
 
 #define ICON_SIZE	48
 #define RES_MIN_X	460
@@ -53,10 +54,10 @@ private slots:
 	void about();
 
 private:
-	Editor			*editor;
-	bool			modified;
-	double			zoomLevel;
-	Node			*current;
+	Editor	*editor;
+	bool	modified;
+	double	zoomLevel;
+	Node	*current;
 
 	QAction *newAct;
 	QAction *openAct;
