@@ -38,49 +38,44 @@ double EvalVisitor::visit(And& andVisitor){
 
 	for(int i = 1; i < andVisitor.getChildren().size() ; i++){
 		if(this->proba ==0){
-			proba = andVisitor.getChildren().at(i)->accept(*this);
+			return andVisitor.getChildren().at(i)->accept(*this);
 
 		}else{
-		 proba = proba * andVisitor.getChildren().at(i)->accept(*this);
+		 return this->proba * andVisitor.getChildren().at(i)->accept(*this);
 		}
 	}
-	return proba;//to remove compiling warning
+	return 0;//to remove compiling warning
 }
 
 double EvalVisitor::visit(Or&  orVisitor){
 
 	for(int i = 0; i < orVisitor.getChildren().size() ; i++){
 
-			 proba += orVisitor.getChildren().at(i)->accept(*this);
+			return this->proba + orVisitor.getChildren().at(i)->accept(*this);
 		}
-	return proba;//to remove compiling warning
+	return 0;//to remove compiling warning
 }
 
 double EvalVisitor::visit(Inhibit& inVisitor){
 	inVisitor.getParent();
 	if(inVisitor.getCondition()){
-		 proba += inVisitor.getChildren().at(0)->accept(*this);
+		 return this->proba + inVisitor.getChildren().at(0)->accept(*this);
 	}
-	return proba;//to remove compiling warning
+	return 0;//to remove compiling warning
 }
 
 double EvalVisitor::visit(Transfert& transVisitor){
-	
+	transVisitor.getParent();
 	return transVisitor.getLink()->getTop()->accept(*this);
 
 }
 
 double EvalVisitor::visit(VotingOR& vorVisitor){
-	
+	vorVisitor.getParent();
 	 return vorVisitor.getSubTree()->accept(*this);
 }
 
 double EvalVisitor::visit(Container& eventVisitor){
-	
+	eventVisitor.getParent();
 	 return eventVisitor.getEvent()->getDistribution()->getProbability(time);
-}
-
-double EvalVisitor::visit(Xor& xorVisitor){
-	return xorVisitor.getChildren().at(0)->accept(*this);
-	return xorVisitor.getChildren().at(1)->accept(*this);
 }
