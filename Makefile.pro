@@ -16,7 +16,8 @@ INCLUDEPATH += \
 $$PWD/inc \
 $$PWD/inc/editor \
 $$PWD/inc/fms \
-$$PWD/inc/gui
+$$PWD/inc/gui \
+$$PWD/inc/evaluator
 
 HEADERS += \
 inc/FTEdit.hh \
@@ -30,6 +31,14 @@ inc/editor/Node.hh \
 inc/editor/Properties.hh \
 inc/editor/Transfert.hh \
 inc/editor/Tree.hh \
+inc/editor/VisitorNode.hh \
+inc/editor/VisitorDistribution.hh \
+inc/evaluator/FTEdit_Evaluator.hh \
+inc/evaluator/EvalVisitor.hh\
+inc/evaluator/Evaluator.hh \
+inc/evaluator/ResultMCS.hh \
+inc/evaluator/ResultBoolean.hh \
+inc/evaluator/Result.hh \
 inc/fms/FileManagerSystem.hh \
 inc/fms/SaveVisitor.hh \
 inc/gui/FTEdit_GUI.hh \
@@ -60,6 +69,11 @@ src/editor/Tree.cc \
 src/editor/VotingOR.cc \
 src/editor/Weibull.cc \
 src/editor/Xor.cc \
+src/evaluator/EvalVisitor.cc \
+src/evaluator/Evaluator.cc \
+src/evaluator/ResultMCS.cc \
+src/evaluator/ResultBoolean.cc \
+src/evaluator/Result.cc \
 src/fms/FileManagerSystem.cc \
 src/fms/SaveVisitor.cc \
 src/gui/ChooseDistributionDialog.cc \

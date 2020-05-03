@@ -1,5 +1,6 @@
 #include "Gate.hh"
 #include "VisitorNode.hh"
+#include "EvalVisitor.hh"
 
 
 Inhibit::Inhibit(QString name) : Gate(name)
@@ -18,11 +19,6 @@ void Inhibit::setCondition(bool condition)
     this->condition = condition;
 }
 
-double Inhibit::getProbability(double time)
-{
-    if(condition) return children.at(0)->getProbability(time);
-    else return 0;
-}
 
 bool Inhibit::check (QList<QString>& errors)
 {
@@ -38,4 +34,9 @@ bool Inhibit::check (QList<QString>& errors)
 void Inhibit::accept(VisitorNode& visitor)
 {
 	visitor.visit(*this);
+}
+
+double Inhibit::accept(EvalVisitor& eval)
+{
+	return eval.visit(*this);
 }

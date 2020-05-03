@@ -9,6 +9,7 @@
 class Editor;
 class Gate;
 class VisitorNode;
+class EvalVisitor;
 
 class Node
 {
@@ -29,8 +30,8 @@ public:
 	void	detach();
 
 	virtual Node*	search(QPoint around) = 0;
-	virtual double	getProbability(double time) = 0;
 	virtual bool	check(QList<QString>& output) = 0;
 	virtual void	remove() = 0;
 	virtual void 	accept(VisitorNode& visitor) = 0;
+	virtual double 	accept(EvalVisitor& eval) = 0;
 };

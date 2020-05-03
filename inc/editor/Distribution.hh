@@ -19,7 +19,7 @@ public:
 	void	setValue(double value);
 
 	virtual double	getProbability(double time) = 0;
-	//virtual void 	accept(SaveVisitor& visitor) = 0;
+	virtual void 	accept(VisitorDistribution& visitor) = 0;
 };
 
 class Constant : public Distribution
