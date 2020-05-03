@@ -4,7 +4,6 @@
 #include "Properties.hh"
 
 class VisitorNode;
-class EvalVisitor;
 
 class Gate : public Node
 {
@@ -30,10 +29,10 @@ public:
 	And(QString name);
 	~And();
 
+	double getProbability(double time);
 
 	bool check(QList<QString>& errors);
 	void accept(VisitorNode& visitor);
-	double accept(EvalVisitor& eval);
 };
 
 class Inhibit : public Gate
@@ -47,11 +46,10 @@ class Inhibit : public Gate
 
 	bool getCondition() const;
 	void setCondition(bool condition);
-	
+	double getProbability(double time);
+
 	bool check(QList<QString>& errors);
 	void accept(VisitorNode& visitor);
-	double accept(EvalVisitor& eval);
-
 
 }; 
 
@@ -61,11 +59,10 @@ public:
 	Or(QString name);
 	~Or();
 
+	double getProbability(double time);
 
 	bool check(QList<QString>& errors);
 	void accept(VisitorNode& visitor);
-	double accept(EvalVisitor& eval);
-
 };
 
 class VotingOR : public Gate // TODO
@@ -83,10 +80,9 @@ class VotingOR : public Gate // TODO
 	int getK() const;
 	void setK(int k);
 	Gate* getSubTree() const;
+	double getProbability(double time);
 	bool check(QList<QString>& errors);
 	void accept(VisitorNode& visitor);
-	double accept(EvalVisitor& eval);
-
 };
 
 class Xor : public Gate
@@ -95,10 +91,8 @@ public:
 	Xor(QString name);
 	~Xor();
 
+	double getProbability(double time);
 
 	bool check(QList<QString>& errors);
-
 	void accept(VisitorNode& visitor);
-	//double accept(EvalVisitor& eval); xor gate undefined in EvalVisitor
-
 };

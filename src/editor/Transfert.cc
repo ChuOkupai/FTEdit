@@ -1,6 +1,5 @@
 #include "Transfert.hh"
 #include "VisitorNode.hh"
-#include "EvalVisitor.hh"
 
 Transfert::Transfert(QString name) : Node() , link(nullptr) , prop(name,false)
 {}
@@ -20,7 +19,11 @@ void Transfert::setLink(Tree* link)
 	}
 }
 
-
+double Transfert::getProbability(double time)
+{
+	Gate* g = link->getTop();
+	return g->getProbability(time);
+}
 
 bool Transfert::check(QList<QString>& errors)
 {
@@ -54,11 +57,6 @@ bool Transfert::detectCycle(Node* n)
 void Transfert::accept(VisitorNode& visitor)
 {
 	visitor.visit(*this);
-}
-
-double Transfert::accept(EvalVisitor& eval)
-{
-	return eval.visit(*this);
 }
 
 void Transfert::remove()

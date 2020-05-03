@@ -1,6 +1,5 @@
 #include "Gate.hh"
 #include "VisitorNode.hh"
-#include "EvalVisitor.hh"
 
 VotingOR::VotingOR(QString name) : Gate(name)
 {}
@@ -23,6 +22,10 @@ Gate* VotingOR::getSubTree()const
     return subTree;
 }
 
+double VotingOR::getProbability(double time)
+{
+    return subTree->getProbability(time);
+}
 
 bool VotingOR::check(QList<QString>& errors)
 {
@@ -40,9 +43,4 @@ bool VotingOR::check(QList<QString>& errors)
 void VotingOR::accept(VisitorNode& visitor)
 {
 	visitor.visit(*this);
-}
-
-double VotingOR::accept(EvalVisitor& eval)
-{
-	return eval.visit(*this);
 }

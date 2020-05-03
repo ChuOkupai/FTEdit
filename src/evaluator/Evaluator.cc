@@ -4,16 +4,16 @@
 
 Evaluator::Evaluator(Gate* top,double missionTime, double step)
 {
-	this->top = top;
-	this->missionTime = missionTime;
-	this->step = step;
+    this->top = top;
+    this->missionTime = missionTime;
+    this->step = step;
 }
 Evaluator::~Evaluator(){}
 double Evaluator::getMissionTime()
 {
-	return missionTime;
+    return missionTime;
 }
 double Evaluator::getStep()
 {
-	return step;
+    return step;
 }

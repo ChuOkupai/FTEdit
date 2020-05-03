@@ -1,7 +1,6 @@
 #include <QtGlobal>
 #include "Gate.hh"
 #include "VisitorNode.hh"
-#include "EvalVisitor.hh"
 
 Xor::Xor(QString name) : Gate(name)
 {}
@@ -9,6 +8,12 @@ Xor::Xor(QString name) : Gate(name)
 Xor::~Xor()
 {}
 
+double Xor::getProbability(double time)
+{
+	double p = children[0]->getProbability(time);
+	p += children[1]->getProbability(time);
+	return (qBound(0.0, p, 1.0));
+}
 
 bool Xor::check(QList<QString>& errors)
 {
@@ -24,10 +29,3 @@ void Xor::accept(VisitorNode& visitor)
 {
 	visitor.visit(*this);
 }
-
-/* xor gate undefined in EvalVisitor
-double Xor::accept(EvalVisitor& eval)
-{
-	return eval.visit(*this);
-}
-*/

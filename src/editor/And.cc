@@ -1,6 +1,5 @@
 #include "Gate.hh"
 #include "VisitorNode.hh"
-#include "EvalVisitor.hh"
 
 And::And(QString name) : Gate(name)
 {}
@@ -8,7 +7,13 @@ And::And(QString name) : Gate(name)
 And::~And()
 {}
 
-
+double And::getProbability(double time)
+{
+	double p = children[0]->getProbability(time);
+	for (int i = 1; i < children.size(); ++i)
+		p *= children.at(i)->getProbability(time);
+	return (p);
+}
 
 bool And::check(QList<QString>& errors)
 {
@@ -24,8 +29,4 @@ bool And::check(QList<QString>& errors)
 void And::accept(VisitorNode& visitor)
 {
 	visitor.visit(*this);
-}
-double And::accept(EvalVisitor& eval)
-{
-	return eval.visit(*this);
 }
