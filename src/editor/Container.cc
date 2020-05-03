@@ -6,13 +6,13 @@
 Container::Container(Event* event) :
 Node::Node(), event(event)
 {
-	event->getProperties().incrementRefCount();
+    event->getProperties().incrementRefCount();
 }
 
 Container::~Container()
 {
-	if(this->event)
-		event->getProperties().decrementRefCount();
+    if(this->event)
+        event->getProperties().decrementRefCount();
 }
 
 
@@ -20,46 +20,46 @@ Container::~Container()
 
 void Container::setEvent(Event* event)
 {
-	if(this->event)//décrémente si event non null
-			this->event->getProperties().decrementRefCount();
-	this->event = event;
-	if(this->event)//incrémente si event non null
-		this->event->getProperties().incrementRefCount();
+    if(this->event)//décrémente si event non null
+            this->event->getProperties().decrementRefCount();
+    this->event = event;
+    if(this->event)//incrémente si event non null
+        this->event->getProperties().incrementRefCount();
 }
 
 Event* Container::getEvent()
 {
-	return (event);
+    return (event);
 }
 
 bool Container::check(QList<QString> &errors)
 {
-	if (!event->getDistribution())
-	{
-		errors << event->getProperties().getName() + ": Probability must be set.";
-		return (false);
-	}
-	return (true);
+    if (!event->getDistribution())
+    {
+        errors << event->getProperties().getName() + ": Probability must be set.";
+        return (false);
+    }
+    return (true);
 }
 
 
 Node* Container::search(QPoint around)
 {
-	(void)around;
-	return (nullptr);
+    (void)around;
+    return (nullptr);
 }
 
 void Container::remove()
 {
-	delete this;
+    delete this;
 }
 
 void Container::accept(VisitorNode& visitor)
 {
-	visitor.visit(*this);
+    visitor.visit(*this);
 }
 
 double Container::accept(EvalVisitor& eval)
 {
-	return eval.visit(*this);
+    return eval.visit(*this);
 }

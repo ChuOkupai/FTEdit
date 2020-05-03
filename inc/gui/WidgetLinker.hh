@@ -9,29 +9,29 @@
 class WidgetLinker
 {
 private:
-	QWidget *parent;
-	QBoxLayout *layout;
+    QWidget *parent;
+    QBoxLayout *layout;
 
 public:
-	WidgetLinker(QWidget *parent, QBoxLayout *layout);
-	~WidgetLinker();
+    WidgetLinker(QWidget *parent, QBoxLayout *layout);
+    ~WidgetLinker();
 
-	QComboBox *addComboBox();
+    QComboBox *addComboBox();
 
-	QLabel *addLabel(const QString &content);
+    QLabel *addLabel(const QString &content);
 
-	QLayoutItem *addLayoutItem(QLayoutItem *item);
+    QLayoutItem *addLayoutItem(QLayoutItem *item);
 
-	QPushButton *addPushButton(const QString &content);
+    QPushButton *addPushButton(const QString &content);
 
-	QLineEdit *addLineEdit(const QString &content);
+    QLineEdit *addLineEdit(const QString &content);
 
-	QTextEdit *addTextEdit(const QString &content);
+    QTextEdit *addTextEdit(const QString &content);
 
-	// Sets the parent widget
-	void set(QWidget *parent);
-	// Sets a layout make a link with the previous one
-	void set(QBoxLayout *layout);
-	// Use another layout
-	void replace(QBoxLayout *layout, QBoxLayout *with);
+    // Sets the parent widget
+    void set(QWidget *parent);
+    // Sets a layout make a link with the previous one
+    void set(QBoxLayout *layout);
+    // Use another layout
+    void replace(QBoxLayout *layout, QBoxLayout *with);
 };

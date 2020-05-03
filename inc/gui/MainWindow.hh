@@ -18,91 +18,91 @@ QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	MainWindow();
+    MainWindow();
 
 protected:
-	void closeEvent(QCloseEvent* e);
+    void closeEvent(QCloseEvent* e);
 
 private slots:
-	// File
-	void newFile();
-	void open();
-	void save();
-	void saveAs();
-	// Edit
-	void cut();
-	void copy();
-	void paste();
-		// Add
-		void addAnd();
-		void addInhibit();
-		void addKN();
-		void addOr();
-		void addXor();
-		void addTransfert();
-		void addEvent();
-	// View
-	void zoomIn();
-	void zoomOut();
-	void zoomReset();
-	void toggleExplorer();
-	void toggleErrorList();
-	// Show
-	void showDistributions();
-	void showEvents();
-	// Analysis
-	void evaluate();
-	// Help
-	void about();
+    // File
+    void newFile();
+    void open();
+    void save();
+    void saveAs();
+    // Edit
+    void cut();
+    void copy();
+    void paste();
+        // Add
+        void addAnd();
+        void addInhibit();
+        void addKN();
+        void addOr();
+        void addXor();
+        void addTransfert();
+        void addEvent();
+    // View
+    void zoomIn();
+    void zoomOut();
+    void zoomReset();
+    void toggleExplorer();
+    void toggleErrorList();
+    // Show
+    void showDistributions();
+    void showEvents();
+    // Analysis
+    void evaluate();
+    // Help
+    void about();
 
 private:
-	Editor			*editor;
-	bool			modified;
-	double			zoomLevel;
-	Node			*current;
+    Editor			*editor;
+    bool			modified;
+    double			zoomLevel;
+    Node			*current;
 
-	QAction *newAct;
-	QAction *openAct;
-	QAction *saveAct;
-	QAction *saveAsAct;
-	QAction *exitAct;
-	QAction *cutAct;
-	QAction *copyAct;
-	QAction *pasteAct;
-	QAction *addAndAct;
-	QAction *addInhibitAct;
-	QAction *addOrAct;
-	QAction *addKNAct;
-	QAction *addXorAct;
-	QAction *addTransfertAct;
-	QAction *addEventAct;
-	QAction *zoomInAct;
-	QAction *zoomOutAct;
-	QAction *zoomResetAct;
-	QAction *toggleExplorerAct;
-	QAction *toggleErrorListAct;
-	QAction *distributionsAct;
-	QAction *eventsAct;
-	QAction *evaluateAct;
-	QAction *aboutAct;
-	QAction *aboutQtAct;
+    QAction *newAct;
+    QAction *openAct;
+    QAction *saveAct;
+    QAction *saveAsAct;
+    QAction *exitAct;
+    QAction *cutAct;
+    QAction *copyAct;
+    QAction *pasteAct;
+    QAction *addAndAct;
+    QAction *addInhibitAct;
+    QAction *addOrAct;
+    QAction *addKNAct;
+    QAction *addXorAct;
+    QAction *addTransfertAct;
+    QAction *addEventAct;
+    QAction *zoomInAct;
+    QAction *zoomOutAct;
+    QAction *zoomResetAct;
+    QAction *toggleExplorerAct;
+    QAction *toggleErrorListAct;
+    QAction *distributionsAct;
+    QAction *eventsAct;
+    QAction *evaluateAct;
+    QAction *aboutAct;
+    QAction *aboutQtAct;
 
-	QToolBar		*toolBar;
-	QTreeWidget		*explorer;
-	QGraphicsView	*graphicsView;
-	QListWidget		*errorList;
-	QSplitter		*vSplitter; // vertical split: graphicsView <-> errorList
-	QSplitter		*hSplitter; // horizontal split: explorer <-> vSplitter
+    QToolBar		*toolBar;
+    QTreeWidget		*explorer;
+    QGraphicsView	*graphicsView;
+    QListWidget		*errorList;
+    QSplitter		*vSplitter; // vertical split: graphicsView <-> errorList
+    QSplitter		*hSplitter; // horizontal split: explorer <-> vSplitter
 
-	void createActions();
-	void createMenus();
-	// Renvoie vrai si le projet peut être écrasé
-	bool maybeSave();
-	// réinitialise l'interface (en cas de chargement ou de nouveau fichier)*
-	void reset();
-	// Redimensionne le layout
-	void resizeSplitter(QSplitter *splitter, int widget1Size, int widget2Size);
+    void createActions();
+    void createMenus();
+    // Renvoie vrai si le projet peut être écrasé
+    bool maybeSave();
+    // réinitialise l'interface (en cas de chargement ou de nouveau fichier)*
+    void reset();
+    // Redimensionne le layout
+    void resizeSplitter(QSplitter *splitter, int widget1Size, int widget2Size);
 };

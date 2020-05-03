@@ -2,15 +2,16 @@
 #include "Evaluator.hh"
 #include "EvalVisitor.hh"
 
+
 class ResultBoolean : public Evaluator
 {
-private :
-	QString topEventName;
+	private :
+    QString topEventName;
 
-public:
-	ResultBoolean(Gate* top, double missionTime,double step);
-	~ResultBoolean();
-	QString getTopEventName();
-	QList<double> getProbabilities();
+    public:
+        ResultBoolean(Gate* top, double missionTime,double step);
+        ~ResultBoolean();
+        QString getTopEventName();
+        QList<double> getProbabilities();
 	
 };

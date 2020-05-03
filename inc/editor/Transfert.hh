@@ -22,8 +22,8 @@ class Transfert : public Node
     Node* search(QPoint around);
 
     bool detectCycle(Node* n);
-	void accept(VisitorNode& visitor);
-	double accept(EvalVisitor& eval);
+    void accept(VisitorNode& visitor);
+    double accept(EvalVisitor& eval);
 
     void remove();
 

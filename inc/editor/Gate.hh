@@ -9,95 +9,95 @@ class EvalVisitor;
 class Gate : public Node
 {
 protected:
-	Properties prop;
-	QList<Node*> children;
+    Properties prop;
+    QList<Node*> children;
 
 public:
-	Gate(QString name);
-	~Gate();
+    Gate(QString name);
+    ~Gate();
 
-	Properties&		getProperties();
-	QList<Node*>&	getChildren();
+    Properties&		getProperties();
+    QList<Node*>&	getChildren();
 
-	Node*	search(QPoint around);
-	void	remove();
+    Node*	search(QPoint around);
+    void	remove();
 };
 
 class And : public Gate
 {
 public:
-	And(QString name);
-	~And();
+    And(QString name);
+    ~And();
 
 
-	bool check(QList<QString>& errors);
-	void accept(VisitorNode& visitor);
-	double accept(EvalVisitor& eval);
+    bool check(QList<QString>& errors);
+    void accept(VisitorNode& visitor);
+    double accept(EvalVisitor& eval);
 };
 
 class Inhibit : public Gate
 {
-	protected:
-	bool condition;
+    protected:
+    bool condition;
 
-	public:
-	Inhibit(QString name);
-	~Inhibit();
+    public:
+    Inhibit(QString name);
+    ~Inhibit();
 
-	bool getCondition() const;
-	void setCondition(bool condition);
-	
-	bool check(QList<QString>& errors);
-	void accept(VisitorNode& visitor);
-	double accept(EvalVisitor& eval);
+    bool getCondition() const;
+    void setCondition(bool condition);
+
+    bool check(QList<QString>& errors);
+    void accept(VisitorNode& visitor);
+    double accept(EvalVisitor& eval);
 
 
-}; 
+};
 
 class Or : public Gate
 {
 public:
-	Or(QString name);
-	~Or();
+    Or(QString name);
+    ~Or();
 
 
-	bool check(QList<QString>& errors);
-	void accept(VisitorNode& visitor);
-	double accept(EvalVisitor& eval);
+    bool check(QList<QString>& errors);
+    void accept(VisitorNode& visitor);
+    double accept(EvalVisitor& eval);
 
 };
 
 class VotingOR : public Gate // TODO
 {
-	protected:
-	int k;
-	Gate* subTree;
-	public:
-	VotingOR(QString name);
-	~VotingOR();
+    protected:
+    int k;
+    Gate* subTree;
+    public:
+    VotingOR(QString name);
+    ~VotingOR();
 
 
-	void updateSubTree();
-	Gate* generateComb(int i,int k,int n);
-	int getK() const;
-	void setK(int k);
-	Gate* getSubTree() const;
-	bool check(QList<QString>& errors);
-	void accept(VisitorNode& visitor);
-	double accept(EvalVisitor& eval);
+    void updateSubTree();
+    Gate* generateComb(int i,int k,int n);
+    int getK() const;
+    void setK(int k);
+    Gate* getSubTree() const;
+    bool check(QList<QString>& errors);
+    void accept(VisitorNode& visitor);
+    double accept(EvalVisitor& eval);
 
 };
 
 class Xor : public Gate
 {
 public:
-	Xor(QString name);
-	~Xor();
+    Xor(QString name);
+    ~Xor();
 
 
-	bool check(QList<QString>& errors);
+    bool check(QList<QString>& errors);
 
-	void accept(VisitorNode& visitor);
-	//double accept(EvalVisitor& eval); xor gate undefined in EvalVisitor
+    void accept(VisitorNode& visitor);
+    //double accept(EvalVisitor& eval); xor gate undefined in EvalVisitor
 
 };

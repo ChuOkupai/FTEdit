@@ -7,21 +7,21 @@ class EvalVisitor;
 class Container : public Node
 {
 private:
-	Event *event;
+    Event *event;
 
 public:
-	Container(Event *event);
+    Container(Event *event);
 
-	~Container();
-	
-	void	setEvent(Event *event);
-	
-	
-	Event	*getEvent();
+    ~Container();
 
-	bool	check(QList<QString> &errors);
-	Node*	search(QPoint around);
-	void	remove();
-	void	accept(VisitorNode& visitor);
-	double	accept(EvalVisitor& eval);
+    void	setEvent(Event *event);
+
+
+    Event	*getEvent();
+
+    bool	check(QList<QString> &errors);
+    Node*	search(QPoint around);
+    void	remove();
+    void	accept(VisitorNode& visitor);
+    double	accept(EvalVisitor& eval);
 };

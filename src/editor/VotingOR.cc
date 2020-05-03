@@ -26,23 +26,23 @@ Gate* VotingOR::getSubTree()const
 
 bool VotingOR::check(QList<QString>& errors)
 {
-	if (children.size() < k)
-	{
-		errors << prop.getName() + ": k value must be less or equal children value.";
-		return (false);
-	}
-	for (int i = 0; i < children.size(); ++i)
-		children.at(i)->check(errors);
-	return (errors.size() > 0);
+    if (children.size() < k)
+    {
+        errors << prop.getName() + ": k value must be less or equal children value.";
+        return (false);
+    }
+    for (int i = 0; i < children.size(); ++i)
+        children.at(i)->check(errors);
+    return (errors.size() > 0);
 }
 
 
 void VotingOR::accept(VisitorNode& visitor)
 {
-	visitor.visit(*this);
+    visitor.visit(*this);
 }
 
 double VotingOR::accept(EvalVisitor& eval)
 {
-	return eval.visit(*this);
+    return eval.visit(*this);
 }

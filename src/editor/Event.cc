@@ -7,31 +7,31 @@ Event::~Event() {}
 
 void Event::setDistribution(Distribution *distribution)
 {
-	if (this->distribution)//decrement if distribution not null
-		this->distribution->getProperties().decrementRefCount();
-	this->distribution = distribution;
-	if(this->distribution)//increment if distribution not null
-		this->distribution->getProperties().incrementRefCount();
+    if (this->distribution)//decrement if distribution not null
+        this->distribution->getProperties().decrementRefCount();
+    this->distribution = distribution;
+    if(this->distribution)//increment if distribution not null
+        this->distribution->getProperties().incrementRefCount();
 }
 
 Distribution* Event::getDistribution()
 {
-	return (distribution);
+    return (distribution);
 }
 
 Properties& Event::getProperties()
 {
-	return (prop);
+    return (prop);
 }
 
 bool Event::operator==(const Event& e1) const
 {
-	return prop.getName()  == e1.prop.getName();
+    return prop.getName()  == e1.prop.getName();
 }
 
 bool Event::operator <(const Event& e1) const
 {
-	return prop.getName()<e1.prop.getName();
+    return prop.getName()<e1.prop.getName();
 }
 
 

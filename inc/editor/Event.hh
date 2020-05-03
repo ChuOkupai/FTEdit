@@ -5,21 +5,21 @@
 class Event
 {
 private:
-	Properties prop;
-	Distribution* distribution ;
+    Properties prop;
+    Distribution* distribution ;
 
 public:
-	Event(QString name);
+    Event(QString name);
 
-	~Event();
-	
-	Properties& getProperties();
+    ~Event();
 
-	void setDistribution(Distribution *distribution);
-	
-	Distribution* getDistribution();
+    Properties& getProperties();
 
-	bool operator==(const Event&)const;
-	bool operator <(const Event&)const;
-	
+    void setDistribution(Distribution *distribution);
+
+    Distribution* getDistribution();
+
+    bool operator==(const Event&)const;
+    bool operator <(const Event&)const;
+
 };
