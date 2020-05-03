@@ -1,6 +1,7 @@
 #include <QtGlobal>
 #include "Gate.hh"
 #include "VisitorNode.hh"
+#include "EvalVisitor.hh"
 
 Or::Or(QString name) : Gate(name)
 {}
@@ -8,13 +9,6 @@ Or::Or(QString name) : Gate(name)
 Or::~Or()
 {}
 
-double Or::getProbability(double time)
-{
-	double p = children[0]->getProbability(time);
-	for (int i = 1; i < children.size(); ++i)
-		p += children.at(i)->getProbability(time);
-	return (qBound(0.0, p, 1.0));
-}
 
 bool Or::check(QList<QString>& errors)
 {
@@ -31,4 +25,9 @@ bool Or::check(QList<QString>& errors)
 void Or::accept(VisitorNode& visitor)
 {
 	visitor.visit(*this);
+}
+
+double Or::accept(EvalVisitor& eval)
+{
+	return eval.visit(*this);
 }

@@ -3,6 +3,7 @@
 #include "Tree.hh"
 
 class VisitorNode;
+class EvalVisitor;
 
 class Transfert : public Node
 {
@@ -16,13 +17,14 @@ class Transfert : public Node
     Tree* getLink() const;
     void setLink(Tree* link);
 
-    double getProbability(double time);
     bool check(QList<QString>& errors);
 
     Node* search(QPoint around);
 
     bool detectCycle(Node* n);
 	void accept(VisitorNode& visitor);
+	double accept(EvalVisitor& eval);
+
     void remove();
 
 
