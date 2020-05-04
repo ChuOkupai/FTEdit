@@ -1,6 +1,6 @@
 #pragma once
 #include "Evaluator.hh"
-#include "EvalVisitor.hh"
+#include "CutVisitor.hh"
 #include "Event.hh"
 
 class ResultMCS : public Evaluator
@@ -20,7 +20,7 @@ class ResultMCS : public Evaluator
 
 	ResultMCS(Gate* top, double missionTime, double step);
 	~ResultMCS();
-	QList<QList<Event>> getMCS();
+    QList<QList<QString>> getMCS();
 	QList<double> getProbabilities();
 
 };

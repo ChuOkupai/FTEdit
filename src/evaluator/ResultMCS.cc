@@ -20,36 +20,15 @@ ResultMCS::ResultMCS(Gate* top,double missionTime,double step) : Evaluator(top,m
 ResultMCS::~ResultMCS(){}
 
 void ResultMCS::computeCS(){/*trouver tous les coupes*/
-
-    QList<Node*> *lstcopy;/*un pointer pointe les nouvelle liste vide*/
+    CutVisitor visitor(cs);
 
     for(int i=0; i<cs.size(); i++){
         for(int j=0; j<cs[i].size();j++){
 
-            if(instanceof<Gate>(cs[i][j])){/*si c'est une Porte*/
-                Gate *g = (Gate*)cs[i][j];
-                QList<Node*>& childrens = g->getChildren();/*recuperer les fils de cette porte*/
-
-                if(instanceof<And>(cs[i][j])){/*si c'est une Porte AND*/
-                    cs[i][j] = childrens.at(0);
-                    for(int m=1; m<childrens.size();m++){
-                        cs[i].append(childrens[m]);
-                    }
-                }
-                else if(instanceof<Or>(cs[i][j])){/*si c'est une Porte OR*/
-                    cs[i][j] = childrens.at(0);/*remplacer cette porte de son premier fils*/
-                    for(int m=1; m<childrens.size();m++){/*parcourir les enfants*/
-                        lstcopy = new QList<Node*>;/*faire le pointer pointe une autre nouvelle liste vide*/
-
-                        for(int n=0; n<cs[i].size();n++){/*copier une nouvelle liste avec le meme contenu*/
-                            lstcopy->append(cs[i][n]);
-                        }
-
-                        lstcopy->replace(j,childrens.at(m));/*mettre les autres fils dans la meme position de leurs liste*/
-                        cs.append(*lstcopy); /*mettre cette nouvelle liste a la fin de cs*/
-
-                    }
-                }
+            if(!instanceof<Container>(cs[i][j])){/*si c'est pas un Event de base*/
+                visitor.setIndex(i,j);//donner visitor l'index courant.
+                cs[i][j]->accept(visitor);//recuperer les enfants et les mettre dans le matrice selon le type de la porte
+                                            // les facons d'ajouter sont deja definis dans visitor.
 
                 computeCS();/*recursif*/
             }
@@ -65,7 +44,10 @@ void ResultMCS::convertCS(){/*Convertit la liste de liste de Node en liste de li
             Container *c = (Container*)cs[i][j];
             mcs[i].append(*c->getEvent());
         }
+        qDeleteAll(cs[i]);//librer memoire pour pointeur;
+        cs[i].clear();
     }
+    cs.clear();//librer memoire;
 }
 
 void ResultMCS::reduceCS(){/*enlever les doublons et reduire */
@@ -148,29 +130,26 @@ QList<int> ResultMCS::sieveOfAtkin(int limit){/*Génère un nombre de nombres pr
     bool sieve_list[limit + 1];
     int n, x, y, k, i;
 
-    /* is_prime(i) ← false, ∀ i ∈ [5, limit] */
-    for(n = 5; n <= limit; n++){
+    for(n = 5; n <= limit; n++){ /* is_prime(i) ← false, ∀ i ∈ [5, limit] */
         sieve_list[n] = false;
     }
+    for(x = 1; x <= (int)sqrt(limit); x++){ /* for (x, y) in [1, √limit] × [1, √limit]: */
+        for(y = 1; y <= (int)sqrt(limit); y++){ 
 
-    /* for (x, y) in [1, √limit] × [1, √limit]: */
-    for(x = 1; x <= (int)sqrt(limit); x++){
-        for(y = 1; y <= (int)sqrt(limit); y++){
-            /*n ← 4x²+y²:if (n ≤ limit) and (n mod 12 = 1 or n mod 12 = 5):is_prime(n) ← ¬is_prime(n)*/
-            n = 4 * x * x + y * y;
-            if(n <= limit && (n % 12 == 1 || n % 12 == 5))
+            n = 4 * x * x + y * y;/*n ← 4x²+y²:if (n ≤ limit) and (n mod 12 = 1 or n mod 12 = 5):is_prime(n) ← ¬is_prime(n)*/
+            if(n <= limit && (n % 12 == 1 || n % 12 == 5)){
                 sieve_list[n] = ~sieve_list[n];
-            /*n ← 3x²+y²:if (n ≤ limit) and (n mod 12 = 7):is_prime(n) ← ¬is_prime(n)*/
-            n = 3 * x * x + y * y;
-            if(n <= limit && n % 12 == 7)
+            }
+            n = 3 * x * x + y * y; /*n ← 3x²+y²:if (n ≤ limit) and (n mod 12 = 7):is_prime(n) ← ¬is_prime(n)*/
+            if(n <= limit && n % 12 == 7){
                 sieve_list[n] = ~sieve_list[n];
-            /*n ← 3x²-y²:if (x > y) and (n ≤ limit) and (n mod 12 = 11):is_prime(n) ← ¬is_prime(n)*/
-            n = 3 * x * x - y * y;
-            if(x > y && n <= limit && n % 12 == 11)
+            }
+            n = 3 * x * x - y * y;/*n ← 3x²-y²:if (x > y) and (n ≤ limit) and (n mod 12 = 11):is_prime(n) ← ¬is_prime(n)*/
+            if(x > y && n <= limit && n % 12 == 11){
                 sieve_list[n] = ~sieve_list[n];
+            }
         }
     }
-
     /*for n in [5, √limit]: if is_prime(n):is_prime(k) ← false, k ∈ {n², 2n², 3n², ..., limit}*/
     for(n = 5; n <= sqrt(limit); n++){
         if(sieve_list[n] == true){
@@ -184,19 +163,28 @@ QList<int> ResultMCS::sieveOfAtkin(int limit){/*Génère un nombre de nombres pr
     }
     premiers<<2<<3;/* append 2, 3 */
     for(n = 5; n <= limit; n++){ /* append les premiers suivants*/
-        if(sieve_list[n] == true)
+        if(sieve_list[n] == true){
             premiers<<n;
+        }
     }
-
     return premiers;
 }
 
 
-QList<QList<Event>> ResultMCS::getMCS(){
+QList<QList<QString>> ResultMCS::getMCS(){//rentrer les noms des events
+    QList<QList<QString>> tabMCS;//mettre dedans les noms des events
     computeCS();
     convertCS();
     reduceCS();
-    return mcs;
+
+    for(int i=0; i<mcs.size(); i++){//recuperer les noms de chaque event
+        tabMCS.append(QList<QString>());
+        for(int j=0; j<mcs[i].size();j++){
+            tabMCS[i].append(mcs[i][j].getProperties().getName());
+        }
+    }
+
+    return tabMCS;
 }
 QList<double> ResultMCS::getProbabilities(){
     QList<double> tab;

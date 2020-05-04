@@ -14,7 +14,6 @@ public :
     double visit(VotingOR& vorVisitor);
     double visit(Transfert& transVisitor);
     double visit(Container& eventVisitor);
-//    Event* visit(Container& eventVisitor);
     double getProba();
     void reset();
     void setTime(double time);
