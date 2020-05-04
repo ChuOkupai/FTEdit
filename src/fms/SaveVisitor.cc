@@ -13,14 +13,23 @@ SaveVisitor::~SaveVisitor() {}
 
 QDomDocument& SaveVisitor::getDomFile() { return dom; }
 
-void SaveVisitor::visit( And &andgate )
-{ 
-	QDomElement rootgate = dom.createElement("define-gate");
-	writeGateProperties(rootgate, andgate);
-	QDomElement andnode = dom.createElement("and");
-	rootgate.appendChild(andnode);
+void SaveVisitor::writeGateProperties(QDomElement &elem, Gate& gate)
+{
+	Properties& prop = gate.getProperties();
+	elem.setAttribute("name", prop.getName());
+	QDomElement tag;
+	if(!prop.getDesc().isEmpty())
+	{
+		tag = dom.createElement("label");
+		tag.appendChild(dom.createTextNode(prop.getDesc()));
+		elem.appendChild(tag);
+	}
+}
+
+void SaveVisitor::writeChildren(QDomElement &node, Gate& gate)
+{
 	QDomElement tmp;
-	for(Node* c : andgate.getChildren())
+	for(Node* c : gate.getChildren())
 	{
 		if(instanceof<Gate>(c))
 		{
@@ -32,18 +41,46 @@ void SaveVisitor::visit( And &andgate )
 			tmp = dom.createElement("basic-event");
 			tmp.setAttribute("name", (dynamic_cast<Container*>(c))->getEvent()->getProperties().getName());
 		}
-		andnode.appendChild(tmp);
+		else if(instanceof<Transfert>(c))
+		{
+			tmp = dom.createElement("transfert");
+			tmp.setAttribute("name", (dynamic_cast<Transfert*>(c))->getLink()->getTop()->getProperties().getName());
+		}
+		node.appendChild(tmp);
 	}
+}
+
+void SaveVisitor::writeGate(Gate& gate, QString type)
+{
+	QDomElement rootgate = dom.createElement("define-gate");
+	writeGateProperties(rootgate, gate);
+	QDomElement node = dom.createElement(type);
+	rootgate.appendChild(node);
+	writeChildren(node, gate);
 	dom.documentElement().appendChild(rootgate);
 }
 
-void SaveVisitor::visit( Or &orgate ) { (void)orgate;}
+void SaveVisitor::visit( And &andgate ) { writeGate(andgate, "and"); }
 
-void SaveVisitor::visit( Xor &xorgate ) {(void)xorgate; }
+void SaveVisitor::visit( Or &orgate ) { writeGate(orgate, "or"); }
 
-void SaveVisitor::visit( Inhibit &inhibgate ) {(void)inhibgate;}
+void SaveVisitor::visit( Xor &xorgate ) { writeGate(xorgate, "xor"); }
 
-void SaveVisitor::visit( Transfert &transfertgate ) {(void)transfertgate;}
+void SaveVisitor::visit( Inhibit &inhibgate )
+{
+	QDomElement rootgate = dom.createElement("define-gate");
+	writeGateProperties(rootgate, inhibgate);
+	QDomElement node = dom.createElement("inhibit");
+	QDomElement tmp;
+	tmp = dom.createElement("constant");
+	tmp.setAttribute("value", inhibgate.getCondition() ? "true" : "false");
+	node.appendChild(tmp);
+	writeChildren(node, inhibgate);
+	rootgate.appendChild(node);
+	dom.documentElement().appendChild(rootgate);
+}
+
+void SaveVisitor::visit( Transfert &transfertgate ) {(void)transfertgate;/*INUTILE ?!?*/}
 
 void SaveVisitor::visit( Constant &constdistrib ) {(void)constdistrib;}
 
@@ -60,11 +97,15 @@ void SaveVisitor::visit( Event &event )
 	tag = dom.createElement("define-basic-event");
 	tag.setAttribute("name", prop.getName());
 	dom.documentElement().appendChild(tag);
-
-	// write properties ...
-	tag2 = dom.createElement("label");
-	tag2.appendChild(dom.createTextNode(prop.getDesc()));
-	tag.appendChild(tag2);
+	
+	// write properties if any
+	if(!prop.getDesc().isEmpty())
+	{
+		tag2 = dom.createElement("label");
+		tag2.appendChild(dom.createTextNode(prop.getDesc()));
+		tag.appendChild(tag2);
+	}
+	
 	// wrtie parameter if any
 	Distribution* distr = event.getDistribution();
 	if(distr)
@@ -73,22 +114,4 @@ void SaveVisitor::visit( Event &event )
 		tag.setAttribute("name", distr->getProperties().getName());
 	}
 	dom.documentElement().appendChild(tag);
-}
-
-void SaveVisitor::writeGateProperties(QDomElement &elem, Gate& gate)
-{
-	Properties& prop = gate.getProperties();
-	elem.setAttribute("name", prop.getName());
-	QDomElement tag;
-	tag = dom.createElement("label");
-	tag.appendChild(dom.createTextNode(prop.getDesc()));
-	elem.appendChild(tag);
-	tag = dom.createElement("attributes");
-	elem.appendChild(tag);
-	tag = dom.createElement("attribute");
-	tag.setAttribute("x", gate.getPosition().x());
-	elem.lastChild().appendChild(tag);
-	tag = dom.createElement("attribute");
-	tag.setAttribute("y", gate.getPosition().y());
-	elem.lastChild().appendChild(tag);
 }

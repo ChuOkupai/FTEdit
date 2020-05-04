@@ -9,6 +9,8 @@ class SaveVisitor
 	private :
 		QDomDocument dom;
 		void writeGateProperties(QDomElement &elem, Gate& gate);
+		void writeChildren(QDomElement &node, Gate& gate);
+		void writeGate(Gate& gate, QString type);
 	public :
 		SaveVisitor();
 		~SaveVisitor();
