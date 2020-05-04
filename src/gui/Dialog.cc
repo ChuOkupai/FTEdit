@@ -36,7 +36,7 @@ ChooseDistributionDialog::ChooseDistributionDialog(QWidget *parent, Editor &edit
 	linker.set(hLayout);
 	linker.addLayoutItem(new QSpacerItem(60, 0, QSizePolicy::Maximum, QSizePolicy::Minimum));
 	linker.set(layout);
-	linker.addOKButton();
+	linker.addOKButton()->setText("Continue");
 }
 
 PropertiesDialog::PropertiesDialog(QWidget *parent, Editor &editor, Properties *prop, bool initialized) :

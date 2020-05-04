@@ -94,4 +94,5 @@ void EditContainerDialog::addDistribution()
 	Distribution *dist = editor.getDistributions().last();
 	distributions->addItem(dist->getProperties().getName());
 	distributions->setCurrentIndex(distributions->count() - 1);
+	editDistribution();
 }

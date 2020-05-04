@@ -34,6 +34,7 @@ FTEdit
 
 # Qt
 .qmake.stash
+Makefile.pro.user
 Makefile
 .moc
 qrc_*.cpp

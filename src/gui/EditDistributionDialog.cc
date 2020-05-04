@@ -14,14 +14,12 @@ void VisitorEditDistribution::visit(Constant &distribution)
 
 void VisitorEditDistribution::visit(Exponential &distribution)
 {
-    //(void)distribution;
-    EditExponentialDialog(parent, editor, distribution).exec();
+	EditExponentialDialog(parent, editor, distribution).exec();
 }
 
 void VisitorEditDistribution::visit(Weibull &distribution)
 {
-    //(void)distribution;
-    EditWeibullDialog(parent, editor, distribution).exec();
+	EditWeibullDialog(parent, editor, distribution).exec();
 }
 
 // EditConstantDialog
@@ -29,7 +27,8 @@ void VisitorEditDistribution::visit(Weibull &distribution)
 EditConstantDialog::EditConstantDialog(QWidget *parent, Editor &editor, Constant &dist) :
 PropertiesDialog(parent, editor, &dist.getProperties()), editor(editor), dist(dist)
 {
-    setWindowTitle("Edit Constant Distribution");
+	setWindowTitle("Edit Constant Distribution");
+	resize(360, 400);
 	WidgetLinker linker(this, (QBoxLayout*)layout());
 	linker.addLayoutItem(new QSpacerItem(0, 20, QSizePolicy::Minimum, QSizePolicy::Maximum));
 	linker.addLabel("Unavailability:");
@@ -38,7 +37,7 @@ PropertiesDialog(parent, editor, &dist.getProperties()), editor(editor), dist(di
 	value->setDecimals(16); // Precision
 	value->setSingleStep(0); // Disable step
 	value->setValue(dist.getValue());
-	value->setButtonSymbols(QAbstractSpinBox::NoButtons); // Disable adjuste button
+	value->setButtonSymbols(QAbstractSpinBox::NoButtons); // Disable adjust button
 	linker.addOKButton();
 
 	connect(value, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
@@ -50,27 +49,21 @@ PropertiesDialog(parent, editor, &dist.getProperties()), editor(editor), dist(di
 EditExponentialDialog::EditExponentialDialog(QWidget *parent, Editor &editor, Exponential &dist) :
 PropertiesDialog(parent, editor, &dist.getProperties()), editor(editor), dist(dist)
 {
-    setWindowTitle("Edit Exponential Distribution");
-    WidgetLinker linker(this, (QBoxLayout*)layout());
-    linker.addLayoutItem(new QSpacerItem(0, 20, QSizePolicy::Minimum, QSizePolicy::Maximum));
-    linker.addLabel("Unavailability:");
-    value = linker.addDoubleSpinBox();
-    value->setRange(0.0, 1.0); // Probability range between 0.0 and 1.0
-    value->setDecimals(16); // Precision
-    value->setSingleStep(0); // Disable step
-    value->setValue(dist.getValue());
-    value->setButtonSymbols(QAbstractSpinBox::NoButtons);
+	setWindowTitle("Edit Exponential Distribution");
+	resize(380, 400);
+	WidgetLinker linker(this, (QBoxLayout*)layout());
+	linker.addLayoutItem(new QSpacerItem(0, 20, QSizePolicy::Minimum, QSizePolicy::Maximum));
+	linker.addLabel("Lambda:");
+	lambda = linker.addDoubleSpinBox();
+	lambda->setRange(0.0, 1.0);
+	lambda->setDecimals(16);
+	lambda->setSingleStep(0);
+	lambda->setValue(dist.getValue());
+	lambda->setButtonSymbols(QAbstractSpinBox::NoButtons);
+	linker.addOKButton();
 
-    linker.addLabel("Lambda:");
-    lambda = linker.addDoubleSpinBox();
-    lambda->setSingleStep(0);
-    lambda->setValue(dist.getLambda());
-    lambda->setButtonSymbols(QAbstractSpinBox::NoButtons);
-
-    linker.addOKButton();
-
-    connect(value, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
-    [=](double d){ this->dist.setValue(d); });
+	connect(lambda, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+	[=](double d){ this->dist.setValue(d); });
 }
 
 // TODO
@@ -80,33 +73,32 @@ PropertiesDialog(parent, editor, &dist.getProperties()), editor(editor), dist(di
 EditWeibullDialog::EditWeibullDialog(QWidget *parent, Editor &editor, Weibull &dist) :
 PropertiesDialog(parent, editor, &dist.getProperties()), editor(editor), dist(dist)
 {
-    setWindowTitle("Edit Weibull Distribution");
-    WidgetLinker linker(this, (QBoxLayout*)layout());
-    linker.addLayoutItem(new QSpacerItem(0, 20, QSizePolicy::Minimum, QSizePolicy::Maximum));
-    linker.addLabel("Unavailability:");
-    value = linker.addDoubleSpinBox();
-    value->setRange(0.0, 1.0); // Probability range between 0.0 and 1.0
-    value->setDecimals(16); // Precision
-    value->setSingleStep(0); // Disable step
-    value->setValue(dist.getValue());
-    value->setButtonSymbols(QAbstractSpinBox::NoButtons);
+	setWindowTitle("Edit Weibull Distribution");
+	resize(360, 400);
+	WidgetLinker linker(this, (QBoxLayout*)layout());
+	linker.addLayoutItem(new QSpacerItem(0, 20, QSizePolicy::Minimum, QSizePolicy::Maximum));
+	linker.addLabel("Scale:");
+	scale = linker.addDoubleSpinBox();
+	scale->setRange(0.0, 1.0);
+	scale->setDecimals(16);
+	scale->setSingleStep(0);
+	scale->setValue(dist.getValue());
+	scale->setButtonSymbols(QAbstractSpinBox::NoButtons);
 
-    linker.addLabel("Scale:");
-    scale = linker.addDoubleSpinBox();
-    scale->setSingleStep(0);
-    scale->setValue(dist.getScale());
-    scale->setButtonSymbols(QAbstractSpinBox::NoButtons);
+	linker.addLabel("Shape:");
+	shape = linker.addDoubleSpinBox();
+	shape->setRange(0.0, 1.0);
+	shape->setDecimals(16);
+	shape->setSingleStep(0);
+	shape->setValue(dist.getValue());
+	shape->setButtonSymbols(QAbstractSpinBox::NoButtons);
 
-    linker.addLabel("Shape:");
-    shape = linker.addDoubleSpinBox();
-    shape->setSingleStep(0);
-    shape->setValue(dist.getShape());
-    shape->setButtonSymbols(QAbstractSpinBox::NoButtons);
+	linker.addOKButton();
 
-    linker.addOKButton();
-
-    connect(value, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
-    [=](double d){ this->dist.setValue(d); });
+	connect(scale, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+	[=](double d){ this->dist.setScale(d); });
+	connect(shape, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+	[=](double d){ this->dist.setShape(d); });
 }
 
 
