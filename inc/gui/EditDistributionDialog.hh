@@ -36,14 +36,11 @@ class EditExponentialDialog : public PropertiesDialog
 
 private:
 	Editor &editor;
-    Exponential &dist;
-	// Add required QDoubleSpinBox fields
-    QDoubleSpinBox *value;
-    //QDoubleSpinBox *time;
-    QDoubleSpinBox *lambda;
+	Exponential &dist;
+	QDoubleSpinBox *lambda;
 
 public:
-    EditExponentialDialog(QWidget *parent, Editor &editor, Exponential &dist);
+	EditExponentialDialog(QWidget *parent, Editor &editor, Exponential &dist);
 };
 
 class EditWeibullDialog : public PropertiesDialog
@@ -52,14 +49,11 @@ class EditWeibullDialog : public PropertiesDialog
 
 private:
 	Editor &editor;
-    Weibull &dist;
-	// Add required QDoubleSpinBox fields
-    QDoubleSpinBox *value;
-    //QDoubleSpinBox *time;
-    QDoubleSpinBox *scale;
-    QDoubleSpinBox *shape;
+	Weibull &dist;
+	QDoubleSpinBox *scale;
+	QDoubleSpinBox *shape;
 
 public:
-    EditWeibullDialog(QWidget *parent, Editor &editor, Weibull &dist);
+	EditWeibullDialog(QWidget *parent, Editor &editor, Weibull &dist);
 };
 
