@@ -40,14 +40,22 @@ public:
 
 // Custom QGraphicsView widget for smooth edition
 
+#define ZOOM_MIN	0.5
+#define ZOOM_MAX	15.0
+#define ZOOM_STEP	0.2
+
 class GraphicsView : public QGraphicsView
 {
 	Q_OBJECT
 
 protected Q_SLOTS:
-	// Zoom view (rescale)
 	void wheelEvent(QWheelEvent *event);
 
 public:
 	GraphicsView(QWidget *parent);
+
+	// Set a new zoom factor
+	void setZoom(qreal factor);
+	// Get the current zoom factor
+	qreal zoom();
 };

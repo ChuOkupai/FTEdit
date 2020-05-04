@@ -106,6 +106,24 @@ QGraphicsView(parent)
 
 void GraphicsView::wheelEvent(QWheelEvent *event)
 {
-	qreal factor = event->delta() > 0 ? 1.25 : 0.75;
+	qreal f = 1;
+
+	if (event->delta() < 0 && (f -= ZOOM_STEP) * zoom() < ZOOM_MIN)
+		setZoom(ZOOM_MIN);
+	else if (event->delta() > 0 && (f += ZOOM_STEP) * zoom() > ZOOM_MAX)
+		setZoom(ZOOM_MAX);
+	else
+		scale(f, f);
+}
+
+void GraphicsView::setZoom(qreal factor)
+{
+	scale(0.1, 0.1);
+	resetMatrix();
 	scale(factor, factor);
+}
+
+qreal GraphicsView::zoom()
+{
+	return transform().m11();
 }

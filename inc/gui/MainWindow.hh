@@ -6,8 +6,6 @@
 #define ICON_SIZE	48
 #define RES_MIN_X	460
 #define RES_MIN_Y	320
-#define ZOOM_MIN	20.0
-#define ZOOM_MAX	400.0
 #define MIN(A, B) ((A) < (B) ? (A) : (B))
 
 class MainWindow : public QMainWindow
@@ -56,7 +54,6 @@ private slots:
 private:
 	Editor	*editor;
 	bool	modified;
-	double	zoomLevel;
 	Node	*current;
 
 	QAction *newAct;

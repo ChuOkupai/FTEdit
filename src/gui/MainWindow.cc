@@ -3,7 +3,7 @@
 #include "ManageDistributionsDialog.hh"
 #include "ManageEventsDialog.hh"
 
-MainWindow::MainWindow() : editor(nullptr), modified(false), zoomLevel(100)
+MainWindow::MainWindow() : editor(nullptr), modified(false)
 {
 	toolBar = new QToolBar;
 	toolBar->setFloatable(false);
@@ -45,7 +45,7 @@ MainWindow::MainWindow() : editor(nullptr), modified(false), zoomLevel(100)
 	scene = new QGraphicsScene(this);
 	view->setScene(scene);
 	scene->setBackgroundBrush(Qt::white);
-	scene->addSimpleText("Hello World!");
+	scene->addText("Hello World!")->setDefaultTextColor(QColor(0, 117, 213));
 	view->show();
 
 	viewLayout->addWidget(view);
@@ -179,22 +179,19 @@ void MainWindow::addTransfert()
 
 void MainWindow::zoomIn()
 {
-	if ((zoomLevel *= 1.2) > ZOOM_MAX)
-		zoomLevel = ZOOM_MAX;
-	qDebug() << "Zoom In to " << zoomLevel;
+	qreal f = 1 + 2 * ZOOM_STEP;
+	f * view->zoom() > ZOOM_MAX ? view->setZoom(ZOOM_MAX) : view->scale(f, f);
 }
 
 void MainWindow::zoomOut()
 {
-	if ((zoomLevel *= 0.8) < ZOOM_MIN)
-		zoomLevel = ZOOM_MIN;
-	qDebug() << "Zoom Out to " << zoomLevel;
+	qreal f = 1 - 2 * ZOOM_STEP;
+	f * view->zoom() < ZOOM_MIN ? view->setZoom(ZOOM_MIN) : view->scale(f, f);
 }
 
 void MainWindow::zoomReset()
 {
-	zoomLevel = 100.0;
-	qDebug() << "Zoom Reset to " << zoomLevel;
+	view->setZoom(1.5);
 }
 
 void MainWindow::showToolBar()
