@@ -83,6 +83,7 @@ private:
 	QAction *aboutAct;
 	QAction *aboutQtAct;
 
+	QMenu			*gatesMenu;
 	QToolBar		*toolBar;
 	QTreeWidget		*explorer;
 	GraphicsView	*view;
@@ -93,6 +94,7 @@ private:
 
 	void createActions();
 	void createMenus();
+	void createToolBar();
 	// Renvoie vrai si le projet peut être écrasé
 	bool maybeSave();
 	// réinitialise l'interface (en cas de chargement ou de nouveau fichier)*

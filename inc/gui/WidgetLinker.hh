@@ -38,11 +38,21 @@ public:
 	void replace(QBoxLayout *layout, QBoxLayout *with);
 };
 
+// Custom button for toolbar
+
+class GateToolButton : public QToolButton
+{
+	Q_OBJECT
+
+public:
+	GateToolButton(QWidget *parent);
+};
+
 // Custom QGraphicsView widget for smooth edition
 
 #define ZOOM_MIN	0.5
 #define ZOOM_MAX	15.0
-#define ZOOM_STEP	0.2
+#define ZOOM_STEP	0.1
 
 class GraphicsView : public QGraphicsView
 {

@@ -98,6 +98,13 @@ void WidgetLinker::replace(QBoxLayout *layout, QBoxLayout *with)
 	this->layout = layout;
 }
 
+GateToolButton::GateToolButton(QWidget *parent) :
+QToolButton(parent)
+{
+	setPopupMode(QToolButton::MenuButtonPopup);
+	QObject::connect(this, SIGNAL(triggered(QAction*)), this, SLOT(setDefaultAction(QAction*)));
+}
+
 GraphicsView::GraphicsView(QWidget *parent) :
 QGraphicsView(parent)
 {
