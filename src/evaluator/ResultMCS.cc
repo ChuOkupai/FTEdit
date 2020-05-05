@@ -136,15 +136,15 @@ QList<int> ResultMCS::sieveOfAtkin(int limit){/*Génère un nombre de nombres pr
 
                 n = 4 * x * x + y * y;/*n ← 4x²+y²:if (n ≤ limit) and (n mod 12 = 1 or n mod 12 = 5):is_prime(n) ← ¬is_prime(n)*/
                 if(n <= limit && (n % 12 == 1 || n % 12 == 5)){
-                    sieve_list[n] = ~sieve_list[n];
+                    sieve_list[n] = !sieve_list[n];
                 }
                 n = 3 * x * x + y * y; /*n ← 3x²+y²:if (n ≤ limit) and (n mod 12 = 7):is_prime(n) ← ¬is_prime(n)*/
                 if(n <= limit && n % 12 == 7){
-                    sieve_list[n] = ~sieve_list[n];
+                    sieve_list[n] = !sieve_list[n];
                 }
                 n = 3 * x * x - y * y;/*n ← 3x²-y²:if (x > y) and (n ≤ limit) and (n mod 12 = 11):is_prime(n) ← ¬is_prime(n)*/
                 if(x > y && n <= limit && n % 12 == 11){
-                    sieve_list[n] = ~sieve_list[n];
+                    sieve_list[n] = !sieve_list[n];
                 }
             }
         }
