@@ -351,7 +351,7 @@ void MainWindow::createActions()
 	addTransfertAct->setIcon(QIcon(":objects/transfert.png"));
 	connect(addTransfertAct, &QAction::triggered, this, &MainWindow::addTransfert);
 
-	addEventAct = new QAction("Basic event", this);
+	addEventAct = new QAction("Add basic event", this);
 	addEventAct->setStatusTip("Add a new basic event into the current tree");
 	addEventAct->setToolTip(addEventAct->statusTip());
 	addEventAct->setIcon(QIcon(":objects/basicEvent.png"));
@@ -417,7 +417,7 @@ void MainWindow::createActions()
 
 void MainWindow::createMenus()
 {
-	QMenu *m, *m2;
+	QMenu *m;
 
 	menuBar()->setContextMenuPolicy(Qt::PreventContextMenu);
 
@@ -435,17 +435,15 @@ void MainWindow::createMenus()
 	m->addAction(pasteAct);
 	m->addSeparator();
 
-	m2 = m->addMenu("Add...");
-		m2->setIcon(QIcon(":icons/add.png"));
-		gatesMenu = m2->addMenu("Gate...");
-		gatesMenu->setIcon(QIcon(":icons/add.png"));
-		gatesMenu->addAction(addAndAct);
-		gatesMenu->addAction(addInhibitAct);
-		gatesMenu->addAction(addOrAct);
-		gatesMenu->addAction(addKNAct);
-		gatesMenu->addAction(addXorAct);
-		gatesMenu->addAction(addTransfertAct);
-	m2->addAction(addEventAct);
+	gatesMenu = m->addMenu("Add Gate...");
+	gatesMenu->setIcon(QIcon(":icons/add.png"));
+	gatesMenu->addAction(addAndAct);
+	gatesMenu->addAction(addInhibitAct);
+	gatesMenu->addAction(addOrAct);
+	gatesMenu->addAction(addKNAct);
+	gatesMenu->addAction(addXorAct);
+	gatesMenu->addAction(addTransfertAct);
+	m->addAction(addEventAct);
 
 	m = menuBar()->addMenu("&View");
 	m->addAction(zoomInAct);
