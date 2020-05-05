@@ -12,6 +12,7 @@ MainWindow::MainWindow() : editor(nullptr), modified(false)
 	createToolBar();
 
 	setWindowTitle("FTEdit");
+	setWindowIcon(QIcon(":icons/ftedit.png"));
 	QRect r = QGuiApplication::primaryScreen()->geometry();
 	setMinimumSize(MIN(r.width(), RES_MIN_X), MIN(r.height(), RES_MIN_Y));
 	resize(r.width() / 1.5, r.height() / 1.5);
@@ -492,6 +493,8 @@ void MainWindow::createToolBar()
 	toolBar->addAction(zoomOutAct);
 	toolBar->addSeparator();
 	toolBar->addAction(evaluateAct);
+	toolBar->addSeparator();
+	toolBar->addAction(aboutAct);
 }
 
 bool MainWindow::maybeSave()
