@@ -41,9 +41,6 @@ MainWindow::MainWindow() : editor(nullptr), modified(false)
 	viewLayout->setContentsMargins(0, 0, 0, 0);
 	scene = new QGraphicsScene(this);
 	view->setScene(scene);
-	scene->setBackgroundBrush(Qt::white);
-	scene->addText("Hello World!")->setDefaultTextColor(QColor(0, 117, 213));
-	view->show();
 
 	viewLayout->addWidget(view);
 
