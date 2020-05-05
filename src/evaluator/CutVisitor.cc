@@ -1,15 +1,8 @@
 #include "CutVisitor.hh"
 
-using namespace std;
+CutVisitor::CutVisitor(QList<QList<Node*>>& cutset, QList<Container*>& containers) :
+    cutset(cutset), containers(containers){}//：后括号初始化赋值，ex:a(10),对于对象、引用、常量的赋值必须在引入函数前就进行初始化，之后不能再改变
 
-template<typename Base, typename T>
-inline bool instanceof(const T*) {
-    return is_base_of<Base, T>::value;
-}
-
-
-CutVisitor::CutVisitor(QList<QList<Node*>>& cutset) : cutset(cutset){//：后括号初始化赋值，ex:a(10),对于对象、引用、常量的赋值必须在引入函数前就进行初始化，之后不能再改变
-}
 CutVisitor::~CutVisitor(){}
 
 
@@ -73,20 +66,16 @@ void CutVisitor::visit(VotingOR& vorgate){
 void CutVisitor::visit(Inhibit& inhibgate){
     visitGate(inhibgate);
 
-//    QList<Container> containers;
-    Event cond("conditon " + inhibgate.getProperties().getName());
-    Constant proba("proba " + inhibgate.getProperties().getName());
+    Event* cond = new Event("conditon " + inhibgate.getProperties().getName());
+    Constant* proba = new Constant("proba " + inhibgate.getProperties().getName());
+    proba->setValue(inhibgate.getCondition()==true);
+    cond->setDistribution(proba);
+    Container* condition = new Container(cond);
 
-    if(inhibgate.getCondition()){
-        proba.setValue(1);
-    }else{
-        proba.setValue(0);
-    }
-    cond.setDistribution(&proba);
-    Container condition(&cond);
+    containers.append(condition);
 
     cutset[i][j] = inhibgate.getChildren().at(0);/*ajouter le fils de inhibit*/
-    cutset[i].append(&condition);/*ajouter sa condition*/
+    cutset[i].append(condition);/*ajouter sa condition*/
 
     }
 

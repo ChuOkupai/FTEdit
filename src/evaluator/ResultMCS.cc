@@ -10,51 +10,70 @@ inline bool instanceof(const T*) {
    return is_base_of<Base, T>::value;
 }
 
-
+/*Constructeur*/
 ResultMCS::ResultMCS(Gate* top,double missionTime,double step) : Evaluator(top,missionTime,step){
-	cs = {{top}};/*cs contient tous les coupe*/
-}
+    QList<Container*> containers;//mettre dedans des containers alloues dynamiques
+    QList<QList<Node*>> cs;
+    QList<QList<Event>> mcs;
+    cs = {{top}};/*cs contient tous les coupe*/
+    computeCS(cs, containers);
+    convertCS(cs, mcs);
+    reduceCS(mcs);
 
+    for(int i=0; i<mcs.size(); i++){//recuperer les noms de chaque event
+        mcsNames.append(QList<QString>());
+        for(int j=0; j<mcs[i].size();j++){
+            mcsNames[i].append(mcs[i][j].getProperties().getName());
+        }
+    }
+
+    for(int i=0;i<containers.size();i++){//librer les memoire dynamique
+        delete containers[i]->getEvent()->getDistribution();
+        delete containers[i]->getEvent();
+        delete containers[i];
+    }
+
+}
+/*Deconstructeur*/
 ResultMCS::~ResultMCS(){}
 
-void ResultMCS::computeCS(){// trouver tous les coupes
-    CutVisitor visitor(cs);
+
+
+void ResultMCS::computeCS(QList<QList<Node*>>& cs, QList<Container*>& containers){// trouver tous les coupes
+    CutVisitor visitor(cs, containers);
 
 	for(int i=0; i<cs.size(); i++){
 		for(int j=0; j<cs[i].size();j++){
 
-            if(!instanceof<Container>(cs[i][j])){/*si c'est pas un Event de base*/
+            if(!instanceof<Container>(cs[i][j])){/*si c'est pas un Event de base, si c'est un event de base, pass directement*/
                 visitor.setIndex(i,j);//donner visitor l'index courant.
                 cs[i][j]->accept(visitor);//recuperer les enfants et les mettre dans le matrice selon le type de la porte
                                             // les facons d'ajouter sont deja definis dans visitor.
 
-                computeCS();/*recursif*/
+                computeCS(cs, containers);/*recursif*/
 			}
 		}
     }
 }
 
-void ResultMCS::convertCS(){/*Convertit la liste de liste de Node en liste de liste d'évènements*/
+void ResultMCS::convertCS(QList<QList<Node*>>& cs, QList<QList<Event>>& mcs){/*Convertit la liste de liste de Node en liste de liste d'évènements*/
     for(int i=0; i<cs.size(); i++){
 		mcs.append(QList<Event>());
 		for(int j=0; j<cs[i].size();j++){
             Container *c = (Container*)cs[i][j];
             mcs[i].append(*c->getEvent());
 		}// (utilise le dynamic cast)
-        qDeleteAll(cs[i]);//librer memoire pour pointeur;
-        cs[i].clear();
     }
-    cs.clear();//librer memoire;
 }
 
-void ResultMCS::reduceCS(){/*enlever les doublons et reduire */
+void ResultMCS::reduceCS(QList<QList<Event>>& mcs){/*enlever les doublons et reduire */
 	QList<int> premiers;
 	QList<Event> lstEvent;/*contient tous les events non-doublons dans cet arbre*/
 	QMap<Event, int> mapEvent;/*lier chaque event avec un nombre premier*/
 	QMap<int, int> mapMul;/*Key est l'index dechaque coupe dans mcs, valeur est resultatMul de chaque coupe correspondant*/
 	int mul;/*y mettre le mul de premier dans chaque coupe*/
 
-	sortCut();/*enlever les doublons dans les coupes */
+    sortCut(mcs);/*enlever les doublons dans les coupes */
 
 	for(int i=0; i<mcs.size(); i++){/*trouver tous les events non-doublons dans cet arbre*/
 		for(int j=0; j<mcs[i].size();j++){
@@ -107,7 +126,7 @@ void ResultMCS::reduceCS(){/*enlever les doublons et reduire */
 
 
 
-void ResultMCS::sortCut(){/*enlever les doublons dans les coupes */
+void ResultMCS::sortCut(QList<QList<Event>>& mcs){/*enlever les doublons dans les coupes */
 
 	for(int i=0; i<mcs.size(); i++){/*enlever les doublons dans les coupes */
 
@@ -170,21 +189,9 @@ QList<int> ResultMCS::sieveOfAtkin(int limit){/*Génère un nombre de nombres pr
 
 
 QList<QList<QString>> ResultMCS::getMCS(){//rentrer les noms des events
-    QList<QList<QString>> tabMCS;//mettre dedans les noms des events
-	computeCS();
-	convertCS();
-	reduceCS();
-
-    for(int i=0; i<mcs.size(); i++){//recuperer les noms de chaque event
-        tabMCS.append(QList<QString>());
-        for(int j=0; j<mcs[i].size();j++){
-            tabMCS[i].append(mcs[i][j].getProperties().getName());
-        }
-    }
-    return tabMCS;
+    return mcsNames;
 }
-QList<double> ResultMCS::getProbabilities(){
-	QList<double> tab;
-	return tab;
 
+QList<double> ResultMCS::getProbabilities(){
+    return mcsProbas;
 }

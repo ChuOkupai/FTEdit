@@ -6,14 +6,14 @@
 class ResultMCS : public Evaluator
 {
 	private : 
-		QList<QList<Event>> mcs;
-		QList<QList<Node*>> cs;
+        QList<QList<QString>> mcsNames;//mettre dedans les noms des events
+        QList<double> mcsProbas;
 
 		QList<int> sieveOfAtkin(int n);
-		void computeCS();
-		void reduceCS();
-		void sortCut();
-		void convertCS();
+        void computeCS(QList<QList<Node*>>& cs, QList<Container*>& containers);
+        void reduceCS(QList<QList<Event>>& mcs);
+        void sortCut(QList<QList<Event>>& mcs);
+        void convertCS(QList<QList<Node*>>& cs, QList<QList<Event>>& mcs);
 
 
 	public :
