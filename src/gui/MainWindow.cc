@@ -2,6 +2,7 @@
 #include "EditContainerDialog.hh"
 #include "ManageDistributionsDialog.hh"
 #include "ManageEventsDialog.hh"
+#include "RenderVisitor.hh"
 
 MainWindow::MainWindow() : editor(nullptr), modified(false)
 {
@@ -76,6 +77,8 @@ void MainWindow::newFile()
 	reset();
 	current = nullptr;
 	editor = new Editor();
+	editor->detach();
+	setEnabledButton(true, false);
 }
 
 void MainWindow::open()
@@ -125,7 +128,7 @@ void MainWindow::cut()
 
 void MainWindow::copy()
 {
-	
+	;
 }
 
 void MainWindow::paste()
@@ -135,27 +138,28 @@ void MainWindow::paste()
 
 void MainWindow::addAnd()
 {
-	modified = true;
+	addGate(new And(editor->generateName(PREFIX_GATE)));
 }
 
 void MainWindow::addInhibit()
 {
-	modified = true;
+	addGate(new Inhibit(editor->generateName(PREFIX_GATE)));
 }
 
 void MainWindow::addOr()
 {
-	modified = true;
+	addGate(new Or(editor->generateName(PREFIX_GATE)));
 }
 
 void MainWindow::addKN()
 {
-	modified = true;
+	addGate(new VotingOR(editor->generateName(PREFIX_GATE)));
 }
 
 void MainWindow::addXor()
 {
-	modified = true;
+	// ISSUE
+	//addGate(new Xor(editor->generateName(PREFIX_GATE)));
 }
 
 void MainWindow::addEvent()
@@ -163,13 +167,18 @@ void MainWindow::addEvent()
 	modified = true;
 	QList<Event> &events = editor->getEvents();
 	events << Event(editor->generateName(PREFIX_EVENT));
-	Container c(&events.last()); // test
-	EditContainerDialog(this, *editor, c).exec();
+	auto cont = new Container(&events.last());
+	cont->attach((Gate*)current);
+	RenderVisitor(view, editor->getSelection());
+	EditContainerDialog(this, *editor, *cont).exec();
 }
 
 void MainWindow::addTransfert()
 {
 	modified = true;
+	auto t = new Transfert(editor->generateName(PREFIX_GATE));
+	t->attach((Gate*)current);
+	RenderVisitor(view, editor->getSelection());
 }
 
 void MainWindow::zoomIn()
@@ -233,7 +242,7 @@ void MainWindow::showEvents()
 
 void MainWindow::evaluate()
 {
-	qDebug() << "Evaluate fault tree";
+	;
 }
 
 void MainWindow::about()
@@ -513,4 +522,31 @@ void MainWindow::resizeSplitter(QSplitter *splitter, int widget1Size, int widget
 	l << widget1Size << widget2Size;
 	splitter->setSizes(l);
 	l.clear();
+}
+
+void MainWindow::setEnabledButton(bool gates, bool childs)
+{
+	addAndAct->setEnabled(gates);
+	addInhibitAct->setEnabled(gates);
+	addOrAct->setEnabled(gates);
+	addKNAct->setEnabled(gates);
+	addXorAct->setEnabled(gates);
+	addTransfertAct->setEnabled(childs);
+	addEventAct->setEnabled(childs);
+}
+
+void MainWindow::addGate(Gate *g)
+{
+	editor->getGates() << g;
+	if (current)
+		g->attach((Gate*)current);
+	else
+	{
+		editor->getSelection()->setTop(g);
+		setEnabledButton(true, true);
+	}
+	//editor->move(g, (Gate*)current); ???
+	current = g;
+	modified = true;
+	RenderVisitor(view, editor->getSelection());
 }

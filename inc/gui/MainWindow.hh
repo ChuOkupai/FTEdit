@@ -97,8 +97,12 @@ private:
 	void createToolBar();
 	// Renvoie vrai si le projet peut être écrasé
 	bool maybeSave();
-	// réinitialise l'interface (en cas de chargement ou de nouveau fichier)*
+	// Réinitialise l'interface (en cas de chargement ou de nouveau fichier)
 	void reset();
 	// Redimensionne le layout
 	void resizeSplitter(QSplitter *splitter, int widget1Size, int widget2Size);
+	// Set enabled buttons
+	void setEnabledButton(bool gates, bool childs);
+	// Add new Gate
+	void addGate(Gate *g);
 };
