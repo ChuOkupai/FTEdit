@@ -1,6 +1,5 @@
 #pragma once
 #include "FTEdit_Editor.hh"
-#include "ResultMCS.hh"
 #include <QDebug>
 
 class CutVisitor : public VisitorNode
