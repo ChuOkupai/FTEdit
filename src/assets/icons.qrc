@@ -1,12 +1,5 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
-	<file>icons/objects/and.png</file>
-	<file>icons/objects/basicEvent.png</file>
-	<file>icons/objects/inhibit.png</file>
-	<file>icons/objects/kn.png</file>
-	<file>icons/objects/or.png</file>
-	<file>icons/objects/transfert.png</file>
-	<file>icons/objects/xor.png</file>
 	<file>icons/about.png</file>
 	<file>icons/add.png</file>
 	<file>icons/copy.png</file>

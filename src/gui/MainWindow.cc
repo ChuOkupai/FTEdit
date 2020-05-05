@@ -308,43 +308,43 @@ void MainWindow::createActions()
 	addAndAct = new QAction("And", this);
 	addAndAct->setStatusTip("Add a new and gate into the current tree");
 	addAndAct->setToolTip(addAndAct->statusTip());
-	addAndAct->setIcon(QIcon(":icons/objects/and.png"));
+	addAndAct->setIcon(QIcon(":objects/and.png"));
 	connect(addAndAct, &QAction::triggered, this, &MainWindow::addAnd);
 
 	addInhibitAct = new QAction("Inhibit", this);
 	addInhibitAct->setStatusTip("Add a new inhibit gate into the current tree");
 	addInhibitAct->setToolTip(addInhibitAct->statusTip());
-	addInhibitAct->setIcon(QIcon(":icons/objects/inhibit.png"));
+	addInhibitAct->setIcon(QIcon(":objects/inhibit.png"));
 	connect(addInhibitAct, &QAction::triggered, this, &MainWindow::addInhibit);
 
 	addOrAct = new QAction("Or", this);
 	addOrAct->setStatusTip("Add a new or gate into the current tree");
 	addOrAct->setToolTip(addOrAct->statusTip());
-	addOrAct->setIcon(QIcon(":icons/objects/or.png"));
+	addOrAct->setIcon(QIcon(":objects/or.png"));
 	connect(addOrAct, &QAction::triggered, this, &MainWindow::addOr);
 
 	addKNAct = new QAction("Voting or", this);
 	addKNAct->setStatusTip("Add a new voting or gate into the current tree");
 	addKNAct->setToolTip(addKNAct->statusTip());
-	addKNAct->setIcon(QIcon(":icons/objects/kn.png"));
+	addKNAct->setIcon(QIcon(":objects/kn.png"));
 	connect(addKNAct, &QAction::triggered, this, &MainWindow::addKN);
 
 	addXorAct = new QAction("Xor", this);
 	addXorAct->setStatusTip("Add a new xor gate into the current tree");
 	addXorAct->setToolTip(addXorAct->statusTip());
-	addXorAct->setIcon(QIcon(":icons/objects/xor.png"));
+	addXorAct->setIcon(QIcon(":objects/xor.png"));
 	connect(addXorAct, &QAction::triggered, this, &MainWindow::addXor);
 
 	addTransfertAct = new QAction("Transfert in", this);
 	addTransfertAct->setStatusTip("Add a new transfert in gate into the current tree");
 	addTransfertAct->setToolTip(addTransfertAct->statusTip());
-	addTransfertAct->setIcon(QIcon(":icons/objects/transfert.png"));
+	addTransfertAct->setIcon(QIcon(":objects/transfert.png"));
 	connect(addTransfertAct, &QAction::triggered, this, &MainWindow::addTransfert);
 
 	addEventAct = new QAction("Basic event", this);
 	addEventAct->setStatusTip("Add a new basic event into the current tree");
 	addEventAct->setToolTip(addEventAct->statusTip());
-	addEventAct->setIcon(QIcon(":icons/objects/basicEvent.png"));
+	addEventAct->setIcon(QIcon(":objects/basicEvent.png"));
 	connect(addEventAct, &QAction::triggered, this, &MainWindow::addEvent);
 
 	zoomInAct = new QAction("Zoom In", this); zoomInAct->setShortcuts(QKeySequence::ZoomIn);

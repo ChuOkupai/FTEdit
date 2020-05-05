@@ -5,12 +5,13 @@ TARGET = FTEdit
 QT += widgets xml
 
 DESTDIR = bin
-MOC_DIR = .moc
+MOC_DIR = src/.moc
 OBJECTS_DIR = .obj
 
 DEFINES += QT_DEPRECATED_WARNINGS
-RESOURCES += assets/icons.qrc
-RCC_DIR = src
+RESOURCES += src/assets/icons.qrc \
+src/assets/objects.qrc
+RCC_DIR = src/.qrc
 
 INCLUDEPATH += \
 $$PWD/inc \

@@ -36,7 +36,8 @@ FTEdit
 .qmake.stash
 Makefile.pro.user
 Makefile
-.moc
-qrc_*.cpp
+.obj
+src/.moc
+src/.qrc
 
 *.DS_Store
