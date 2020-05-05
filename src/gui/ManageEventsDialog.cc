@@ -10,4 +10,5 @@ ManageEventsDialog::ManageEventsDialog(QWidget *parent, QList<Event> &list)
 : QDialog(parent), list(list)
 {
 	setWindowTitle("Events list");
+	setWindowIcon(QIcon(":icons/manage.png"));
 }

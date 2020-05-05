@@ -81,6 +81,7 @@ void PropertiesDialog::init()
 {
 	if (!this->layout())
 		new QVBoxLayout(this);
+	setWindowIcon(QIcon(":icons/edit.png"));
 	WidgetLinker linker(this, (QBoxLayout*)this->layout());
 	linker.addLabel("Name:");
 	nameWidget = linker.addLineEdit(prop->getName());

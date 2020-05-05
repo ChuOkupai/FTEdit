@@ -369,6 +369,7 @@ void MainWindow::createActions()
 
 	zoomResetAct = new QAction("Reset Zoom", this);
 	zoomResetAct->setStatusTip("Reset Zoom");
+	zoomResetAct->setIcon(QIcon(":icons/edit.png"));
 	connect(zoomResetAct, &QAction::triggered, this, &MainWindow::zoomReset);
 
 	showToolBarAct = new QAction("Show Toolbar", this);
@@ -379,10 +380,12 @@ void MainWindow::createActions()
 
 	toggleExplorerAct = new QAction("Toggle Project Explorer", this);
 	toggleExplorerAct->setStatusTip("Display or hide Project Explorer section");
+	toggleExplorerAct->setIcon(QIcon(":icons/edit.png"));
 	connect(toggleExplorerAct, &QAction::triggered, this, &MainWindow::toggleExplorer);
 
 	toggleErrorListAct = new QAction("Toggle Error List", this);
 	toggleErrorListAct->setStatusTip("Display or hide Error List section");
+	toggleErrorListAct->setIcon(QIcon(":icons/edit.png"));
 	connect(toggleErrorListAct, &QAction::triggered, this, &MainWindow::toggleErrorList);
 
 	distributionsAct = new QAction("Manage distributions...", this);

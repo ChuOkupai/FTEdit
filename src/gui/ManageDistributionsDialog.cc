@@ -10,4 +10,5 @@ ManageDistributionsDialog::ManageDistributionsDialog(QWidget *parent, QList<Dist
 : QDialog(parent), list(list)
 {
 	setWindowTitle("Distributions list");
+	setWindowIcon(QIcon(":icons/manage.png"));
 }
