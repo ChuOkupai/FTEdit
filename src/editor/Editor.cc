@@ -66,8 +66,8 @@ void Editor::paste(Gate *parent)
 
 void Editor::move(Node *child, Gate *parent)
 {
-	(void)child;
-	(void)parent;
+	child->detach();
+	child->attach(parent);
 }
 
 void Editor::remove(Node *top)

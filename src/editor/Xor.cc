@@ -6,6 +6,10 @@
 Xor::Xor(QString name) : Gate(name)
 {}
 
+Xor::Xor(Xor& cop) : Gate(cop.getProperties().getName())
+{}
+
+
 Xor::~Xor()
 {}
 
@@ -25,9 +29,7 @@ void Xor::accept(VisitorNode& visitor)
 	visitor.visit(*this);
 }
 
-/* xor gate undefined in EvalVisitor
 double Xor::accept(EvalVisitor& eval)
 {
 	return eval.visit(*this);
 }
-*/

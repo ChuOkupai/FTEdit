@@ -32,6 +32,7 @@ public:
 	virtual Node*	search(QPoint around) = 0;
 	virtual bool	check(QList<QString>& output) = 0;
 	virtual void	remove() = 0;
+	virtual void 	balanceNodePos() = 0;
 	virtual void 	accept(VisitorNode& visitor) = 0;
 	virtual double 	accept(EvalVisitor& eval) = 0;
 };

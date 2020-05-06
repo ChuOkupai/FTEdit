@@ -31,6 +31,7 @@ inc/editor/Transfert.hh \
 inc/editor/Tree.hh \
 inc/editor/VisitorNode.hh \
 inc/editor/VisitorDistribution.hh \
+inc/editor/CopyVisitor.hh \
 inc/evaluator/FTEdit_Evaluator.hh \
 inc/evaluator/EvalVisitor.hh\
 inc/evaluator/Evaluator.hh \
@@ -62,6 +63,7 @@ src/editor/Tree.cc \
 src/editor/VotingOR.cc \
 src/editor/Weibull.cc \
 src/editor/Xor.cc \
+src/editor/CopyVisitor.cc \
 src/evaluator/EvalVisitor.cc \
 src/evaluator/Evaluator.cc \
 src/evaluator/ResultMCS.cc \

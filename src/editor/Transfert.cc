@@ -5,6 +5,9 @@
 Transfert::Transfert(QString name) : Node() , link(nullptr) , prop(name,false)
 {}
 
+Transfert::Transfert(const Transfert& cop) : Node() , link(cop.getLink()) , prop(cop.prop)
+{}
+
 Transfert::~Transfert()
 {}
 
@@ -20,7 +23,10 @@ void Transfert::setLink(Tree* link)
 	}
 }
 
-
+Properties& Transfert::getProperties()
+{
+	return prop;
+}
 
 bool Transfert::check(QList<QString>& errors)
 {
@@ -32,10 +38,15 @@ bool Transfert::check(QList<QString>& errors)
 Node* Transfert::search(QPoint around)
 {
 	if (around.x() >= position.x() && around.x() < position.x() + NODE_X
-	&& around.y() >= position.y() && around.y() < position.y() + NODE_Y)
+	&& around.y() <= position.y() && around.y() > position.y() - NODE_Y)
 		return (this);
 	Node* n = nullptr;
 	return (n);
+}
+
+void Transfert::balanceNodePos()
+{
+	return;
 }
 
 bool Transfert::detectCycle(Node* n)

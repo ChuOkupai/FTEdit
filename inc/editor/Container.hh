@@ -11,16 +11,18 @@ private:
 
 public:
 	Container(Event *event);
+	Container(const Container&);
 
 	~Container();
 	
 	void	setEvent(Event *event);
 	
 	
-	Event	*getEvent();
+	Event	*getEvent() const;
 
 	bool	check(QList<QString> &errors);
 	Node*	search(QPoint around);
+	void 	balanceNodePos();
 	void	remove();
 	void	accept(VisitorNode& visitor);
 	double	accept(EvalVisitor& eval);

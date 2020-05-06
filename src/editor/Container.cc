@@ -9,6 +9,9 @@ Node::Node(), event(event)
 	event->getProperties().incrementRefCount();
 }
 
+Container::Container(const Container& cop) : Node() ,event(cop.getEvent())
+{}
+
 Container::~Container()
 {
 	if(this->event)
@@ -27,7 +30,7 @@ void Container::setEvent(Event* event)
 		this->event->getProperties().incrementRefCount();
 }
 
-Event* Container::getEvent()
+Event* Container::getEvent() const
 {
 	return (event);
 }
@@ -45,8 +48,26 @@ bool Container::check(QList<QString> &errors)
 
 Node* Container::search(QPoint around)
 {
-	(void)around;
-	return (nullptr);
+	/*
+	if(around == this->position)
+	return(this);
+	else
+	{
+		return this;
+	}
+	*/
+	
+	if (around.x() >= position.x() && around.x() < position.x() + NODE_X
+	&& around.y() <= position.y() && around.y() > position.y() - NODE_Y)
+		return (this);
+	Node* n = nullptr;
+	return (n);
+	
+}
+
+void Container::balanceNodePos()
+{
+	return;
 }
 
 void Container::remove()

@@ -18,7 +18,7 @@ public:
 
 	Properties&		getProperties();
 	QList<Node*>&	getChildren();
-
+	void 	balanceNodePos();	
 	Node*	search(QPoint around);
 	void	remove();
 };
@@ -27,6 +27,7 @@ class And : public Gate
 {
 public:
 	And(QString name);
+	And( And&);
 	~And();
 
 
@@ -42,6 +43,7 @@ class Inhibit : public Gate
 
 	public:
 	Inhibit(QString name);
+	Inhibit( Inhibit&);
 	~Inhibit();
 
 	bool getCondition() const;
@@ -58,6 +60,7 @@ class Or : public Gate
 {
 public:
 	Or(QString name);
+	Or( Or&);
 	~Or();
 
 
@@ -74,6 +77,7 @@ class VotingOR : public Gate // TODO
 	Gate* subTree;
 	public:
 	VotingOR(QString name);
+	VotingOR( VotingOR&);
 	~VotingOR();
 
 
@@ -92,12 +96,13 @@ class Xor : public Gate
 {
 public:
 	Xor(QString name);
+	Xor( Xor&);
 	~Xor();
 
 
 	bool check(QList<QString>& errors);
 
 	void accept(VisitorNode& visitor);
-	//double accept(EvalVisitor& eval); xor gate undefined in EvalVisitor
+	double accept(EvalVisitor& eval); //xor gate undefined in EvalVisitor
 
 };

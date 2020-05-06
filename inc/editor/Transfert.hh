@@ -12,15 +12,17 @@ class Transfert : public Node
     Properties prop;
     public:
     Transfert(QString name);
+    Transfert(const Transfert&);
     ~Transfert();
 
     Tree* getLink() const;
     void setLink(Tree* link);
+    Properties& getProperties();
 
     bool check(QList<QString>& errors);
 
     Node* search(QPoint around);
-
+    void 	balanceNodePos();
     bool detectCycle(Node* n);
 	void accept(VisitorNode& visitor);
 	double accept(EvalVisitor& eval);
