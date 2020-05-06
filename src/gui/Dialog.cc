@@ -19,6 +19,7 @@ ChooseDistributionDialog::ChooseDistributionDialog(QWidget *parent, Editor &edit
 : QDialog(parent), editor(editor)
 {
 	setWindowTitle("New model");
+	setWindowIcon(QIcon(":icons/add.png"));
 	auto layout = new QVBoxLayout(this);
 	WidgetLinker linker(this, layout);
 	linker.addLayoutItem(new QSpacerItem(0, 20, QSizePolicy::Minimum, QSizePolicy::Maximum));

@@ -8,10 +8,12 @@ class ManageEventsDialog : public QDialog
 
 private slots:
 	void closeEvent(QCloseEvent *event);
+	void cellChanged(int y, int x);
 
 private:
 	QList<Event> &list;
+	QTableWidget *table;
 
 public:
-	ManageEventsDialog(QWidget *parent,QList<Event> &list);
+	ManageEventsDialog(QWidget *parent, QList<Event> &list);
 };

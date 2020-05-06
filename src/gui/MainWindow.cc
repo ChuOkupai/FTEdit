@@ -230,12 +230,16 @@ void MainWindow::toggleErrorList()
 
 void MainWindow::showDistributions()
 {
+	modified = true;
 	ManageDistributionsDialog(this, editor->getDistributions()).exec();
+	editor->refresh(); // Remove unused Distributions
 }
 
 void MainWindow::showEvents()
 {
+	modified = true;
 	ManageEventsDialog(this, editor->getEvents()).exec();
+	editor->refresh(); // Remove unused Events
 }
 
 void MainWindow::evaluate()
