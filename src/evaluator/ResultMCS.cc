@@ -5,11 +5,6 @@
 using namespace std;
 #define LIMIT	(100000)
 
-template<typename Base, typename T> /*verifier le type d'un objet*/
-inline bool instanceof(const T*) {
-   return is_base_of<Base, T>::value;
-}
-
 /*Constructeur*/
 ResultMCS::ResultMCS(Gate* top,double missionTime,double step) : Evaluator(top,missionTime,step){
     QList<Container*> containers;//mettre dedans des containers alloues dynamiques
@@ -24,6 +19,12 @@ ResultMCS::ResultMCS(Gate* top,double missionTime,double step) : Evaluator(top,m
         mcsNames.append(QList<QString>());
         for(int j=0; j<mcs[i].size();j++){
             mcsNames[i].append(mcs[i][j].getProperties().getName());
+        }
+    }
+
+    for(int i=0; i<mcsNames.size(); i++){//montrer les resultat
+        for(int j=0; j<mcsNames[i].size();j++){
+            qDebug()<<"("<<i<<", "<<j<<"): "<<mcsNames[i][j];
         }
     }
 
@@ -45,7 +46,7 @@ void ResultMCS::computeCS(QList<QList<Node*>>& cs, QList<Container*>& containers
 	for(int i=0; i<cs.size(); i++){
 		for(int j=0; j<cs[i].size();j++){
 
-            if(!instanceof<Container>(cs[i][j])){/*si c'est pas un Event de base, si c'est un event de base, pass directement*/
+            if(!dynamic_cast<Container*>(cs[i][j])){/*si c'est pas un Event de base, si c'est un event de base, pass directement*/
                 visitor.setIndex(i,j);//donner visitor l'index courant.
                 cs[i][j]->accept(visitor);//recuperer les enfants et les mettre dans le matrice selon le type de la porte
                                             // les facons d'ajouter sont deja definis dans visitor.
@@ -96,24 +97,35 @@ void ResultMCS::reduceCS(QList<QList<Event>>& mcs){/*enlever les doublons et red
 		mapMul[i]=mul;
 	}
 
-
-	int temp[mcs.size()];/*mets l'index de chaque coupe*/
+    int tempIndexs[mcs.size()];/*mets les indexs de chaque coupe*/
+    int tempMuls[mcs.size()];/*mets les muls de chaque coupe*/
+    int temp;//temporaire
+    for(int i=0; i<mcs.size(); i++){//on ne peut pas modifier map parce que le key est le meme index que l'index de coupe dans le matrice
+                                         // du coup on creer deux tableaus pour mettre l'index et mul qui peuvent etre modifier
+        tempIndexs[i] = i;
+        tempMuls[i] = mapMul[i];
+    }
 
 	for(int j=mcs.size(); j>=1; j--){/*sort croissant*/
 		for(int i=0;i<j-1;i++){
-			if(mapMul[i] > mapMul[i+1]){/*mettre l'index du plus grand à la fin*/
-				temp[i] = i+1;
-				temp[i+1]=i;
-			}
+            if(tempMuls[i] > tempMuls[i+1]){/*mettre l'index du plus grand à la fin*/
+                temp = tempIndexs[i];
+                tempIndexs[i] = tempIndexs[i+1];
+                tempIndexs[i+1]=temp;
+
+                temp = tempMuls[i];
+                tempMuls[i] =tempMuls[i+1];
+                tempMuls[i+1] = temp;
+            }
 		}
 	}
 
 
 	for(int i=0; i<mcs.size();i++){
 		for(int j=i+1; j<mcs.size();j++){
-			if(!mapMul[temp[j]]%mapMul[temp[i]]){ /*MULde mcs[j] mod MULmcs[i] ==0*/
-				mcs[temp[j]].clear();/*empty la coupe qui a mul plus grand*/
-			}
+            if(mapMul[tempIndexs[j]]%mapMul[tempIndexs[i]]==0){ /*MULde mcs[j] mod MULmcs[i] ==0*/
+                mcs[tempIndexs[j]].clear();/*empty la coupe qui a mul plus grand*/
+            }
 		}
 	}
 	for(int i=mcs.size()-1; i>-1;i--){/*supprimer la coupe qui est vide*/
@@ -193,5 +205,5 @@ QList<QList<QString>> ResultMCS::getMCS(){//rentrer les noms des events
 }
 
 QList<double> ResultMCS::getProbabilities(){
-    return mcsProbas;
+    return probabilities;
 }

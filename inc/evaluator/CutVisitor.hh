@@ -12,7 +12,7 @@ private :
 
     void visitGate(Gate &gate)
     {
-        qDebug() << "Nombre d'enfants: "<<gate.getChildren().size();
+        qDebug() << gate.getProperties().getName() << "Nombre d'enfants: "<<gate.getChildren().size();
     }
 
 public :
@@ -27,6 +27,5 @@ public :
     void visit(Transfert& transfertgate);
     void visit(Container& container);
     void setIndex(int i, int j);//donner le visitor les index de la porte courante
-    void freeContainer();
 
 };

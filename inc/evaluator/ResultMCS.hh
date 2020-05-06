@@ -7,7 +7,6 @@ class ResultMCS : public Evaluator
 {
 	private : 
         QList<QList<QString>> mcsNames;//mettre dedans les noms des events
-        QList<double> mcsProbas;
 
 		QList<int> sieveOfAtkin(int n);
         void computeCS(QList<QList<Node*>>& cs, QList<Container*>& containers);
