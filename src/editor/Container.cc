@@ -9,7 +9,7 @@ Node::Node(), event(event)
 	event->getProperties().incrementRefCount();
 }
 
-Container::Container(const Container& cop) : Node() ,event(cop.getEvent())
+Container::Container(const Container& cop) : Node() , event(cop.getEvent())
 {}
 
 Container::~Container()
