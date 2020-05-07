@@ -56,6 +56,15 @@ double EvalVisitor::visit(Or&  orVisitor){
 	return 0;//to remove compiling warning
 }
 
+double EvalVisitor::visit(Xor&  xorVisitor){
+
+    for(int i = 0; i < xorVisitor.getChildren().size() ; i++){
+
+            return this->proba + xorVisitor.getChildren().at(i)->accept(*this);
+        }
+    return 0;//to remove compiling warning
+}
+
 double EvalVisitor::visit(Inhibit& inVisitor){
 	inVisitor.getParent();
 	if(inVisitor.getCondition()){
