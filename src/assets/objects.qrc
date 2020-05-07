@@ -1,0 +1,18 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+	<file>objects/flat/and.png</file>
+	<file>objects/flat/basicEvent.png</file>
+	<file>objects/flat/inhibit.png</file>
+	<file>objects/flat/kn.png</file>
+	<file>objects/flat/or.png</file>
+	<file>objects/flat/transfert.png</file>
+	<file>objects/flat/xor.png</file>
+	<file>objects/and.png</file>
+	<file>objects/basicEvent.png</file>
+	<file>objects/inhibit.png</file>
+	<file>objects/kn.png</file>
+	<file>objects/or.png</file>
+	<file>objects/transfert.png</file>
+	<file>objects/xor.png</file>
+</qresource>
+</RCC>

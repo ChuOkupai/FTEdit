@@ -1,11 +1,6 @@
 #pragma once
 #include <QtWidgets>
 
-/*
-** Classe qui sert d'interface temporaire pour simplifier la création des
-** éléments disposés sur la fenêtre.
-*/
-
 class WidgetLinker
 {
 private:
@@ -18,13 +13,20 @@ public:
 
 	QComboBox *addComboBox();
 
+	QDoubleSpinBox *addDoubleSpinBox();
+
 	QLabel *addLabel(const QString &content);
 
 	QLayoutItem *addLayoutItem(QLayoutItem *item);
 
+	QLineEdit *addLineEdit(const QString &content);
+
+	// Add an OK button and link its signal to closeEvent()
+	QPushButton *addOKButton();
+
 	QPushButton *addPushButton(const QString &content);
 
-	QLineEdit *addLineEdit(const QString &content);
+	QRadioButton *addRadioButton(const QString &content);
 
 	QTextEdit *addTextEdit(const QString &content);
 
@@ -34,4 +36,36 @@ public:
 	void set(QBoxLayout *layout);
 	// Use another layout
 	void replace(QBoxLayout *layout, QBoxLayout *with);
+};
+
+// Custom button for toolbar
+
+class GateToolButton : public QToolButton
+{
+	Q_OBJECT
+
+public:
+	GateToolButton(QWidget *parent);
+};
+
+// Custom QGraphicsView widget for smooth edition
+
+#define ZOOM_MIN	0.5
+#define ZOOM_MAX	15.0
+#define ZOOM_STEP	0.1
+
+class GraphicsView : public QGraphicsView
+{
+	Q_OBJECT
+
+protected Q_SLOTS:
+	void wheelEvent(QWheelEvent *event);
+
+public:
+	GraphicsView(QWidget *parent);
+
+	// Set a new zoom factor
+	void setZoom(qreal factor);
+	// Get the current zoom factor
+	qreal zoom();
 };
