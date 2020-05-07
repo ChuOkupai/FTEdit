@@ -1,16 +1,18 @@
-#include <QDir>
-#include <QList>
-#include <QDebug>
 #include "MainWindow.hh"
 #include "EditContainerDialog.hh"
-#include "WidgetLinker.hh"
+#include "ManageDistributionsDialog.hh"
+#include "ManageEventsDialog.hh"
+#include "RenderVisitor.hh"
 
-MainWindow::MainWindow() : editor(nullptr), modified(false), zoomLevel(100)
+MainWindow::MainWindow() : editor(nullptr), modified(false)
 {
+	statusBar();
 	createActions();
 	createMenus();
+	createToolBar();
 
 	setWindowTitle("FTEdit");
+	setWindowIcon(QIcon(":icons/ftedit.png"));
 	QRect r = QGuiApplication::primaryScreen()->geometry();
 	setMinimumSize(MIN(r.width(), RES_MIN_X), MIN(r.height(), RES_MIN_Y));
 	resize(r.width() / 1.5, r.height() / 1.5);
@@ -34,11 +36,13 @@ MainWindow::MainWindow() : editor(nullptr), modified(false), zoomLevel(100)
 	vSplitter = new QSplitter(hSplitter);
 	vSplitter->setOrientation(Qt::Vertical);
 	auto verticalLayout = new QWidget(vSplitter);
-	auto graphicsViewLayout = new QVBoxLayout(verticalLayout);
-	graphicsView = new QGraphicsView(verticalLayout);
-	graphicsViewLayout->setContentsMargins(0, 0, 0, 0);
+	auto viewLayout = new QVBoxLayout(verticalLayout);
+	view = new GraphicsView(verticalLayout);
+	viewLayout->setContentsMargins(0, 0, 0, 0);
+	scene = new QGraphicsScene(this);
+	view->setScene(scene);
 
-	graphicsViewLayout->addWidget(graphicsView);
+	viewLayout->addWidget(view);
 
 	vSplitter->addWidget(verticalLayout);
 	auto verticalLayout2 = new QWidget(vSplitter);
@@ -59,14 +63,8 @@ MainWindow::MainWindow() : editor(nullptr), modified(false), zoomLevel(100)
 	gridLayout->addWidget(hSplitter, 0, 0, 1, 1);
 	explorer->resize(0, explorer->height());
 	toggleExplorer();
-	errorList->resize(errorList->width(), 0);
+	errorList->resize(errorList->width(), 1);
 	toggleErrorList();
-
-	toolBar = new QToolBar;
-	toolBar->setMovable(false);
-	addToolBar(Qt::TopToolBarArea, toolBar);
-	statusBar(); // barre de status
-
 	this->newFile();
 }
 
@@ -77,13 +75,15 @@ void MainWindow::newFile()
 	reset();
 	current = nullptr;
 	editor = new Editor();
+	editor->detach();
+	setEnabledButton(true, false);
 }
 
 void MainWindow::open()
 {
 	if (!maybeSave())
 		return ;
-	QString path = QFileDialog::getSaveFileName(this, "Open project", QDir::homePath(),
+	QString path = QFileDialog::getOpenFileName(this, "Open project", QDir::homePath(),
 	"Open-PSA project (*.opsa);;All Files (*)");
 	if (path.isEmpty())
 		return ;
@@ -126,7 +126,7 @@ void MainWindow::cut()
 
 void MainWindow::copy()
 {
-	
+	;
 }
 
 void MainWindow::paste()
@@ -136,27 +136,28 @@ void MainWindow::paste()
 
 void MainWindow::addAnd()
 {
-	modified = true;
+	addGate(new And(editor->generateName(PREFIX_GATE)));
 }
 
 void MainWindow::addInhibit()
 {
-	modified = true;
+	addGate(new Inhibit(editor->generateName(PREFIX_GATE)));
 }
 
 void MainWindow::addOr()
 {
-	modified = true;
+	addGate(new Or(editor->generateName(PREFIX_GATE)));
 }
 
 void MainWindow::addKN()
 {
-	modified = true;
+	addGate(new VotingOR(editor->generateName(PREFIX_GATE)));
 }
 
 void MainWindow::addXor()
 {
-	modified = true;
+	// ISSUE
+	//addGate(new Xor(editor->generateName(PREFIX_GATE)));
 }
 
 void MainWindow::addEvent()
@@ -164,33 +165,43 @@ void MainWindow::addEvent()
 	modified = true;
 	QList<Event> &events = editor->getEvents();
 	events << Event(editor->generateName(PREFIX_EVENT));
-	Container c(&events.last()); // test
-	EditContainerDialog(this, *editor, c).exec();
+	auto cont = new Container(&events.last());
+	cont->attach((Gate*)current);
+	RenderVisitor(view, editor->getSelection());
+	EditContainerDialog(this, *editor, *cont).exec();
 }
 
 void MainWindow::addTransfert()
 {
 	modified = true;
+	auto t = new Transfert(editor->generateName(PREFIX_GATE));
+	t->attach((Gate*)current);
+	RenderVisitor(view, editor->getSelection());
 }
 
 void MainWindow::zoomIn()
 {
-	if ((zoomLevel *= 1.2) > ZOOM_MAX)
-		zoomLevel = ZOOM_MAX;
-	qDebug() << "Zoom In to " << zoomLevel;
+	qreal f = 1 + 2 * ZOOM_STEP;
+	f * view->zoom() > ZOOM_MAX ? view->setZoom(ZOOM_MAX) : view->scale(f, f);
 }
 
 void MainWindow::zoomOut()
 {
-	if ((zoomLevel *= 0.8) < ZOOM_MIN)
-		zoomLevel = ZOOM_MIN;
-	qDebug() << "Zoom Out to " << zoomLevel;
+	qreal f = 1 - 2 * ZOOM_STEP;
+	f * view->zoom() < ZOOM_MIN ? view->setZoom(ZOOM_MIN) : view->scale(f, f);
 }
 
 void MainWindow::zoomReset()
 {
-	zoomLevel = 100.0;
-	qDebug() << "Zoom Reset to " << zoomLevel;
+	view->setZoom(1.5);
+}
+
+void MainWindow::showToolBar()
+{
+	if (showToolBarAct->isChecked())
+		toolBar->show();
+	else
+		toolBar->hide();
 }
 
 void MainWindow::toggleExplorer()
@@ -209,7 +220,7 @@ void MainWindow::toggleErrorList()
 {
 	if (errorList->height())
 	{
-		resizeSplitter(vSplitter, graphicsView->height(), 0);
+		resizeSplitter(vSplitter, view->height(), 0);
 		return ;
 	}
 	QSize size = this->size();
@@ -219,141 +230,197 @@ void MainWindow::toggleErrorList()
 
 void MainWindow::showDistributions()
 {
-	qDebug() << "showDistributions";
+	modified = true;
+	ManageDistributionsDialog(this, editor->getDistributions()).exec();
+	editor->refresh(); // Remove unused Distributions
 }
 
 void MainWindow::showEvents()
 {
-	qDebug() << "showEvents";
+	modified = true;
+	ManageEventsDialog(this, editor->getEvents()).exec();
+	editor->refresh(); // Remove unused Events
 }
 
 void MainWindow::evaluate()
 {
-	qDebug() << "Evaluate fault tree";
+	;
 }
 
 void MainWindow::about()
 {
-	QMessageBox::about(this, "About FTEdit",
-	"FTEdit is an open source editor fault tree analysis tool.<br><br>"
+	QMessageBox about(this);
+	about.setWindowIcon(QIcon(":icons/about.png"));
+	about.setWindowTitle("About FTEdit");
+	about.setText("FTEdit is an open source editor fault tree analysis tool.<br><br>"
 	"License: GPLv3<br>Source code is available on "
 	"<a href='https://github.com/ChuOkupai/FTEdit'>GitHub</a><br>");
+	about.exec();
 }
 
 void MainWindow::createActions()
 {
-	newAct = new QAction("&New", this);
+	newAct = new QAction("&New project", this);
 	newAct->setShortcuts(QKeySequence::New);
 	newAct->setStatusTip("Create a new project");
+	newAct->setToolTip(newAct->statusTip());
+	newAct->setIcon(QIcon(":icons/new.png"));
 	connect(newAct, &QAction::triggered, this, &MainWindow::newFile);
 
 	openAct = new QAction("&Open...", this);
 	openAct->setShortcuts(QKeySequence::Open);
 	openAct->setStatusTip("Open an existing project");
+	openAct->setToolTip(openAct->statusTip());
+	openAct->setIcon(QIcon(":icons/open.png"));
 	connect(openAct, &QAction::triggered, this, &MainWindow::open);
 
 	saveAct = new QAction("&Save", this);
 	saveAct->setShortcuts(QKeySequence::Save);
 	saveAct->setStatusTip("Save the project to disk");
+	saveAct->setToolTip(saveAct->statusTip());
+	saveAct->setIcon(QIcon(":icons/save.png"));
 	connect(saveAct, &QAction::triggered, this, &MainWindow::save);
 
 	saveAsAct = new QAction("Save As...", this);
 	saveAsAct->setShortcuts(QKeySequence::SaveAs);
 	saveAsAct->setStatusTip("Save the project to disk with a different name");
+	saveAsAct->setToolTip(saveAsAct->statusTip());
+	saveAsAct->setIcon(QIcon(":icons/saveAs.png"));
 	connect(saveAsAct, &QAction::triggered, this, &MainWindow::saveAs);
 
 	exitAct = new QAction("E&xit", this);
 	exitAct->setShortcuts(QKeySequence::Quit);
 	exitAct->setStatusTip("Exit the application");
+	exitAct->setToolTip(exitAct->statusTip());
+	exitAct->setIcon(QIcon(":icons/exit.png"));
 	connect(exitAct, &QAction::triggered, this, &QWidget::close);
 
 	cutAct = new QAction("Cu&t", this);
 	cutAct->setShortcuts(QKeySequence::Cut);
 	cutAct->setStatusTip("Cut the current selected node to the clipboard");
+	cutAct->setToolTip(cutAct->statusTip());
+	cutAct->setIcon(QIcon(":icons/cut.png"));
 	connect(cutAct, &QAction::triggered, this, &MainWindow::cut);
 
 	copyAct = new QAction("&Copy", this);
 	copyAct->setShortcuts(QKeySequence::Copy);
 	copyAct->setStatusTip("Copy the current selected node to the clipboard");
+	copyAct->setToolTip(copyAct->statusTip());
+	copyAct->setIcon(QIcon(":icons/copy.png"));
 	connect(copyAct, &QAction::triggered, this, &MainWindow::copy);
 
 	pasteAct = new QAction("&Paste", this);
 	pasteAct->setShortcuts(QKeySequence::Paste);
 	pasteAct->setStatusTip("Paste the clipboard's contents into the current node");
+	pasteAct->setToolTip(pasteAct->statusTip());
+	pasteAct->setIcon(QIcon(":icons/paste.png"));
 	connect(pasteAct, &QAction::triggered, this, &MainWindow::paste);
 
 	addAndAct = new QAction("And", this);
 	addAndAct->setStatusTip("Add a new and gate into the current tree");
+	addAndAct->setToolTip(addAndAct->statusTip());
+	addAndAct->setIcon(QIcon(":objects/and.png"));
 	connect(addAndAct, &QAction::triggered, this, &MainWindow::addAnd);
 
 	addInhibitAct = new QAction("Inhibit", this);
 	addInhibitAct->setStatusTip("Add a new inhibit gate into the current tree");
+	addInhibitAct->setToolTip(addInhibitAct->statusTip());
+	addInhibitAct->setIcon(QIcon(":objects/inhibit.png"));
 	connect(addInhibitAct, &QAction::triggered, this, &MainWindow::addInhibit);
 
 	addOrAct = new QAction("Or", this);
 	addOrAct->setStatusTip("Add a new or gate into the current tree");
+	addOrAct->setToolTip(addOrAct->statusTip());
+	addOrAct->setIcon(QIcon(":objects/or.png"));
 	connect(addOrAct, &QAction::triggered, this, &MainWindow::addOr);
 
 	addKNAct = new QAction("Voting or", this);
 	addKNAct->setStatusTip("Add a new voting or gate into the current tree");
+	addKNAct->setToolTip(addKNAct->statusTip());
+	addKNAct->setIcon(QIcon(":objects/kn.png"));
 	connect(addKNAct, &QAction::triggered, this, &MainWindow::addKN);
 
 	addXorAct = new QAction("Xor", this);
 	addXorAct->setStatusTip("Add a new xor gate into the current tree");
+	addXorAct->setToolTip(addXorAct->statusTip());
+	addXorAct->setIcon(QIcon(":objects/xor.png"));
 	connect(addXorAct, &QAction::triggered, this, &MainWindow::addXor);
-
-	addEventAct = new QAction("Basic event", this);
-	addEventAct->setStatusTip("Add a new basic event into the current tree");
-	connect(addEventAct, &QAction::triggered, this, &MainWindow::addEvent);
 
 	addTransfertAct = new QAction("Transfert in", this);
 	addTransfertAct->setStatusTip("Add a new transfert in gate into the current tree");
+	addTransfertAct->setToolTip(addTransfertAct->statusTip());
+	addTransfertAct->setIcon(QIcon(":objects/transfert.png"));
 	connect(addTransfertAct, &QAction::triggered, this, &MainWindow::addTransfert);
+
+	addEventAct = new QAction("Add basic event", this);
+	addEventAct->setStatusTip("Add a new basic event into the current tree");
+	addEventAct->setToolTip(addEventAct->statusTip());
+	addEventAct->setIcon(QIcon(":objects/basicEvent.png"));
+	connect(addEventAct, &QAction::triggered, this, &MainWindow::addEvent);
 
 	zoomInAct = new QAction("Zoom In", this); zoomInAct->setShortcuts(QKeySequence::ZoomIn);
 	zoomInAct->setStatusTip("Zoom In");
+	zoomInAct->setIcon(QIcon(":icons/zoomIn.png"));
 	connect(zoomInAct, &QAction::triggered, this, &MainWindow::zoomIn);
 
 	zoomOutAct = new QAction("Zoom Out", this); zoomOutAct->setShortcuts(QKeySequence::ZoomOut);
 	zoomOutAct->setStatusTip("Zoom Out");
+	zoomOutAct->setIcon(QIcon(":icons/zoomOut.png"));
 	connect(zoomOutAct, &QAction::triggered, this, &MainWindow::zoomOut);
 
 	zoomResetAct = new QAction("Reset Zoom", this);
 	zoomResetAct->setStatusTip("Reset Zoom");
+	zoomResetAct->setIcon(QIcon(":icons/edit.png"));
 	connect(zoomResetAct, &QAction::triggered, this, &MainWindow::zoomReset);
+
+	showToolBarAct = new QAction("Show Toolbar", this);
+	showToolBarAct->setStatusTip("Enable or disable Toolbar");
+	showToolBarAct->setCheckable(true);
+	showToolBarAct->setChecked(true);
+	connect(showToolBarAct, &QAction::triggered, this, &MainWindow::showToolBar);
 
 	toggleExplorerAct = new QAction("Toggle Project Explorer", this);
 	toggleExplorerAct->setStatusTip("Display or hide Project Explorer section");
+	toggleExplorerAct->setIcon(QIcon(":icons/edit.png"));
 	connect(toggleExplorerAct, &QAction::triggered, this, &MainWindow::toggleExplorer);
 
 	toggleErrorListAct = new QAction("Toggle Error List", this);
 	toggleErrorListAct->setStatusTip("Display or hide Error List section");
+	toggleErrorListAct->setIcon(QIcon(":icons/edit.png"));
 	connect(toggleErrorListAct, &QAction::triggered, this, &MainWindow::toggleErrorList);
 
 	distributionsAct = new QAction("Manage distributions...", this);
 	distributionsAct->setStatusTip("Show the list of all distributions");
+	distributionsAct->setIcon(QIcon(":icons/manage.png"));
 	connect(distributionsAct, &QAction::triggered, this, &MainWindow::showDistributions);
 
 	eventsAct = new QAction("Manage events...", this);
 	eventsAct->setStatusTip("Show the list of all events");
+	eventsAct->setIcon(QIcon(":icons/manage.png"));
 	connect(eventsAct, &QAction::triggered, this, &MainWindow::showEvents);
 
 	evaluateAct = new QAction("Evaluate...", this);
 	evaluateAct->setStatusTip("Perform a fault tree analysis");
+	evaluateAct->setToolTip(evaluateAct->statusTip());
+	evaluateAct->setIcon(QIcon(":icons/evaluate.png"));
 	connect(evaluateAct, &QAction::triggered, this, &MainWindow::evaluate);
 
 	aboutAct = new QAction("About", this);
 	aboutAct->setStatusTip("About FTEdit");
+	aboutAct->setIcon(QIcon(":icons/about.png"));
 	connect(aboutAct, &QAction::triggered, this, &MainWindow::about);
 
 	aboutQtAct = new QAction("About Qt", this);
 	aboutQtAct->setStatusTip("About Qt");
+	aboutQtAct->setIcon(QIcon(":icons/about.png"));
 	connect(aboutQtAct, &QAction::triggered, qApp, &QApplication::aboutQt);
 }
 
 void MainWindow::createMenus()
 {
-	QMenu *m, *m2, *m3;
+	QMenu *m;
+
+	menuBar()->setContextMenuPolicy(Qt::PreventContextMenu);
 
 	m = menuBar()->addMenu("&File");
 	m->addAction(newAct);
@@ -369,21 +436,22 @@ void MainWindow::createMenus()
 	m->addAction(pasteAct);
 	m->addSeparator();
 
-	m2 = m->addMenu("Add...");
-		m3 = m2->addMenu("Gate...");
-		m3->addAction(addAndAct);
-		m3->addAction(addInhibitAct);
-		m3->addAction(addOrAct);
-		m3->addAction(addKNAct);
-		m3->addAction(addXorAct);
-		m3->addAction(addTransfertAct);
-	m2->addAction(addEventAct);
+	gatesMenu = m->addMenu("Add Gate...");
+	gatesMenu->setIcon(QIcon(":icons/add.png"));
+	gatesMenu->addAction(addAndAct);
+	gatesMenu->addAction(addInhibitAct);
+	gatesMenu->addAction(addOrAct);
+	gatesMenu->addAction(addKNAct);
+	gatesMenu->addAction(addXorAct);
+	gatesMenu->addAction(addTransfertAct);
+	m->addAction(addEventAct);
 
 	m = menuBar()->addMenu("&View");
 	m->addAction(zoomInAct);
 	m->addAction(zoomOutAct);
 	m->addAction(zoomResetAct);
 	m->addSeparator();
+	m->addAction(showToolBarAct);
 	m->addAction(toggleExplorerAct);
 	m->addAction(toggleErrorListAct);
 
@@ -397,6 +465,38 @@ void MainWindow::createMenus()
 	m = menuBar()->addMenu("&Help");
 	m->addAction(aboutAct);
 	m->addAction(aboutQtAct);
+}
+
+void MainWindow::createToolBar()
+{
+	toolBar = new QToolBar;
+	toolBar->setFloatable(false);
+	toolBar->setIconSize(QSize(ICON_SIZE, ICON_SIZE));
+	toolBar->setContextMenuPolicy(Qt::PreventContextMenu);
+	addToolBar(Qt::TopToolBarArea, toolBar);
+
+	toolBar->addAction(newAct);
+	toolBar->addAction(openAct);
+	toolBar->addAction(saveAct);
+	toolBar->addAction(saveAsAct);
+	toolBar->addAction(exitAct);
+	toolBar->addSeparator();
+	toolBar->addAction(cutAct);
+	toolBar->addAction(copyAct);
+	toolBar->addAction(pasteAct);
+	toolBar->addSeparator();
+	auto button = new GateToolButton(this);
+	button->setMenu(gatesMenu);
+	button->setDefaultAction(addAndAct);
+	toolBar->addWidget(button);
+	toolBar->addAction(addEventAct);
+	toolBar->addSeparator();
+	toolBar->addAction(zoomInAct);
+	toolBar->addAction(zoomOutAct);
+	toolBar->addSeparator();
+	toolBar->addAction(evaluateAct);
+	toolBar->addSeparator();
+	toolBar->addAction(aboutAct);
 }
 
 bool MainWindow::maybeSave()
@@ -427,4 +527,31 @@ void MainWindow::resizeSplitter(QSplitter *splitter, int widget1Size, int widget
 	l << widget1Size << widget2Size;
 	splitter->setSizes(l);
 	l.clear();
+}
+
+void MainWindow::setEnabledButton(bool gates, bool childs)
+{
+	addAndAct->setEnabled(gates);
+	addInhibitAct->setEnabled(gates);
+	addOrAct->setEnabled(gates);
+	addKNAct->setEnabled(gates);
+	addXorAct->setEnabled(gates);
+	addTransfertAct->setEnabled(childs);
+	addEventAct->setEnabled(childs);
+}
+
+void MainWindow::addGate(Gate *g)
+{
+	editor->getGates() << g;
+	if (current)
+		g->attach((Gate*)current);
+	else
+	{
+		editor->getSelection()->setTop(g);
+		setEnabledButton(true, true);
+	}
+	//editor->move(g, (Gate*)current); ???
+	current = g;
+	modified = true;
+	RenderVisitor(view, editor->getSelection());
 }
