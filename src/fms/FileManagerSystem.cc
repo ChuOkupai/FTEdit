@@ -1,4 +1,5 @@
-#include <QFile>
+#include <QSaveFile>
+#include <QTextStream>
 #include "FileManagerSystem.hh"
 #include "SaveVisitor.hh"
 
@@ -10,21 +11,48 @@ QString FileManagerSystem::getErrorMessage() { return errorMessage; }
 
 QString FileManagerSystem::getPath() { return path; }
 
-Editor* FileManagerSystem::load(QString path) { (void)path; return 0; }
+Editor* FileManagerSystem::load(QString path)
+{ 
+	this->path = path;
+	QFile svfile(path);
+	if(!svfile.open(QIODevice::ReadOnly)){
+		errorMessage = "Cannot read file" + svfile.errorString();
+		qDebug() << errorMessage;
+		return nullptr;
+	}
+	
+	Editor* editor = new Editor();
+	XmlTreeReader xtr(&svfile);
+	
+	return editor;
+}
 
 int FileManagerSystem::save(Editor* editor)
 {
-	(void) editor;
-	
-	QFile file(path); SaveVisitor sv;
+	QSaveFile file(path); SaveVisitor svisitor;
 	
 	if(!file.open(QIODevice::WriteOnly))
 	{
 		errorMessage = "Failed to open the file in write mode";
 		return -1;
 	}
+	QTextStream saveStream(&file); QDomDocument& domref = svisitor.getDomFile();
 	
-	//visit  
+	//create root node of xml file
+	QDomElement root = domref.createElement("open-psa");
+	root.setAttribute("author", "FTEdit");
+	domref.appendChild(root);
+
+	//visit
+	for(Distribution *d :  editor->getDistributions())
+		d->accept(svisitor);
+	/*for(Event e :  editor->getEvents())
+		e.accept(svisitor);
+	for(Gate* g :  editor->getGates())
+		g->accept(svisitor);*/
+
+	saveStream << domref.toString();
+	file.commit();
 	return 0;
 }
 

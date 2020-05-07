@@ -16,9 +16,9 @@ RCC_DIR = src/.qrc
 INCLUDEPATH += \
 $$PWD/inc \
 $$PWD/inc/editor \
+$$PWD/inc/evaluator \
 $$PWD/inc/fms \
 $$PWD/inc/gui \
-$$PWD/inc/evaluator
 
 HEADERS += \
 inc/FTEdit.hh \
@@ -41,7 +41,9 @@ inc/evaluator/ResultMCS.hh \
 inc/evaluator/ResultBoolean.hh \
 inc/evaluator/Result.hh \
 inc/fms/FileManagerSystem.hh \
+inc/fms/FTEdit_FMS.hh \
 inc/fms/SaveVisitor.hh \
+inc/fms/XmlTreeReader.hh \
 inc/gui/FTEdit_GUI.hh \
 inc/gui/Dialog.hh \
 inc/gui/EditContainerDialog.hh \
@@ -78,6 +80,7 @@ src/evaluator/ResultBoolean.cc \
 src/evaluator/Result.cc \
 src/fms/FileManagerSystem.cc \
 src/fms/SaveVisitor.cc \
+src/fms/XmlTreeReader.cc \
 src/gui/Dialog.cc \
 src/gui/EditContainerDialog.cc \
 src/gui/EditDistributionDialog.cc \

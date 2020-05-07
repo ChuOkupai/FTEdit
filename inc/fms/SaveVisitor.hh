@@ -4,18 +4,21 @@
 #include <QString>
 #include "FTEdit_Editor.hh"
 
-class SaveVisitor
+class SaveVisitor : public VisitorDistribution, public VisitorNode
 {
 	private :
 		QDomDocument dom;
+		void writeProperties(QDomElement &elem, Gate& gate);
+		void writeChildren(QDomElement &node, Gate& gate);
+		void writeGate(Gate& gate, QString type);
 	public :
 		SaveVisitor();
 		~SaveVisitor();
-		QDomDocument getDomFile();
+		QDomDocument& getDomFile();
 		void visit( And &andgate );
 		void visit( Or &orgate );
 		void visit( Xor &xorgate );
-		/*void visit( VotingOR &vorgate );*/
+		void visit( VotingOR &vorgate );
 		void visit( Transfert &transfertgate );
 		void visit( Inhibit &inhibgate );
 		void visit( Constant &constdistrib );
