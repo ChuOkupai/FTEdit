@@ -2,6 +2,7 @@
 
 #include <QString>
 #include "FTEdit_Editor.hh"
+#include "XmlTreeReader.hh"
 
 class FileManagerSystem
 {

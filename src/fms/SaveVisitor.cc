@@ -13,7 +13,7 @@ SaveVisitor::~SaveVisitor() {}
 
 QDomDocument& SaveVisitor::getDomFile() { return dom; }
 
-void SaveVisitor::writeGateProperties(QDomElement &elem, Gate& gate)
+void SaveVisitor::writeProperties(QDomElement &elem, Gate& gate)
 {
 	Properties& prop = gate.getProperties();
 	elem.setAttribute("name", prop.getName());
@@ -53,7 +53,7 @@ void SaveVisitor::writeChildren(QDomElement &node, Gate& gate)
 void SaveVisitor::writeGate(Gate& gate, QString type)
 {
 	QDomElement rootgate = dom.createElement("define-gate");
-	writeGateProperties(rootgate, gate);
+	writeProperties(rootgate, gate);
 	QDomElement node = dom.createElement(type);
 	rootgate.appendChild(node);
 	writeChildren(node, gate);
@@ -66,11 +66,13 @@ void SaveVisitor::visit( Or &orgate ) { writeGate(orgate, "or"); }
 
 void SaveVisitor::visit( Xor &xorgate ) { writeGate(xorgate, "xor"); }
 
+void SaveVisitor::visit( VotingOR &vorgate ) { (void) vorgate; }
+
 void SaveVisitor::visit( Inhibit &inhibgate )
 {
 	QDomElement rootgate = dom.createElement("define-gate");
-	writeGateProperties(rootgate, inhibgate);
-	QDomElement node = dom.createElement("inhibit");
+	writeProperties(rootgate, inhibgate);
+	QDomElement node = dom.createElement("and");
 	QDomElement tmp;
 	tmp = dom.createElement("constant");
 	tmp.setAttribute("value", inhibgate.getCondition() ? "true" : "false");
@@ -80,13 +82,33 @@ void SaveVisitor::visit( Inhibit &inhibgate )
 	dom.documentElement().appendChild(rootgate);
 }
 
-void SaveVisitor::visit( Transfert &transfertgate ) {(void)transfertgate;/*INUTILE ?!?*/}
+void SaveVisitor::visit( Transfert &transfertgate ) {(void)transfertgate;}
 
-void SaveVisitor::visit( Constant &constdistrib ) {(void)constdistrib;}
+void SaveVisitor::visit( Constant &constdistrib )
+{
+	QDomElement distr = dom.createElement("define-parameter");
+	Properties& prop = constdistrib.getProperties();
+	distr.setAttribute("name", prop.getName());
+	QDomElement val = dom.createElement("float");
+	val.setAttribute("value", constdistrib.getValue());
+	distr.appendChild(val);
+	dom.documentElement().appendChild(distr);
+}
 
-void SaveVisitor::visit( Exponential &expdistrib ) {(void)expdistrib;}
+void SaveVisitor::visit( Exponential &expdistrib )
+{
+	//Même nombre de valeur
+	QDomElement val = dom.createElement("float");
+	val.setAttribute("value", expdistrib.getValue());
+	dom.documentElement().appendChild(val);
+}
 
-void SaveVisitor::visit( Weibull &weibulldistrib ) {(void)weibulldistrib;}
+void SaveVisitor::visit( Weibull &weibulldistrib )
+{
+	QDomElement val = dom.createElement("float");
+	val.setAttribute("value", weibulldistrib.getValue());
+	dom.documentElement().appendChild(val);
+}
 
 void SaveVisitor::visit( Container &container ) {(void)container; /*INUTILE ?!?*/}
 
@@ -96,7 +118,7 @@ void SaveVisitor::visit( Event &event )
 	Properties& prop = event.getProperties(); 
 	tag = dom.createElement("define-basic-event");
 	tag.setAttribute("name", prop.getName());
-	dom.documentElement().appendChild(tag);
+	//dom.documentElement().appendChild(tag);
 	
 	// write properties if any
 	if(!prop.getDesc().isEmpty())
@@ -110,8 +132,9 @@ void SaveVisitor::visit( Event &event )
 	Distribution* distr = event.getDistribution();
 	if(distr)
 	{
-		tag = dom.createElement("parameter");
-		tag.setAttribute("name", distr->getProperties().getName());
+		tag2 = dom.createElement("parameter");
+		tag2.setAttribute("name", distr->getProperties().getName());
+		tag.appendChild(tag2);
 	}
 	dom.documentElement().appendChild(tag);
 }

@@ -1,4 +1,5 @@
 #include <QFile>
+#include <QSaveFile>
 #include <QTextStream>
 #include "FileManagerSystem.hh"
 #include "SaveVisitor.hh"
@@ -11,13 +12,25 @@ QString FileManagerSystem::getErrorMessage() { return errorMessage; }
 
 QString FileManagerSystem::getPath() { return path; }
 
-Editor* FileManagerSystem::load(QString path) { (void)path; return 0; }
+Editor* FileManagerSystem::load(QString path)
+{ 
+	this->path = path;
+	QFile svfile(path);
+	if(!svfile.open(QIODevice::ReadOnly)){
+		errorMessage = "Cannot read file" + svfile.errorString();
+		qDebug() << errorMessage;
+		return nullptr;
+	}
+	
+	Editor* editor = new Editor();
+	XmlTreeReader xtr(&svfile);
+	
+	return editor;
+}
 
 int FileManagerSystem::save(Editor* editor)
 {
-	(void) editor;
-	
-	QFile file(path); SaveVisitor svisitor;
+	QSaveFile file(path); SaveVisitor svisitor;
 	
 	if(!file.open(QIODevice::WriteOnly))
 	{
@@ -32,13 +45,15 @@ int FileManagerSystem::save(Editor* editor)
 	domref.appendChild(root);
 
 	//visit
+	//for(Distribution *d :  editor->getDistributions())
+		//d->accept(svisitor);
 	for(Event e :  editor->getEvents())
 		e.accept(svisitor);
 	for(Gate* g :  editor->getGates())
 		g->accept(svisitor);
 
 	saveStream << domref.toString();
-	file.close();
+	file.commit();
 	return 0;
 }
 

@@ -30,6 +30,7 @@ inc/editor/Transfert.hh \
 inc/editor/Tree.hh \
 inc/fms/FileManagerSystem.hh \
 inc/fms/SaveVisitor.hh \
+inc/fms/XmlTreeReader.hh \
 inc/gui/FTEdit_GUI.hh \
 inc/gui/MainWindow.hh
 
@@ -53,5 +54,6 @@ src/editor/Weibull.cc \
 src/editor/Xor.cc \
 src/fms/FileManagerSystem.cc \
 src/fms/SaveVisitor.cc \
+src/fms/XmlTreeReader.cc \
 src/gui/MainWindow.cc \
 src/main.cc
