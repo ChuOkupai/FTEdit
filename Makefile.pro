@@ -36,6 +36,7 @@ inc/editor/VisitorNode.hh \
 inc/editor/VisitorDistribution.hh \
 inc/evaluator/FTEdit_Evaluator.hh \
 inc/evaluator/EvalVisitor.hh\
+inc/evaluator/CutVisitor.hh\
 inc/evaluator/Evaluator.hh \
 inc/evaluator/ResultMCS.hh \
 inc/evaluator/ResultBoolean.hh \
@@ -72,6 +73,7 @@ src/editor/VotingOR.cc \
 src/editor/Weibull.cc \
 src/editor/Xor.cc \
 src/evaluator/EvalVisitor.cc \
+src/evaluator/CutVisitor.cc \
 src/evaluator/Evaluator.cc \
 src/evaluator/ResultMCS.cc \
 src/evaluator/ResultBoolean.cc \
