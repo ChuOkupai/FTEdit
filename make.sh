@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [[ "$#" -eq 1 && ("$1" == "--clean" || "$1" == "--rebuild") ]]; then
-	rm -rf bin Makefile .moc .obj .qmake.stash
+	rm -rf .obj bin Makefile src/.moc src/.qrc .qmake.stash
 	if [ "$1" == "--clean" ]; then
 		exit
 	fi

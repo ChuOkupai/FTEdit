@@ -1,28 +1,23 @@
 #pragma once
-#include <QtWidgets>
-#include "FTEdit_Editor.hh"
+#include "Dialog.hh"
 
-class EditContainerDialog : public QDialog
+class EditContainerDialog : public PropertiesDialog
 {
 	Q_OBJECT
 
+private:
+	Container &cont;
+	QComboBox *events;
+	QComboBox *distributions;
+	QPushButton *edit;
+	int index;
+
 private slots:
-	void closeEvent(QCloseEvent *event);
-	void checkName();
+	void updateName(QString s);
 	void setEvent(int index);
 	void setDistribution(int index);
 	void editDistribution();
 	void addDistribution();
-
-private:
-	Editor &editor;
-	Container &cont;
-	bool valid;
-	int index;
-	QComboBox *events;
-	QLineEdit *name;
-	QTextEdit *desc;
-	QComboBox *distributions;
 
 public:
 	EditContainerDialog(QWidget *parent, Editor &editor, Container &cont);
