@@ -1,3 +1,4 @@
+#include <QFile>
 #include <QSaveFile>
 #include <QTextStream>
 #include "FileManagerSystem.hh"
@@ -44,6 +45,7 @@ int FileManagerSystem::save(Editor* editor)
 	domref.appendChild(root);
 
 	//visit
+	
 	for(Distribution *d :  editor->getDistributions())
 		d->accept(svisitor);
 	/*for(Event e :  editor->getEvents())

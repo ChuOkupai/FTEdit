@@ -81,21 +81,8 @@ void SaveVisitor::visit( Inhibit &inhibgate )
 	rootgate.appendChild(node);
 	dom.documentElement().appendChild(rootgate);
 }
-void SaveVisitor::visit( Inhibit &inhibgate )
-{
-	QDomElement rootgate = dom.createElement("define-gate");
-	writeProperties(rootgate, inhibgate);
-	QDomElement node = dom.createElement("inhibit");
-	QDomElement tmp;
-	tmp = dom.createElement("constant");
-	tmp.setAttribute("value", inhibgate.getCondition() ? "true" : "false");
-	node.appendChild(tmp);
-	writeChildren(node, inhibgate);
-	rootgate.appendChild(node);
-	dom.documentElement().appendChild(rootgate);
-}
 
-void SaveVisitor::visit( Transfert &transfertgate ) {(void)transfertgate;/*INUTILE ?!?*/}
+void SaveVisitor::visit( Transfert &transfertgate ) {(void)transfertgate;}
 
 void SaveVisitor::visit( Constant &constdistrib )
 {
