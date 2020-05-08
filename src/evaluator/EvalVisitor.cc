@@ -70,9 +70,8 @@ double EvalVisitor::visit(Inhibit& inVisitor){
 	
 	if(inVisitor.getCondition()){
 		 this->proba = this->proba + inVisitor.getChildren().at(0)->accept(*this);
-	}else{
-		return this->proba;
 	}
+	return this->proba;
 	
 }
 
