@@ -13,6 +13,13 @@ QComboBox *WidgetLinker::addComboBox()
 	return (comboBox);
 }
 
+QDoubleSpinBox *WidgetLinker::addDoubleSpinBox()
+{
+	auto *spinBox = new QDoubleSpinBox(parent);
+	layout->addWidget(spinBox);
+	return (spinBox);
+}
+
 QLabel *WidgetLinker::addLabel(const QString &content)
 {
 	auto *label = new QLabel(parent);
@@ -27,6 +34,28 @@ QLayoutItem *WidgetLinker::addLayoutItem(QLayoutItem *item)
 	return (item);
 }
 
+QLineEdit *WidgetLinker::addLineEdit(const QString &content)
+{
+	auto *lineEdit = new QLineEdit(parent);
+	lineEdit->setText(content);
+	layout->addWidget(lineEdit);
+	return (lineEdit);
+}
+
+QPushButton *WidgetLinker::addOKButton()
+{
+	layout->addItem(new QSpacerItem(0, 20, QSizePolicy::Minimum, QSizePolicy::Minimum));
+	auto hLayout = new QHBoxLayout();
+	layout->addLayout(hLayout);
+	hLayout->addItem(new QSpacerItem(20, 0, QSizePolicy::Expanding, QSizePolicy::Maximum));
+	auto *button = new QPushButton(parent);
+	button->setText("OK");
+	hLayout->addWidget(button);
+	button->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Minimum);
+	parent->connect(button, SIGNAL(released()), parent, SLOT(close()));
+	return (button);
+}
+
 QPushButton *WidgetLinker::addPushButton(const QString &content)
 {
 	auto *button = new QPushButton(parent);
@@ -35,12 +64,12 @@ QPushButton *WidgetLinker::addPushButton(const QString &content)
 	return (button);
 }
 
-QLineEdit *WidgetLinker::addLineEdit(const QString &content)
+QRadioButton *WidgetLinker::addRadioButton(const QString &content)
 {
-	auto *lineEdit = new QLineEdit(parent);
-	lineEdit->setText(content);
-	layout->addWidget(lineEdit);
-	return (lineEdit);
+	auto *button = new QRadioButton(parent);
+	button->setText(content);
+	layout->addWidget(button);
+	return (button);
 }
 
 QTextEdit *WidgetLinker::addTextEdit(const QString &content)
@@ -67,4 +96,41 @@ void WidgetLinker::replace(QBoxLayout *layout, QBoxLayout *with)
 {
 	with->addLayout(layout);
 	this->layout = layout;
+}
+
+GateToolButton::GateToolButton(QWidget *parent) :
+QToolButton(parent)
+{
+	setPopupMode(QToolButton::MenuButtonPopup);
+	QObject::connect(this, SIGNAL(triggered(QAction*)), this, SLOT(setDefaultAction(QAction*)));
+}
+
+GraphicsView::GraphicsView(QWidget *parent) :
+QGraphicsView(parent)
+{
+	setDragMode(QGraphicsView::ScrollHandDrag);
+}
+
+void GraphicsView::wheelEvent(QWheelEvent *event)
+{
+	qreal f = 1;
+
+	if (event->delta() < 0 && (f -= ZOOM_STEP) * zoom() < ZOOM_MIN)
+		setZoom(ZOOM_MIN);
+	else if (event->delta() > 0 && (f += ZOOM_STEP) * zoom() > ZOOM_MAX)
+		setZoom(ZOOM_MAX);
+	else
+		scale(f, f);
+}
+
+void GraphicsView::setZoom(qreal factor)
+{
+	scale(0.1, 0.1);
+	resetMatrix();
+	scale(factor, factor);
+}
+
+qreal GraphicsView::zoom()
+{
+	return transform().m11();
 }

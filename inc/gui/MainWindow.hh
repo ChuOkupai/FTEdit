@@ -1,20 +1,12 @@
 #pragma once
 #include <QMainWindow>
-#include <QtWidgets>
-#include "Editor.hh"
+#include "FTEdit_Editor.hh"
+#include "WidgetLinker.hh"
 
+#define ICON_SIZE	48
 #define RES_MIN_X	460
 #define RES_MIN_Y	320
-#define ZOOM_MIN	20.0
-#define ZOOM_MAX	400.0
 #define MIN(A, B) ((A) < (B) ? (A) : (B))
-
-QT_BEGIN_NAMESPACE
-class QAction;
-class QActionGroup;
-class QLabel;
-class QMenu;
-QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow
 {
@@ -48,6 +40,7 @@ private slots:
 	void zoomIn();
 	void zoomOut();
 	void zoomReset();
+	void showToolBar();
 	void toggleExplorer();
 	void toggleErrorList();
 	// Show
@@ -59,10 +52,9 @@ private slots:
 	void about();
 
 private:
-	Editor			*editor;
-	bool			modified;
-	double			zoomLevel;
-	Node			*current;
+	Editor	*editor;
+	bool	modified;
+	Node	*current;
 
 	QAction *newAct;
 	QAction *openAct;
@@ -82,6 +74,7 @@ private:
 	QAction *zoomInAct;
 	QAction *zoomOutAct;
 	QAction *zoomResetAct;
+	QAction *showToolBarAct;
 	QAction *toggleExplorerAct;
 	QAction *toggleErrorListAct;
 	QAction *distributionsAct;
@@ -90,19 +83,26 @@ private:
 	QAction *aboutAct;
 	QAction *aboutQtAct;
 
+	QMenu			*gatesMenu;
 	QToolBar		*toolBar;
 	QTreeWidget		*explorer;
-	QGraphicsView	*graphicsView;
+	GraphicsView	*view;
+	QGraphicsScene	*scene;
 	QListWidget		*errorList;
 	QSplitter		*vSplitter; // vertical split: graphicsView <-> errorList
 	QSplitter		*hSplitter; // horizontal split: explorer <-> vSplitter
 
 	void createActions();
 	void createMenus();
+	void createToolBar();
 	// Renvoie vrai si le projet peut être écrasé
 	bool maybeSave();
-	// réinitialise l'interface (en cas de chargement ou de nouveau fichier)*
+	// Réinitialise l'interface (en cas de chargement ou de nouveau fichier)
 	void reset();
 	// Redimensionne le layout
 	void resizeSplitter(QSplitter *splitter, int widget1Size, int widget2Size);
+	// Set enabled buttons
+	void setEnabledButton(bool gates, bool childs);
+	// Add new Gate
+	void addGate(Gate *g);
 };
