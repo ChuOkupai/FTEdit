@@ -38,7 +38,7 @@ double EvalVisitor::visit(And& andVisitor){
 
 	for(int i = 1; i < andVisitor.getChildren().size() ; i++){
 		if(this->proba ==0){
-			this->proba = randVisitor.getChildren().at(i)->accept(*this);
+			this->proba = andVisitor.getChildren().at(i)->accept(*this);
 
 		}else{
 		 this->proba = this->proba * andVisitor.getChildren().at(i)->accept(*this);
@@ -63,11 +63,11 @@ double EvalVisitor::visit(Xor&  xorVisitor){
 
             this->proba += xorVisitor.getChildren().at(i)->accept(*this);
         }
-   
+   return this->proba;
 }
 
 double EvalVisitor::visit(Inhibit& inVisitor){
-	inVisitor.getParent();
+	
 	if(inVisitor.getCondition()){
 		 this->proba = this->proba + inVisitor.getChildren().at(0)->accept(*this);
 	}else{
