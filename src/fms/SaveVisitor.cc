@@ -66,7 +66,16 @@ void SaveVisitor::visit( Or &orgate ) { writeGate(orgate, "or"); }
 
 void SaveVisitor::visit( Xor &xorgate ) { writeGate(xorgate, "xor"); }
 
-void SaveVisitor::visit( VotingOR &vorgate ) { (void) vorgate; }
+void SaveVisitor::visit( VotingOR &vorgate )
+{ 
+	QDomElement rootgate = dom.createElement("define-gate");
+	writeProperties(rootgate, vorgate);
+	QDomElement node = dom.createElement("atleast");
+	node.setAttribute("min", vorgate.getK());
+	rootgate.appendChild(node);
+	writeChildren(node, vorgate);
+	dom.documentElement().appendChild(rootgate);
+}
 
 void SaveVisitor::visit( Inhibit &inhibgate )
 {
@@ -82,7 +91,7 @@ void SaveVisitor::visit( Inhibit &inhibgate )
 	dom.documentElement().appendChild(rootgate);
 }
 
-void SaveVisitor::visit( Transfert &transfertgate ) {(void)transfertgate;}
+void SaveVisitor::visit( Transfert &transfertgate ) {(void)transfertgate; /*INUTILE ?!?*/}
 
 void SaveVisitor::visit( Constant &constdistrib )
 {
@@ -98,16 +107,28 @@ void SaveVisitor::visit( Constant &constdistrib )
 void SaveVisitor::visit( Exponential &expdistrib )
 {
 	//Même nombre de valeur
+	QDomElement distr = dom.createElement("define-parameter");
+	Properties& prop = expdistrib.getProperties();
+	distr.setAttribute("name", prop.getName());
 	QDomElement val = dom.createElement("float");
-	val.setAttribute("value", expdistrib.getValue());
-	dom.documentElement().appendChild(val);
+	val.setAttribute("value", expdistrib.getLambda());
+	distr.appendChild(val);
+	dom.documentElement().appendChild(distr);
 }
 
 void SaveVisitor::visit( Weibull &weibulldistrib )
 {
-	QDomElement val = dom.createElement("float");
-	val.setAttribute("value", weibulldistrib.getValue());
-	dom.documentElement().appendChild(val);
+	QDomElement distr = dom.createElement("define-parameter");
+	Properties& prop = weibulldistrib.getProperties();
+	distr.setAttribute("name", prop.getName());
+	QDomElement val;
+	val = dom.createElement("float");
+	val.setAttribute("value", weibulldistrib.getScale());
+	distr.appendChild(val);
+	val = dom.createElement("float");
+	val.setAttribute("value", weibulldistrib.getShape());
+	distr.appendChild(val);
+	dom.documentElement().appendChild(distr);
 }
 
 void SaveVisitor::visit( Container &container ) {(void)container; /*INUTILE ?!?*/}

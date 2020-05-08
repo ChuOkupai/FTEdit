@@ -24,6 +24,7 @@ Editor* FileManagerSystem::load(QString path)
 	
 	Editor* editor = new Editor();
 	XmlTreeReader xtr(&svfile);
+	xtr.readTree();
 	
 	return editor;
 }
@@ -50,8 +51,8 @@ int FileManagerSystem::save(Editor* editor)
 		d->accept(svisitor);
 	/*for(Event e :  editor->getEvents())
 		e.accept(svisitor);
-	for(Gate* g :  editor->getGates())
-		g->accept(svisitor);*/
+	*/for(Gate* g :  editor->getGates())
+		g->accept(svisitor);
 
 	saveStream << domref.toString();
 	file.commit();
