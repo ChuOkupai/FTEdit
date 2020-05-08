@@ -8,7 +8,6 @@ icon(icon), n(n), prop(prop)
 	pressed = false;
 	setFlag(ItemIsMovable);
 	setFlag(ItemIsSelectable);
-	setSelected(false);
 }
 
 QRectF NodeItem::boundingRect() const
@@ -29,11 +28,22 @@ void NodeItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 	path.addRoundedRect(r, ICON_RSIZE / 2, ICON_RSIZE / 2);
 	path.addRect(r.x(), r.height() / 4 - BORDER_SIZE / 2, r.width(), 0);
 	painter->setPen(pen);
-	if (isSelected())
-		painter->fillPath(path, QColor(51, 164, 255, 32));
+	painter->fillPath(path, (isSelected() ? QColor(213, 236, 255) : Qt::white));
 	painter->drawPath(path);
 	QPointF p(r.x() + ICON_RSIZE, r.y() + 1.89 * ICON_RSIZE + BORDER_SIZE - 1);
 	painter->drawPixmap(p, icon);
+	if (prop)
+	{
+		QFont font = painter->font();
+		font.setPixelSize(ICON_RSIZE / 4);
+		painter->setFont(font);
+		QRect r2(r.x() + ICON_RSIZE / 4, r.y() + ICON_RSIZE / 8,
+		r.width() - ICON_RSIZE / 2, r.height() / 4 - BORDER_SIZE);
+		painter->drawText(r2, Qt::AlignLeft, prop->getName());
+		r2.setY(r.y() + r.height() / 4);
+		r2.setHeight(r.height() - r.height() / 4 - BORDER_SIZE);
+		painter->drawText(r2, Qt::TextWordWrap, prop->getDesc());
+	}
 }
 
 void NodeItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
