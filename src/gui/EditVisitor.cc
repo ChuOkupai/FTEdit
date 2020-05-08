@@ -1,6 +1,115 @@
-#include "EditContainerDialog.hh"
+#include "EditVisitor.hh"
 #include "EditDistributionDialog.hh"
-#include "WidgetLinker.hh"
+
+EditVisitor::EditVisitor(QWidget *parent, Editor &editor) :
+parent(parent), editor(editor)
+{}
+
+void EditVisitor::visit(And &gate)
+{
+	EditGateDialog(parent, editor, gate, "And").exec();
+}
+
+void EditVisitor::visit(Or &gate)
+{
+	EditGateDialog(parent, editor, gate, "Or").exec();
+}
+
+void EditVisitor::visit(Xor &gate)
+{
+	EditGateDialog(parent, editor, gate, "Xor").exec();
+}
+
+void EditVisitor::visit(VotingOR &gate)
+{
+	EditVotingORDialog(parent, editor, gate).exec();
+}
+
+void EditVisitor::visit(Inhibit &gate)
+{
+	EditInhibitDialog(parent, editor, gate).exec();
+}
+
+void EditVisitor::visit(Transfert &gate)
+{
+	EditTransfertDialog(parent, editor, gate).exec();
+}
+
+void EditVisitor::visit(Container &cont)
+{
+	EditContainerDialog(parent, editor, cont).exec();
+}
+
+EditGateDialog::EditGateDialog(QWidget *parent, Editor &editor, Gate &gate, QString name) :
+PropertiesDialog(parent, editor, &gate.getProperties())
+{
+	setWindowTitle("Edit " + name + " Gate");
+	resize(360, 400);
+	WidgetLinker linker(this, (QBoxLayout*)layout());
+	linker.addOKButton();
+}
+
+EditInhibitDialog::EditInhibitDialog(QWidget *parent, Editor &editor, Inhibit &gate) :
+PropertiesDialog(parent, editor, &gate.getProperties()), gate(gate)
+{
+	setWindowTitle("Edit Inhibit Gate");
+	resize(360, 400);
+	WidgetLinker linker(this, (QBoxLayout*)layout());
+	linker.addLayoutItem(new QSpacerItem(0, 20, QSizePolicy::Minimum, QSizePolicy::Maximum));
+	linker.addLabel("Condition:");
+	condition = linker.addComboBox();
+	condition->addItem("false");
+	condition->addItem("true");
+	condition->setCurrentIndex(gate.getCondition() == true);
+	linker.addOKButton();
+
+	connect(condition, QOverload<int>::of(&QComboBox::currentIndexChanged),
+	[=](int i) { this->gate.setCondition(i == 1); });
+}
+
+EditVotingORDialog::EditVotingORDialog(QWidget *parent, Editor &editor, VotingOR &gate) :
+PropertiesDialog(parent, editor, &gate.getProperties()), gate(gate)
+{
+	setWindowTitle("Edit Voting or Gate");
+	resize(360, 400);
+	WidgetLinker linker(this, (QBoxLayout*)layout());
+	linker.addLayoutItem(new QSpacerItem(0, 20, QSizePolicy::Minimum, QSizePolicy::Maximum));
+	linker.addLabel("K parameter:");
+	k = linker.addSpinBox();
+	k->setRange(0, gate.getChildren().size()); // k range between 0 and n children
+	k->setValue(gate.getK());
+	linker.addOKButton();
+
+	connect(k, SIGNAL(valueChanged(int)), this, SLOT(updateK(int)));
+}
+
+void EditVotingORDialog::updateK(int k2)
+{
+	gate.setK(k2);
+}
+
+EditTransfertDialog::EditTransfertDialog(QWidget *parent, Editor &editor, Transfert &gate) :
+QDialog(parent), editor(editor), gate(gate)
+{
+	setWindowIcon(QIcon(":icons/edit.png"));
+	setWindowTitle("Edit Transfert In Gate");
+	resize(360, 140);
+	WidgetLinker linker(this, new QVBoxLayout(this));
+	linker.addLabel("Link:");
+	trees = linker.addComboBox();
+	linker.addLayoutItem(new QSpacerItem(0, 20, QSizePolicy::Minimum, QSizePolicy::Expanding));
+	linker.addOKButton();
+
+	QList<Tree> &l = editor.getTrees();
+	trees->addItem(""); // Empty link
+	for (int i = 0; i < l.size(); ++i)
+		trees->addItem(l[i].getProperties().getName());
+	Tree *link = gate.getLink();
+	trees->setCurrentIndex(link ? trees->findText(link->getProperties().getName()) + 1 : 0);
+	
+	connect(trees, QOverload<int>::of(&QComboBox::currentIndexChanged),
+	[=](int i) { this->gate.setLink(i ? &this->editor.getTrees()[i - 1] : nullptr); });
+}
 
 EditContainerDialog::EditContainerDialog(QWidget *parent, Editor &editor, Container &cont) :
 PropertiesDialog(parent, editor, &cont.getEvent()->getProperties(), false), cont(cont)

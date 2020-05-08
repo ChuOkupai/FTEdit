@@ -1,5 +1,4 @@
 #include "MainWindow.hh"
-#include "EditContainerDialog.hh"
 #include "ManageDistributionsDialog.hh"
 #include "ManageEventsDialog.hh"
 #include "RenderVisitor.hh"
@@ -168,7 +167,6 @@ void MainWindow::addEvent()
 	auto cont = new Container(&events.last());
 	cont->attach((Gate*)current);
 	RenderVisitor(view, editor->getSelection());
-	EditContainerDialog(this, *editor, *cont).exec();
 }
 
 void MainWindow::addTransfert()
@@ -193,7 +191,7 @@ void MainWindow::zoomOut()
 
 void MainWindow::zoomReset()
 {
-	view->setZoom(1.5);
+	view->setZoom(1);
 }
 
 void MainWindow::showToolBar()
