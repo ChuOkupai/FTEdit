@@ -9,7 +9,7 @@
 #define CARD_GAPX (CARD_Y / 2)
 #define CARD_GAPY (CARD_Y / 2)
 
-class NodeItem : public QGraphicsItem
+class NodeItem : public QGraphicsRectItem
 {
 private:
 	QPixmap icon;
@@ -27,8 +27,6 @@ public:
 	NodeItem(Node *n, Properties *prop, QPixmap icon);
 
 	QRectF boundingRect() const;
-
-	Node *getNode();
 
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 };

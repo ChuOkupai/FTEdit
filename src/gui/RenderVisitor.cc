@@ -2,10 +2,13 @@
 #include "RenderVisitor.hh"
 
 NodeItem::NodeItem(Node *n, Properties *prop, QPixmap icon) :
+QGraphicsRectItem(n->getPosition().x(), n->getPosition().y(), CARD_X, CARD_Y),
 icon(icon), n(n), prop(prop)
 {
 	pressed = false;
 	setFlag(ItemIsMovable);
+	setFlag(ItemIsSelectable);
+	setSelected(false);
 }
 
 QRectF NodeItem::boundingRect() const
@@ -21,9 +24,14 @@ void NodeItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 	r.setHeight(r.height() - ICON_RSIZE);
 	QPen pen(Qt::black, BORDER_SIZE);
 	painter->setPen(pen);
-	painter->drawRoundedRect(r, ICON_RSIZE / 2, ICON_RSIZE / 2);
-	QRectF r2(r.x(), r.height() / 4 - BORDER_SIZE / 2, r.width(), 0);
-	painter->drawRect(r2);
+	painter->setRenderHint(QPainter::Antialiasing);
+	QPainterPath path;
+	path.addRoundedRect(r, ICON_RSIZE / 2, ICON_RSIZE / 2);
+	path.addRect(r.x(), r.height() / 4 - BORDER_SIZE / 2, r.width(), 0);
+	painter->setPen(pen);
+	if (isSelected())
+		painter->fillPath(path, QColor(51, 164, 255, 32));
+	painter->drawPath(path);
 	QPointF p(r.x() + ICON_RSIZE, r.y() + 1.89 * ICON_RSIZE + BORDER_SIZE - 1);
 	painter->drawPixmap(p, icon);
 }
@@ -38,12 +46,15 @@ void NodeItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void NodeItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
 	pressed = false;
+	if (event->button() == Qt::LeftButton)
+		setSelected(true);
 	update();
 	QGraphicsItem::mouseReleaseEvent(event);
 }
 
 void NodeItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
+	setSelected(true);
 	QMenu menu;
 	menu.addAction("Edit");
 	QAction *a = menu.exec(event->screenPos());
