@@ -3,6 +3,7 @@
 RenderVisitor::RenderVisitor(GraphicsView *view, Tree *tree) :
 view(view), scene(view->scene())
 {
+	(void)this->view;
 	scene->clear();
 	view->update();
 	qDebug() << "\nRender;";
