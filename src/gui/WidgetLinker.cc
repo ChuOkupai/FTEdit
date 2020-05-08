@@ -117,7 +117,7 @@ QGraphicsView(parent)
 {
 	setDragMode(QGraphicsView::ScrollHandDrag);
 	setMouseTracking(true);
-    viewport()->setMouseTracking(true);
+	viewport()->setMouseTracking(true);
 }
 
 void GraphicsView::wheelEvent(QWheelEvent *event)

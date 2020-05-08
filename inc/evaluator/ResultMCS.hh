@@ -1,25 +1,25 @@
 #pragma once
 #include "Evaluator.hh"
+#include "CutVisitor.hh"
 #include "Event.hh"
 
 class ResultMCS : public Evaluator
 {
 	private : 
-		QList<QList<Event>> mcs;
-		QList<QList<Node*>> cs;
+        QList<QList<QString>> mcsNames;//mettre dedans les noms des events
 
 		QList<int> sieveOfAtkin(int n);
-		void computeCS();
-		void reduceCS();
-		void sortCut();
-		void convertCS();
+        void computeCS(QList<QList<Node*>>& cs, QList<Container*>& containers);
+        void reduceCS(QList<QList<Event>>& mcs);
+        void sortCut(QList<QList<Event>>& mcs);
+        void convertCS(QList<QList<Node*>>& cs, QList<QList<Event>>& mcs);
 
 
 	public :
 
 	ResultMCS(Gate* top, double missionTime, double step);
 	~ResultMCS();
-	QList<QList<Event>> getMCS();
+    QList<QList<QString>> getMCS();
 	QList<double> getProbabilities();
 
 };

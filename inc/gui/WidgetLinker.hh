@@ -27,8 +27,11 @@ public:
 	QPushButton *addPushButton(const QString &content);
 
 	QRadioButton *addRadioButton(const QString &content);
+<<<<<<< HEAD
 
 	QSpinBox *addSpinBox();
+=======
+>>>>>>> origin/dev
 
 	QTextEdit *addTextEdit(const QString &content);
 
@@ -52,9 +55,15 @@ public:
 
 // Custom QGraphicsView widget for smooth edition
 
+<<<<<<< HEAD
 #define ZOOM_MIN	0.05
 #define ZOOM_MAX	4.0
 #define ZOOM_STEP	0.2
+=======
+#define ZOOM_MIN	0.5
+#define ZOOM_MAX	15.0
+#define ZOOM_STEP	0.1
+>>>>>>> origin/dev
 
 class GraphicsView : public QGraphicsView
 {

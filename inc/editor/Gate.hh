@@ -98,6 +98,6 @@ public:
 	bool check(QList<QString>& errors);
 
 	void accept(VisitorNode& visitor);
-	//double accept(EvalVisitor& eval); xor gate undefined in EvalVisitor
+    double accept(EvalVisitor& eval); /*xor gate undefined in EvalVisitor*/
 
 };
