@@ -31,6 +31,21 @@ MainWindow::MainWindow() : editor(nullptr), modified(false)
 	explorer->headerItem()->setText(0, "Project Explorer");
 	explorerLayout->addWidget(explorer);
 
+    QTreeWidgetItem *project = new QTreeWidgetItem(explorer);
+    project->setText(0, tr("Project"));
+    QTreeWidgetItem *historical = new QTreeWidgetItem(project);
+    historical->setText(0, tr("Historical"));
+    QTreeWidgetItem *tree1 = new QTreeWidgetItem(historical);
+    tree1->setText(0, tr("Current Tree"));
+    QTreeWidgetItem *tree2 = new QTreeWidgetItem(historical);
+    tree2->setText(0, tr("Previous Tree"));
+    QTreeWidgetItem *results = new QTreeWidgetItem(project);
+    results->setText(0, tr("Results"));
+    QTreeWidgetItem *res1 = new QTreeWidgetItem(results);
+    res1->setText(0, tr("Current Result"));
+    QTreeWidgetItem *res2 = new QTreeWidgetItem(results);
+    res2->setText(0, tr("Previous Results"));
+
 	hSplitter->addWidget(horizontalLayout);
 	vSplitter = new QSplitter(hSplitter);
 	vSplitter->setOrientation(Qt::Vertical);
