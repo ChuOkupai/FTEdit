@@ -80,11 +80,11 @@ void MainWindow::newFile()
 {
 	if (!maybeSave())
 		return ;
+	scene->clear();
 	reset();
-	curItem = nullptr;
 	editor = new Editor();
 	editor->detach(); // Creates empty tree
-	updateScene(nullptr);
+	setEnabledButton();
 }
 
 void MainWindow::open()
@@ -612,6 +612,7 @@ void MainWindow::reset()
 	editor = nullptr;
 	modified = false;
 	curItem = nullptr;
+	resultsHistory.clear();
 }
 
 void MainWindow::resizeSplitter(QSplitter *splitter, int widget1Size, int widget2Size)
@@ -655,18 +656,20 @@ void MainWindow::addGate(Gate *g)
 
 void MainWindow::updateScene(Node *selection)
 {
-	RenderVisitor visitor(*this, selection);
-	Node *top = editor->getSelection()->getTop();
 	scene->clear();
+	Node *top = editor->getSelection()->getTop();
 	if (top)
 	{
+		RenderVisitor visitor(*this, selection);
 		top->balanceNodePos(); // Reset node position
 		top->accept(visitor);
 	}
 	else // Reset to empty tree
+	{
 		curItem = nullptr;
+		setEnabledButton();
+	}
 	view->update();
-	setEnabledButton();
 }
 
 QMenu *MainWindow::childItemsContextMenu()
