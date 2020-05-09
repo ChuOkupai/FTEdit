@@ -18,9 +18,6 @@ Container::~Container()
 		event->getProperties().decrementRefCount();
 }
 
-
-
-
 void Container::setEvent(Event* event)
 {
 	if(this->event)//décrémente si event non null
@@ -48,21 +45,17 @@ bool Container::check(QList<QString> &errors)
 
 Node* Container::search(QPoint around)
 {
-	/*
-	if(around == this->position)
-	return(this);
-	else
-	{
-		return this;
-	}
-	*/
-	
-	if (around.x() >= position.x() && around.x() < position.x() + NODE_X
-	&& around.y() <= position.y() && around.y() > position.y() - NODE_Y)
+	if (around.x() >= position.x() && around.x() < position.x() + (CARD_X +CARD_GAP_X)
+	&& around.y() <= position.y() && around.y() > position.y() - (CARD_Y + CARD_GAP_Y))
 		return (this);
 	Node* n = nullptr;
 	return (n);
 	
+}
+
+QPoint 	Container::top_node_coord(QPoint cpt)
+{
+	return cpt;
 }
 
 void Container::balanceNodePos()
@@ -72,6 +65,8 @@ void Container::balanceNodePos()
 
 void Container::remove()
 {
+	if(parent)
+		this->detach();
 	delete this;
 }
 

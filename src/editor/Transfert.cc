@@ -37,11 +37,16 @@ bool Transfert::check(QList<QString>& errors)
 
 Node* Transfert::search(QPoint around)
 {
-	if (around.x() >= position.x() && around.x() < position.x() + NODE_X
-	&& around.y() <= position.y() && around.y() > position.y() - NODE_Y)
+	if (around.x() >= position.x() && around.x() < position.x() + (CARD_X + CARD_GAP_X)
+	&& around.y() <= position.y() && around.y() > position.y() - (CARD_Y + CARD_GAP_Y))
 		return (this);
 	Node* n = nullptr;
 	return (n);
+}
+
+QPoint 	Transfert::top_node_coord(QPoint cpt)
+{
+	return cpt;
 }
 
 void Transfert::balanceNodePos()
@@ -74,6 +79,8 @@ double Transfert::accept(EvalVisitor& eval)
 
 void Transfert::remove()
 {
+	if(parent)
+		this->detach();
 	link->getTop()->remove();
 	link = nullptr;
 	delete this;
