@@ -88,7 +88,7 @@ void MainWindow::newFile()
 	if (!maybeSave())
 		return ;
 	reset();
-	current = nullptr;
+	curItem = nullptr;
 	editor = new Editor();
 	editor->detach();
 	setEnabledButton(true, false);
@@ -180,16 +180,30 @@ void MainWindow::addEvent()
 	QList<Event> &events = editor->getEvents();
 	events << Event(editor->generateName(PREFIX_EVENT));
 	auto cont = new Container(&events.last());
-	cont->attach((Gate*)current);
-	RenderVisitor(scene, *editor, curItem->node());
+	cont->attach((Gate*)curItem->node());
+	RenderVisitor visitor(*this, curItem->node());
+	scene->clear();
+	Gate *top = editor->getSelection()->getTop();
+	if (top)
+	{
+		top->balanceNodePos();
+		top->accept(visitor);
+	}
 }
 
 void MainWindow::addTransfert()
 {
 	modified = true;
 	auto t = new Transfert(editor->generateName(PREFIX_GATE));
-	t->attach((Gate*)current);
-	RenderVisitor(scene, *editor, curItem->node());
+	t->attach((Gate*)curItem->node());
+	RenderVisitor visitor(*this, curItem->node());
+	scene->clear();
+	Gate *top = editor->getSelection()->getTop();
+	if (top)
+	{
+		top->balanceNodePos();
+		top->accept(visitor);
+	}
 }
 
 void MainWindow::zoomIn()
@@ -283,11 +297,11 @@ void MainWindow::changeItem()
 	setEnabledButton(!curItem->isChild(), !curItem->isChild());
 }
 
-void MainWindow::editItem(NodeItem *item)
+void MainWindow::editItem()
 {
-	EditVisitor visitor(this, *editor, item);
-	item->node()->accept(visitor);
-	item->update();
+	EditVisitor visitor(this, *editor, curItem);
+	curItem->node()->accept(visitor);
+	scene->update();
 }
 
 void MainWindow::createActions()
@@ -446,6 +460,11 @@ void MainWindow::createActions()
 	aboutQtAct->setStatusTip("About Qt");
 	aboutQtAct->setIcon(QIcon(":icons/about.png"));
 	connect(aboutQtAct, &QAction::triggered, qApp, &QApplication::aboutQt);
+
+	editItemAct = new QAction("Edit", this);
+	editItemAct->setStatusTip("Edit node properties");
+	editItemAct->setIcon(QIcon(":icons/edit.png"));
+	connect(editItemAct, &QAction::triggered, this, &MainWindow::editItem);
 }
 
 void MainWindow::createMenus()
@@ -497,6 +516,12 @@ void MainWindow::createMenus()
 	m = menuBar()->addMenu("&Help");
 	m->addAction(aboutAct);
 	m->addAction(aboutQtAct);
+
+	itemsMenu = new QMenu(this);
+	itemsMenu->addAction(editItemAct);
+
+	childItemsMenu = new QMenu(this);
+	childItemsMenu->addAction(editItemAct);
 }
 
 void MainWindow::createToolBar()
@@ -575,15 +600,35 @@ void MainWindow::setEnabledButton(bool gates, bool childs)
 void MainWindow::addGate(Gate *g)
 {
 	editor->getGates() << g;
-	if (current)
-		g->attach((Gate*)current);
+	if (curItem)
+		g->attach((Gate*)curItem->node());
 	else
 	{
 		editor->getSelection()->setTop(g);
 		setEnabledButton(true, true);
 	}
-	//editor->move(g, (Gate*)current); ???
-	current = g;
+	RenderVisitor visitor(*this, g);
+	scene->clear();
+	Gate *top = editor->getSelection()->getTop();
+	if (top)
+	{
+		top->balanceNodePos();
+		top->accept(visitor);
+	}
 	modified = true;
-	RenderVisitor(scene, *editor, g);
+}
+
+QMenu *MainWindow::childItemsContextMenu()
+{
+	return (childItemsMenu);
+}
+
+QMenu *MainWindow::itemsContextMenu()
+{
+	return (itemsMenu);
+}
+
+QGraphicsScene *MainWindow::getScene()
+{
+	return (scene);
 }

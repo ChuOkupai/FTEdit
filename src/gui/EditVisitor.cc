@@ -40,7 +40,7 @@ void EditVisitor::visit(Container &cont)
 {
 	EditContainerDialog(parent, editor, cont).exec();
 	n->setProperties(&cont.getEvent()->getProperties());
-	editor.refresh();
+	editor.refresh(); // Remove useless events
 }
 
 EditGateDialog::EditGateDialog(QWidget *parent, Editor &editor, Gate &gate, QString name) :

@@ -55,13 +55,12 @@ private slots:
 
 	// Change item selection
 	void changeItem();
-	// Edit item
-	void editItem(NodeItem *item);
+	// Edit current node
+	void editItem();
 
 private:
 	Editor		*editor;
 	bool		modified;
-	Node		*current;
 	NodeItem	*curItem;
 
 	QAction *newAct;
@@ -90,7 +89,10 @@ private:
 	QAction *evaluateAct;
 	QAction *aboutAct;
 	QAction *aboutQtAct;
+	QAction *editItemAct;
 
+	QMenu			*childItemsMenu; // for childs (Container + Transfert)
+	QMenu			*itemsMenu; // for gates
 	QMenu			*gatesMenu;
 	QToolBar		*toolBar;
 	QTreeWidget		*explorer;
@@ -113,4 +115,9 @@ private:
 	void setEnabledButton(bool gates, bool childs);
 	// Add new Gate
 	void addGate(Gate *g);
+
+public:
+	QMenu *childItemsContextMenu();
+	QMenu *itemsContextMenu();
+	QGraphicsScene *getScene();
 };

@@ -14,19 +14,17 @@
 class NodeItem : public QGraphicsRectItem
 {
 private:
-	Editor &editor;
+	QMenu *contextMenu;
 	QPixmap icon;
 	Node *n;
 	Properties *prop;
 	bool child;
-	bool pressed;
 
-	void mousePressEvent(QGraphicsSceneMouseEvent *event);
 	void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 	void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
 
 public:
-	NodeItem(Editor &editor, QPixmap icon, Node *n, Properties *prop, bool isChild = false);
+	NodeItem(QMenu *contextMenu, QPixmap icon, Node *n, Properties *prop, bool isChild = false);
 
 	bool isChild();
 
@@ -43,12 +41,11 @@ public:
 class RenderVisitor : public VisitorNode
 {
 private:
-	QGraphicsScene *scene;
-	Editor &editor;
+	MainWindow &win;
 	Node *selection;
 
 public:
-	RenderVisitor(QGraphicsScene *scene, Editor &editor, Node *selection);
+	RenderVisitor(MainWindow &win, Node *selection);
 
 	void visit(And &gate);
 
