@@ -1,6 +1,7 @@
 #include <QtGlobal>
 #include <limits>
 #include "Editor.hh"
+#include "CopyVisitor.hh"
 
 Editor::Editor(bool autoRefresh) :
 clipboard(nullptr), selection(nullptr), autoRefresh(autoRefresh)
@@ -51,17 +52,32 @@ void Editor::setAutoRefresh(bool value)
 
 void Editor::copy(Node *top)
 {
-	(void)top;
+	/*
+	resetClipboard();
+	CopyVisitor tmp;
+	top->accept(tmp);
+	clipboard = tmp.getCopied();
+	*/
+	(void) top;
 }
 
 void Editor::cut(Node *top)
 {
-	(void)top;
+	/*
+	resetClipboard();
+	CopyVisitor tmp;
+	top->accept(tmp);
+	clipboard = tmp.getCopied();
+	top->remove();//still not working...
+	*/
+	(void) top;
 }
 
 void Editor::paste(Gate *parent)
 {
-	(void)parent;
+	//modify clipboard temporarly to change name... somehow.
+	//clipboard->attach(parent);
+	(void) parent;
 }
 
 void Editor::move(Node *child, Gate *parent)
@@ -153,4 +169,5 @@ void Editor::refresh()
 void Editor::resetClipboard()
 {
 	// détruire la copie de l'arbre dans clipboard
+	//clipboard->remove();
 }

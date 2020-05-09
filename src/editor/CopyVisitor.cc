@@ -28,13 +28,13 @@ Gate* CopyVisitor::find(Node * n,QString name)
         if(g->getProperties().getName() == name)
             return g;
         else
-    {
+        {
         for(int i =0; i< g->getChildren().size();i++)
         {
             Gate* tmp = find(g->getChildren().at(i),name);
             if(tmp) return tmp;
         }
-    }
+        }
     }
     return nullptr;
     
