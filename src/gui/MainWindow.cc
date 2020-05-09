@@ -1,7 +1,6 @@
-#include "MainWindow.hh"
+#include "EditVisitor.hh"
 #include "ManageDistributionsDialog.hh"
 #include "ManageEventsDialog.hh"
-#include "RenderVisitor.hh"
 
 MainWindow::MainWindow() : editor(nullptr), modified(false)
 {
@@ -80,6 +79,8 @@ MainWindow::MainWindow() : editor(nullptr), modified(false)
 	errorList->resize(errorList->width(), 1);
 	toggleErrorList();
 	this->newFile();
+
+	connect(scene, SIGNAL(selectionChanged()), this, SLOT(changeItem()));
 }
 
 void MainWindow::newFile()
@@ -170,8 +171,7 @@ void MainWindow::addKN()
 
 void MainWindow::addXor()
 {
-	// ISSUE
-	//addGate(new Xor(editor->generateName(PREFIX_GATE)));
+	addGate(new Xor(editor->generateName(PREFIX_GATE)));
 }
 
 void MainWindow::addEvent()
@@ -181,7 +181,7 @@ void MainWindow::addEvent()
 	events << Event(editor->generateName(PREFIX_EVENT));
 	auto cont = new Container(&events.last());
 	cont->attach((Gate*)current);
-	RenderVisitor(view, editor->getSelection());
+	RenderVisitor(scene, *editor, curItem->node());
 }
 
 void MainWindow::addTransfert()
@@ -189,7 +189,7 @@ void MainWindow::addTransfert()
 	modified = true;
 	auto t = new Transfert(editor->generateName(PREFIX_GATE));
 	t->attach((Gate*)current);
-	RenderVisitor(view, editor->getSelection());
+	RenderVisitor(scene, *editor, curItem->node());
 }
 
 void MainWindow::zoomIn()
@@ -269,6 +269,25 @@ void MainWindow::about()
 	"License: GPLv3<br>Source code is available on "
 	"<a href='https://github.com/ChuOkupai/FTEdit'>GitHub</a><br>");
 	about.exec();
+}
+
+void MainWindow::changeItem()
+{
+	QList<QGraphicsItem*> list = scene->selectedItems();
+	if (list.size() != 1)
+	{
+		curItem->setSelected(!list.size());
+		return ;
+	}
+	curItem = (NodeItem*)list[0];
+	setEnabledButton(!curItem->isChild(), !curItem->isChild());
+}
+
+void MainWindow::editItem(NodeItem *item)
+{
+	EditVisitor visitor(this, *editor, item);
+	item->node()->accept(visitor);
+	item->update();
 }
 
 void MainWindow::createActions()
@@ -566,5 +585,5 @@ void MainWindow::addGate(Gate *g)
 	//editor->move(g, (Gate*)current); ???
 	current = g;
 	modified = true;
-	RenderVisitor(view, editor->getSelection());
+	RenderVisitor(scene, *editor, g);
 }

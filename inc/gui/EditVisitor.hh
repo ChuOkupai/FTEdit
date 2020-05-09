@@ -1,6 +1,6 @@
 #pragma once
 #include "Dialog.hh"
-#include "WidgetLinker.hh"
+#include "RenderVisitor.hh"
 
 // Generic visitor for Node properties editing
 class EditVisitor : public VisitorNode
@@ -8,9 +8,10 @@ class EditVisitor : public VisitorNode
 private:
 	QWidget *parent;
 	Editor &editor;
+	NodeItem *n;
 
 public:
-	EditVisitor(QWidget *parent, Editor &editor);
+	EditVisitor(QWidget *parent, Editor &editor, NodeItem *n);
 
 	void visit(And &gate);
 

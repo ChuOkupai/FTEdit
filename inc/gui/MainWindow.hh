@@ -8,6 +8,8 @@
 #define RES_MIN_Y	320
 #define MIN(A, B) ((A) < (B) ? (A) : (B))
 
+class NodeItem;
+
 class MainWindow : public QMainWindow
 {
 	Q_OBJECT
@@ -51,10 +53,16 @@ private slots:
 	// Help
 	void about();
 
+	// Change item selection
+	void changeItem();
+	// Edit item
+	void editItem(NodeItem *item);
+
 private:
-	Editor	*editor;
-	bool	modified;
-	Node	*current;
+	Editor		*editor;
+	bool		modified;
+	Node		*current;
+	NodeItem	*curItem;
 
 	QAction *newAct;
 	QAction *openAct;

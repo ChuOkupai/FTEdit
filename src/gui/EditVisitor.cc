@@ -1,8 +1,8 @@
 #include "EditVisitor.hh"
 #include "EditDistributionDialog.hh"
 
-EditVisitor::EditVisitor(QWidget *parent, Editor &editor) :
-parent(parent), editor(editor)
+EditVisitor::EditVisitor(QWidget *parent, Editor &editor, NodeItem *n) :
+parent(parent), editor(editor), n(n)
 {}
 
 void EditVisitor::visit(And &gate)
@@ -33,11 +33,14 @@ void EditVisitor::visit(Inhibit &gate)
 void EditVisitor::visit(Transfert &gate)
 {
 	EditTransfertDialog(parent, editor, gate).exec();
+	n->setProperties(gate.getLink() ? &gate.getLink()->getProperties() : nullptr);
 }
 
 void EditVisitor::visit(Container &cont)
 {
 	EditContainerDialog(parent, editor, cont).exec();
+	n->setProperties(&cont.getEvent()->getProperties());
+	editor.refresh();
 }
 
 EditGateDialog::EditGateDialog(QWidget *parent, Editor &editor, Gate &gate, QString name) :

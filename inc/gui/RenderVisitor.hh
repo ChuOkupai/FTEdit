@@ -1,5 +1,6 @@
 #pragma once
 #include "FTEdit_Editor.hh"
+#include "MainWindow.hh"
 #include "WidgetLinker.hh"
 
 #define ICON_RSIZE 80
@@ -9,22 +10,30 @@
 #define CARD_GAPX (CARD_Y / 2)
 #define CARD_GAPY (CARD_Y / 2)
 
+// Qt graphic item (Node has to be converted)
 class NodeItem : public QGraphicsRectItem
 {
 private:
+	Editor &editor;
 	QPixmap icon;
-	bool pressed;
-
-protected:
 	Node *n;
 	Properties *prop;
+	bool child;
+	bool pressed;
 
 	void mousePressEvent(QGraphicsSceneMouseEvent *event);
 	void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 	void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
 
 public:
-	NodeItem(Node *n, Properties *prop, QPixmap icon);
+	NodeItem(Editor &editor, QPixmap icon, Node *n, Properties *prop, bool isChild = false);
+
+	bool isChild();
+
+	// GetNode
+	Node *node();
+
+	void setProperties(Properties *prop);
 
 	QRectF boundingRect() const;
 
@@ -35,9 +44,11 @@ class RenderVisitor : public VisitorNode
 {
 private:
 	QGraphicsScene *scene;
+	Editor &editor;
+	Node *selection;
 
 public:
-	RenderVisitor(GraphicsView *view,  Tree *tree);
+	RenderVisitor(QGraphicsScene *scene, Editor &editor, Node *selection);
 
 	void visit(And &gate);
 
