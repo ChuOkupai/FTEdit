@@ -138,7 +138,7 @@ void ResultMCS::reduceCS(QList<QList<Event>>& mcs){/*enlever les doublons et red
 
 
 
-void ResultMCS::sortCut(QList<QList<Event>>& mcs){/*enlever les doublons dans les coupes */
+void ResultMCS::sortCut(QList<QList<Event>>& mcs){/*enlever les doublons dans les coupes et sort croissant les coupes par size de coupe*/
 
 	for(int i=0; i<mcs.size(); i++){/*enlever les doublons dans les coupes */
 
@@ -151,6 +151,17 @@ void ResultMCS::sortCut(QList<QList<Event>>& mcs){/*enlever les doublons dans le
 			}
 		}
 	}
+    
+    QList<Event> temp;
+    for(int j=mcs.size(); j>=1; j--){/*sort croissant les coupes par size de coupe*/
+        for(int i=0;i<j-1;i++){
+            if(mcs[i].size()>mcs[i+1].size()){
+                temp = mcs[i];
+                mcs[i] = mcs[i+1];
+                mcs[i+1] = temp;
+            }
+        }
+    }
 }
 
 QList<int> ResultMCS::sieveOfAtkin(int limit){/*Génère un nombre de nombres premiers selon le nombre limite n.*/
