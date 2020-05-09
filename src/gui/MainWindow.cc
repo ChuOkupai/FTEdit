@@ -183,14 +183,7 @@ void MainWindow::addEvent()
 	events << Event(editor->generateName(PREFIX_EVENT));
 	auto cont = new Container(&events.last());
 	cont->attach((Gate*)curItem->node());
-	RenderVisitor visitor(*this, curItem->node());
-	scene->clear();
-	Gate *top = editor->getSelection()->getTop();
-	if (top)
-	{
-		top->balanceNodePos();
-		top->accept(visitor);
-	}
+	updateScene(curItem->node());
 }
 
 void MainWindow::addTransfert()
@@ -198,14 +191,7 @@ void MainWindow::addTransfert()
 	modified = true;
 	auto t = new Transfert(editor->generateName(PREFIX_GATE));
 	t->attach((Gate*)curItem->node());
-	RenderVisitor visitor(*this, curItem->node());
-	scene->clear();
-	Gate *top = editor->getSelection()->getTop();
-	if (top)
-	{
-		top->balanceNodePos();
-		top->accept(visitor);
-	}
+	updateScene(curItem->node());
 }
 
 void MainWindow::zoomIn()
@@ -296,7 +282,7 @@ void MainWindow::changeItem()
 		return ;
 	}
 	curItem = (NodeItem*)list[0];
-	setEnabledButton(!curItem->isChild(), !curItem->isChild());
+	setEnabledButton();
 }
 
 void MainWindow::editItem()
@@ -631,22 +617,25 @@ void MainWindow::resizeSplitter(QSplitter *splitter, int widget1Size, int widget
 	l.clear();
 }
 
-void MainWindow::setEnabledButton(bool gates, bool childs)
+void MainWindow::setEnabledButton()
 {
+	saveAct->setEnabled(modified);
 	cutAct->setDisabled(curItem == nullptr);
 	copyAct->setDisabled(curItem == nullptr);
 	pasteAct->setEnabled(editor->getClipboard() && curItem && !curItem->isChild());
-	addAndAct->setEnabled(gates);
-	addInhibitAct->setEnabled(gates);
-	addOrAct->setEnabled(gates);
-	addKNAct->setEnabled(gates);
-	addXorAct->setEnabled(gates);
-	addTransfertAct->setEnabled(childs);
-	addEventAct->setEnabled(childs);
+	addAndAct->setDisabled(curItem && curItem->isChild());
+	addInhibitAct->setDisabled(curItem && curItem->isChild());
+	addOrAct->setDisabled(curItem && curItem->isChild());
+	addKNAct->setDisabled(curItem && curItem->isChild());
+	addXorAct->setDisabled(curItem && curItem->isChild());
+	addTransfertAct->setEnabled(curItem && !curItem->isChild());
+	addEventAct->setEnabled(curItem && !curItem->isChild());
+	evaluateAct->setEnabled(curItem && !curItem->isChild());
 }
 
 void MainWindow::addGate(Gate *g)
 {
+	modified = true;
 	editor->getGates() << g;
 	if (curItem)
 	{
@@ -654,12 +643,8 @@ void MainWindow::addGate(Gate *g)
 		g = (Gate*)curItem->node();
 	}
 	else
-	{
 		editor->getSelection()->setTop(g);
-		setEnabledButton(true, true);
-	}
 	updateScene(g);
-	modified = true;
 }
 
 void MainWindow::updateScene(Node *selection)
@@ -673,11 +658,9 @@ void MainWindow::updateScene(Node *selection)
 		top->accept(visitor);
 	}
 	else // Reset to empty tree
-	{
-		setEnabledButton(true, false);
 		curItem = nullptr;
-	}
 	view->update();
+	setEnabledButton();
 }
 
 QMenu *MainWindow::childItemsContextMenu()

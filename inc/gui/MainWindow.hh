@@ -123,7 +123,7 @@ private:
 	// Redimensionne le layout
 	void resizeSplitter(QSplitter *splitter, int widget1Size, int widget2Size);
 	// Set enabled buttons
-	void setEnabledButton(bool gates, bool childs);
+	void setEnabledButton();
 	// Add new Gate
 	void addGate(Gate *g);
 	// Refresh current scene
