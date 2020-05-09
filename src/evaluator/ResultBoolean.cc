@@ -11,13 +11,13 @@ ResultBoolean::~ResultBoolean(){
 
 //TODO
 QList<double> ResultBoolean::getProbabilities(){
-	EvalVisitor *eval = new EvalVisitor(0,0);
+	EvalVisitor eval(0,0);
 	for(int i = 0; i < missionTime; i = i + step){
-		eval->setTime(i);
-		//this->probabilities.at(i) = top->accept(eval);
-		eval->reset();
+		eval.setTime(i);
+		this->probabilities << this->top->accept(eval);
+		eval.reset();
 	}
-	delete eval;
+	
 	return probabilities;;
 }
 

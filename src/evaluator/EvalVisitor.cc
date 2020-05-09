@@ -34,57 +34,59 @@ void EvalVisitor::reset(){
 }
 
 double EvalVisitor::visit(And& andVisitor){
-
+	
 
 	for(int i = 1; i < andVisitor.getChildren().size() ; i++){
 		if(this->proba ==0){
-			return andVisitor.getChildren().at(i)->accept(*this);
+			this->proba = andVisitor.getChildren().at(i)->accept(*this);
 
 		}else{
-		 return this->proba * andVisitor.getChildren().at(i)->accept(*this);
+		 this->proba = this->proba * andVisitor.getChildren().at(i)->accept(*this);
 		}
 	}
-	return 0;//to remove compiling warning
+	
+	return this->proba;
 }
 
 double EvalVisitor::visit(Or&  orVisitor){
 
 	for(int i = 0; i < orVisitor.getChildren().size() ; i++){
 
-			return this->proba + orVisitor.getChildren().at(i)->accept(*this);
+			this->proba = this->proba + orVisitor.getChildren().at(i)->accept(*this);
 		}
-	return 0;//to remove compiling warning
+	return this->proba;
 }
 
 double EvalVisitor::visit(Xor&  xorVisitor){
-
+	
     for(int i = 0; i < xorVisitor.getChildren().size() ; i++){
 
-            return this->proba + xorVisitor.getChildren().at(i)->accept(*this);
+            this->proba += xorVisitor.getChildren().at(i)->accept(*this);
         }
-    return 0;//to remove compiling warning
+   return this->proba;
 }
 
 double EvalVisitor::visit(Inhibit& inVisitor){
-	inVisitor.getParent();
+	
 	if(inVisitor.getCondition()){
-		 return this->proba + inVisitor.getChildren().at(0)->accept(*this);
+		 this->proba = this->proba + inVisitor.getChildren().at(0)->accept(*this);
 	}
-	return 0;//to remove compiling warning
+	return this->proba;
+	
 }
 
 double EvalVisitor::visit(Transfert& transVisitor){
-	transVisitor.getParent();
-	return transVisitor.getLink()->getTop()->accept(*this);
-
+	
+	this->proba += transVisitor.getLink()->getTop()->accept(*this);
+	return this->proba;
 }
 
 double EvalVisitor::visit(VotingOR& vorVisitor){
-	vorVisitor.getParent();
+	
 	 return vorVisitor.getSubTree()->accept(*this);
 }
 
 double EvalVisitor::visit(Container& eventVisitor){
-	eventVisitor.getParent();
+	
 	 return eventVisitor.getEvent()->getDistribution()->getProbability(time);
 }
