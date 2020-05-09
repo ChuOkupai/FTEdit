@@ -3,13 +3,15 @@
 #include "Result.hh"
 
 
-class PrintResultat : public QDialog
+class PrintResult : public QDialog
 {
     Q_OBJECT
 
 public:
-    PrintResultat(QWidget *parent, ResultMCS *resultMCS, ResultBoolean *resultBoolean);
+    PrintResult(QWidget *parent, ResultMCS *resultMCS, ResultBoolean *resultBoolean);
+    PrintResult(QWidget *parent, Result *result);
 private:
+    Result *result;
     ResultMCS *resultMCS;
     ResultBoolean *resultBoolean;
 private slots:

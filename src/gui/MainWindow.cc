@@ -253,6 +253,8 @@ void MainWindow::showEvents()
 void MainWindow::evaluate()
 {
 	// add result entry to resultsHistory on success.
+	//Result *result;
+	//PrintResult(this, result).exec();
 	// Redirect user to error list on failure.
 }
 
