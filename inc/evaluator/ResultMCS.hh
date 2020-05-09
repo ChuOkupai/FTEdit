@@ -13,6 +13,7 @@ class ResultMCS : public Evaluator
         void reduceCS(QList<QList<Event>>& mcs);
         void sortCut(QList<QList<Event>>& mcs);
         void convertCS(QList<QList<Node*>>& cs, QList<QList<Event>>& mcs);
+        void combo(int n,int k,int a[],QList<QList<int>>& comb,int m);/*calculer les compositions des coupes minimales*/
 
 
 	public :
@@ -20,6 +21,6 @@ class ResultMCS : public Evaluator
 	ResultMCS(Gate* top, double missionTime, double step);
 	~ResultMCS();
     QList<QList<QString>> getMCS();
-	QList<double> getProbabilities();
+    QList<double> getProbabilities();/*probabilities[0] = proba de top*/
 
 };
