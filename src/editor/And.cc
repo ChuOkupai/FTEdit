@@ -5,6 +5,9 @@
 And::And(QString name) : Gate(name)
 {}
 
+And::And(And& cop) : Gate (cop.getProperties().getName())
+{}
+
 And::~And()
 {}
 
