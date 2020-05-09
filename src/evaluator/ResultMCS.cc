@@ -32,7 +32,7 @@ ResultMCS::ResultMCS(Gate* top,double missionTime,double step) : Evaluator(top,m
 
 
     /*quantitative*//*probabilities[0] = proba de top*/
-    probabilities << 0;/*probabilities[0] = proba de top*/
+
     double probaCoupe;
     for(int i=0; i<mcs.size(); i++){/*Calculer le proba de chaque coupe minimale */
         probaCoupe = 1;
@@ -47,7 +47,7 @@ ResultMCS::ResultMCS(Gate* top,double missionTime,double step) : Evaluator(top,m
 
     double p=0;/*proba de top*/
     int klimit;/*limiter le nombre de s*/
-    int n = mcs.size();
+    int n = probabilities.size();
     if(n<5){
         klimit = n+1;
     }else{
@@ -58,7 +58,7 @@ ResultMCS::ResultMCS(Gate* top,double missionTime,double step) : Evaluator(top,m
         double s=0;
 
         if(i==1){
-            for(int j=1; j<n+1;j++){/*probabilities.size() = mcs.size()+1 */
+            for(int j=0; j<n;j++){
                 s += probabilities[j];
             }
         }
@@ -97,7 +97,9 @@ ResultMCS::ResultMCS(Gate* top,double missionTime,double step) : Evaluator(top,m
             }
             p += s;/*proba de top*/
         }
+
     }
+    probabilities << p;/*probabilities.last() = proba de top*/
 
 
 
