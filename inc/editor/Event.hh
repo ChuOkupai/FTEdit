@@ -2,6 +2,8 @@
 #include "Properties.hh"
 #include "Distribution.hh"
 
+class SaveVisitor;
+
 class Event
 {
 private:
@@ -18,6 +20,8 @@ public:
 	void setDistribution(Distribution *distribution);
 	
 	Distribution* getDistribution();
+
+	void accept(SaveVisitor& v);
 
 	bool operator==(const Event&)const;
 	bool operator <(const Event&)const;

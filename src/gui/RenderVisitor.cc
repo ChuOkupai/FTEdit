@@ -95,6 +95,7 @@ void NodeItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 RenderVisitor::RenderVisitor(QGraphicsScene *scene, Editor &editor, Node *selection) :
 scene(scene), editor(editor), selection(selection)
 {
+	(void)this->view;
 	scene->clear();
 	if (editor.getSelection()->getTop())
 		editor.getSelection()->getTop()->accept(*this);
