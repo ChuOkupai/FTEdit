@@ -29,21 +29,14 @@ MainWindow::MainWindow() : editor(nullptr), modified(false)
 	explorer = new QTreeWidget(horizontalLayout);
 	explorer->headerItem()->setText(0, "Project Explorer");
 	explorerLayout->addWidget(explorer);
+	connect(explorer, SIGNAL(itemClicked(QTreeWidgetItem *, int)), this, SLOT(explorerItemClicked(QTreeWidgetItem *, int)));
 
-    QTreeWidgetItem *project = new QTreeWidgetItem(explorer);
-    project->setText(0, tr("Project"));
-    QTreeWidgetItem *historical = new QTreeWidgetItem(project);
-    historical->setText(0, tr("Historical"));
-    QTreeWidgetItem *tree1 = new QTreeWidgetItem(historical);
-    tree1->setText(0, tr("Current Tree"));
-    QTreeWidgetItem *tree2 = new QTreeWidgetItem(historical);
-    tree2->setText(0, tr("Previous Tree"));
-    QTreeWidgetItem *results = new QTreeWidgetItem(project);
-    results->setText(0, tr("Results"));
-    QTreeWidgetItem *res1 = new QTreeWidgetItem(results);
-    res1->setText(0, tr("Current Result"));
-    QTreeWidgetItem *res2 = new QTreeWidgetItem(results);
-    res2->setText(0, tr("Previous Results"));
+	trees = new QTreeWidgetItem(explorer);
+	trees->setText(0, "Fault tree");
+	QTreeWidgetItem *tree1 = new QTreeWidgetItem(trees);
+	tree1->setText(0, "test");
+	results = new QTreeWidgetItem(explorer);
+	results->setText(0, "Result");
 
 	hSplitter->addWidget(horizontalLayout);
 	vSplitter = new QSplitter(hSplitter);
@@ -259,7 +252,8 @@ void MainWindow::showEvents()
 
 void MainWindow::evaluate()
 {
-	;
+	// add result entry to resultsHistory on success.
+	// Redirect user to error list on failure.
 }
 
 void MainWindow::about()
@@ -312,6 +306,18 @@ void MainWindow::join()
 	// Merge the content
 	updateScene(curItem->node());
 	*/
+}
+
+void MainWindow::explorerItemClicked(QTreeWidgetItem *item, int column)
+{
+	qDebug() << "clicked";
+	(void)item;
+	(void)column;
+	//	verif si parent appartient aux trees
+	//		=> changer l'arbre séléctionné dans l'éditeur
+	//updateScene(editor->getSelection()->getTop()); // pour mettre à jour l'affichage
+	//	verif si parent appartient à l'attribut results
+	//		=> Afficher les résultats (utiliser l'attribut resultsHistory dans la classe)
 }
 
 void MainWindow::createActions()

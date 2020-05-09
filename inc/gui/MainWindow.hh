@@ -1,6 +1,7 @@
 #pragma once
 #include <QMainWindow>
 #include "FTEdit_Editor.hh"
+#include "FTEdit_Evaluator.hh"
 #include "WidgetLinker.hh"
 
 #define ICON_SIZE	48
@@ -63,11 +64,14 @@ private slots:
 	void detach();
 	// Merge the content of a fault tree as a child of this node
 	void join();
+	// Check clicked item in explorer
+	void explorerItemClicked(QTreeWidgetItem *item, int column);
 
 private:
-	Editor		*editor;
-	bool		modified;
-	NodeItem	*curItem;
+	Editor			*editor;
+	bool			modified;
+	NodeItem		*curItem;
+	QList<Result>	resultsHistory;
 
 	QAction *newAct;
 	QAction *openAct;
@@ -107,6 +111,8 @@ private:
 	QMenu			*gatesMenu;
 	QToolBar		*toolBar;
 	QTreeWidget		*explorer;
+	QTreeWidgetItem	*trees; // Fault trees list
+	QTreeWidgetItem	*results; // Results list
 	GraphicsView	*view;
 	QGraphicsScene	*scene;
 	QListWidget		*errorList;
