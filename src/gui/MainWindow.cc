@@ -90,8 +90,8 @@ void MainWindow::newFile()
 	reset();
 	curItem = nullptr;
 	editor = new Editor();
-	editor->detach();
-	setEnabledButton(true, false);
+	editor->detach(); // Creates empty tree
+	updateScene(nullptr);
 }
 
 void MainWindow::open()
@@ -136,16 +136,18 @@ void MainWindow::closeEvent(QCloseEvent* e)
 
 void MainWindow::cut()
 {
+	editor->cut(curItem->node());
 	modified = true;
 }
 
 void MainWindow::copy()
 {
-	;
+	editor->copy(curItem->node());
 }
 
 void MainWindow::paste()
 {
+	editor->paste((Gate*)curItem->node());
 	modified = true;
 }
 
@@ -302,6 +304,28 @@ void MainWindow::editItem()
 	EditVisitor visitor(this, *editor, curItem);
 	curItem->node()->accept(visitor);
 	scene->update();
+}
+
+void MainWindow::removeItem()
+{
+	Node *parent = curItem->node()->getParent();
+	editor->remove(curItem->node());
+	updateScene(parent);
+}
+
+void MainWindow::detach()
+{
+	editor->detach((Gate*)curItem->node());
+	updateScene(curItem->node());
+}
+
+void MainWindow::join()
+{
+	/*
+	// Choose a tree dialog
+	// Merge the content
+	updateScene(curItem->node());
+	*/
 }
 
 void MainWindow::createActions()
@@ -465,6 +489,21 @@ void MainWindow::createActions()
 	editItemAct->setStatusTip("Edit node properties");
 	editItemAct->setIcon(QIcon(":icons/edit.png"));
 	connect(editItemAct, &QAction::triggered, this, &MainWindow::editItem);
+
+	removeItemAct = new QAction("Remove", this);
+	removeItemAct->setStatusTip("Remove all nodes starting from here");
+	removeItemAct->setIcon(QIcon(":icons/cut.png"));
+	connect(removeItemAct, &QAction::triggered, this, &MainWindow::removeItem);
+
+	detachItemAct = new QAction("Detach", this);
+	detachItemAct->setStatusTip("Move all nodes starting from here in a new fault tree");
+	detachItemAct->setIcon(QIcon(":icons/cut.png"));
+	connect(detachItemAct, &QAction::triggered, this, &MainWindow::detach);
+
+	joinItemAct = new QAction("Join", this);
+	joinItemAct->setStatusTip("Merge the content of a fault tree as a child of this node");
+	joinItemAct->setIcon(QIcon(":icons/add.png"));
+	connect(joinItemAct, &QAction::triggered, this, &MainWindow::join);
 }
 
 void MainWindow::createMenus()
@@ -519,9 +558,14 @@ void MainWindow::createMenus()
 
 	itemsMenu = new QMenu(this);
 	itemsMenu->addAction(editItemAct);
+	itemsMenu->addAction(removeItemAct);
+	itemsMenu->addSeparator();
+	itemsMenu->addAction(detachItemAct);
+	itemsMenu->addAction(joinItemAct);
 
 	childItemsMenu = new QMenu(this);
 	childItemsMenu->addAction(editItemAct);
+	childItemsMenu->addAction(removeItemAct);
 }
 
 void MainWindow::createToolBar()
@@ -575,6 +619,7 @@ void MainWindow::reset()
 		delete editor;
 	editor = nullptr;
 	modified = false;
+	curItem = nullptr;
 }
 
 void MainWindow::resizeSplitter(QSplitter *splitter, int widget1Size, int widget2Size)
@@ -588,6 +633,9 @@ void MainWindow::resizeSplitter(QSplitter *splitter, int widget1Size, int widget
 
 void MainWindow::setEnabledButton(bool gates, bool childs)
 {
+	cutAct->setDisabled(curItem == nullptr);
+	copyAct->setDisabled(curItem == nullptr);
+	pasteAct->setEnabled(editor->getClipboard() && curItem && !curItem->isChild());
 	addAndAct->setEnabled(gates);
 	addInhibitAct->setEnabled(gates);
 	addOrAct->setEnabled(gates);
@@ -601,21 +649,35 @@ void MainWindow::addGate(Gate *g)
 {
 	editor->getGates() << g;
 	if (curItem)
+	{
 		g->attach((Gate*)curItem->node());
+		g = (Gate*)curItem->node();
+	}
 	else
 	{
 		editor->getSelection()->setTop(g);
 		setEnabledButton(true, true);
 	}
-	RenderVisitor visitor(*this, g);
+	updateScene(g);
+	modified = true;
+}
+
+void MainWindow::updateScene(Node *selection)
+{
+	RenderVisitor visitor(*this, selection);
+	Node *top = editor->getSelection()->getTop();
 	scene->clear();
-	Gate *top = editor->getSelection()->getTop();
 	if (top)
 	{
-		top->balanceNodePos();
+		top->balanceNodePos(); // Reset node position
 		top->accept(visitor);
 	}
-	modified = true;
+	else // Reset to empty tree
+	{
+		setEnabledButton(true, false);
+		curItem = nullptr;
+	}
+	view->update();
 }
 
 QMenu *MainWindow::childItemsContextMenu()

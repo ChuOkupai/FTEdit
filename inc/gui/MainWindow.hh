@@ -57,6 +57,12 @@ private slots:
 	void changeItem();
 	// Edit current node
 	void editItem();
+	// Remove a sub-tree
+	void removeItem();
+	// Move all nodes starting from here in a new fault tree
+	void detach();
+	// Merge the content of a fault tree as a child of this node
+	void join();
 
 private:
 	Editor		*editor;
@@ -89,7 +95,12 @@ private:
 	QAction *evaluateAct;
 	QAction *aboutAct;
 	QAction *aboutQtAct;
+
+	// Context menus actions
 	QAction *editItemAct;
+	QAction *removeItemAct;
+	QAction *detachItemAct;
+	QAction *joinItemAct;
 
 	QMenu			*childItemsMenu; // for childs (Container + Transfert)
 	QMenu			*itemsMenu; // for gates
@@ -115,6 +126,8 @@ private:
 	void setEnabledButton(bool gates, bool childs);
 	// Add new Gate
 	void addGate(Gate *g);
+	// Refresh current scene
+	void updateScene(Node *selection);
 
 public:
 	QMenu *childItemsContextMenu();

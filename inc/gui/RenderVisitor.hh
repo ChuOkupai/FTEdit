@@ -7,7 +7,6 @@
 #define BORDER_SIZE 2
 #define CARD_X (3 * ICON_RSIZE)
 #define CARD_Y (3 * ICON_RSIZE)
-#define CARD_GAPX (CARD_Y / 2)
 #define CARD_GAPY (CARD_Y / 2)
 
 // Qt graphic item (Node has to be converted)
