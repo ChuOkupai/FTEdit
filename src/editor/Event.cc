@@ -1,4 +1,5 @@
 #include "Event.hh"
+#include "SaveVisitor.hh"
 
 Event::Event(QString name) : prop(name,false), distribution(nullptr)
 {}
@@ -22,6 +23,11 @@ Distribution* Event::getDistribution()
 Properties& Event::getProperties()
 {
 	return (prop);
+}
+
+void Event::accept(SaveVisitor& v)
+{
+	v.visit(*this);
 }
 
 bool Event::operator==(const Event& e1) const

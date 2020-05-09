@@ -6,6 +6,10 @@
 Inhibit::Inhibit(QString name) : Gate(name)
 {}
 
+Inhibit::Inhibit (Inhibit& cop) : Gate(cop.getProperties().getName()) , condition(cop.getCondition())
+{}
+
+
 Inhibit::~Inhibit()
 {}
 
