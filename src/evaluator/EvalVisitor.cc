@@ -36,7 +36,7 @@ void EvalVisitor::reset(){
 double EvalVisitor::visit(And& andVisitor){
 	
 
-	for(int i = 1; i < andVisitor.getChildren().size() ; i++){
+	for(int i = 0; i < andVisitor.getChildren().size() ; i++){
 		if(this->proba ==0){
 			this->proba = andVisitor.getChildren().at(i)->accept(*this);
 
@@ -58,11 +58,8 @@ double EvalVisitor::visit(Or&  orVisitor){
 }
 
 double EvalVisitor::visit(Xor&  xorVisitor){
-	
-    for(int i = 0; i < xorVisitor.getChildren().size() ; i++){
 
-            this->proba += xorVisitor.getChildren().at(i)->accept(*this);
-        }
+   this->proba = ( xorVisitor.getChildren().at(0)->accept(*this) * (1 - xorVisitor.getChildren().at(1)->accept(*this)) ) + ( (1 - xorVisitor.getChildren().at(0)->accept(*this)) * xorVisitor.getChildren().at(1)->accept(*this) ) ;
    return this->proba;
 }
 
@@ -77,8 +74,8 @@ double EvalVisitor::visit(Inhibit& inVisitor){
 
 double EvalVisitor::visit(Transfert& transVisitor){
 	
-	this->proba += transVisitor.getLink()->getTop()->accept(*this);
-	return this->proba;
+	return transVisitor.getLink()->getTop()->accept(*this);
+	
 }
 
 double EvalVisitor::visit(VotingOR& vorVisitor){
