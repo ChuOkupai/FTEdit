@@ -135,7 +135,7 @@ void RenderVisitor::visit(Transfert &gate)
 {
 	Properties *prop = gate.getLink() ? &gate.getLink()->getProperties() : nullptr;
 	static QPixmap icon(QPixmap(":objects/transfert.png").scaled(ICON_RSIZE, ICON_RSIZE, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-	auto n = new NodeItem(win.childItemsContextMenu(), icon, &gate, prop, true);
+	auto n = new NodeItem(win.itemsContextMenu(), icon, &gate, prop, true);
 	if (&gate == selection) n->setSelected(true);
 	win.getScene()->addItem(n);
 }
@@ -143,7 +143,7 @@ void RenderVisitor::visit(Transfert &gate)
 void RenderVisitor::visit(Container &cont)
 {
 	static QPixmap icon(QPixmap(":objects/basicEvent.png").scaled(ICON_RSIZE, ICON_RSIZE, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-	auto n = new NodeItem(win.childItemsContextMenu(), icon, &cont, &cont.getEvent()->getProperties(), true);
+	auto n = new NodeItem(win.itemsContextMenu(), icon, &cont, &cont.getEvent()->getProperties(), true);
 	if (&cont == selection) n->setSelected(true);
 	win.getScene()->addItem(n);
 }

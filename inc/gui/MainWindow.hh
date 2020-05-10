@@ -39,6 +39,14 @@ private slots:
 		void addXor();
 		void addTransfert();
 		void addEvent();
+	void moveItemFirst();
+	void moveItemLeft();
+	void moveItemRight();
+	void moveItemLast();
+	void editItem();
+	void removeItem();
+	void detach();
+	void join();
 	// View
 	void zoomIn();
 	void zoomOut();
@@ -56,14 +64,6 @@ private slots:
 
 	// Change item selection
 	void changeItem();
-	// Edit current node
-	void editItem();
-	// Remove a sub-tree
-	void removeItem();
-	// Move all nodes starting from here in a new fault tree
-	void detach();
-	// Merge the content of a fault tree as a child of this node
-	void join();
 	// Check clicked item in explorer
 	void explorerItemClicked(QTreeWidgetItem *item, int column);
 
@@ -88,6 +88,15 @@ private:
 	QAction *addXorAct;
 	QAction *addTransfertAct;
 	QAction *addEventAct;
+		// Context menus actions
+		QAction *moveItemFirstAct;
+		QAction *moveItemLeftAct;
+		QAction *moveItemRightAct;
+		QAction *moveItemLastAct;
+		QAction *editItemAct;
+		QAction *removeItemAct;
+		QAction *detachItemAct;
+		QAction *joinItemAct;
 	QAction *zoomInAct;
 	QAction *zoomOutAct;
 	QAction *zoomResetAct;
@@ -99,12 +108,6 @@ private:
 	QAction *evaluateAct;
 	QAction *aboutAct;
 	QAction *aboutQtAct;
-
-	// Context menus actions
-	QAction *editItemAct;
-	QAction *removeItemAct;
-	QAction *detachItemAct;
-	QAction *joinItemAct;
 
 	QMenu			*childItemsMenu; // for childs (Container + Transfert)
 	QMenu			*itemsMenu; // for gates
@@ -136,7 +139,6 @@ private:
 	void updateScene(Node *selection);
 
 public:
-	QMenu *childItemsContextMenu();
 	QMenu *itemsContextMenu();
 	QGraphicsScene *getScene();
 };
