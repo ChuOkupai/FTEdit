@@ -11,7 +11,7 @@
 #define CARD_X (3 * ICON_RSIZE)
 #define CARD_Y (3 * ICON_RSIZE)
 #define CARD_GAP_Y (CARD_Y / 2)
-#define CARD_GAP_X (CARD_X / 2)
+//#define CARD_GAP_X (CARD_X / 2)
 
 
 class Editor;

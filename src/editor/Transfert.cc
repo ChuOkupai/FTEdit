@@ -2,10 +2,10 @@
 #include "VisitorNode.hh"
 #include "EvalVisitor.hh"
 
-Transfert::Transfert(QString name) : Node() , link(nullptr) , prop(name,false)
+Transfert::Transfert() : Node() , link(nullptr)
 {}
 
-Transfert::Transfert(const Transfert& cop) : Node() , link(cop.getLink()) , prop(cop.prop)
+Transfert::Transfert(const Transfert& cop) : Node() , link(cop.getLink())
 {}
 
 Transfert::~Transfert()
@@ -19,14 +19,13 @@ void Transfert::setLink(Tree* link)
 {
 	if(link)
 	{	
+		if(this->link)
+			this->link->getProperties().decrementRefCount();
 		this->link = link;
+		link->getProperties().incrementRefCount();
 	}
 }
 
-Properties& Transfert::getProperties()
-{
-	return prop;
-}
 
 bool Transfert::check(QList<QString>& errors)
 {
@@ -37,7 +36,7 @@ bool Transfert::check(QList<QString>& errors)
 
 Node* Transfert::search(QPoint around)
 {
-	if (around.x() >= position.x() && around.x() < position.x() + (CARD_X + CARD_GAP_X)
+	if (around.x() >= position.x() && around.x() < position.x() + (CARD_X /*+ CARD_GAP_X*/)
 	&& around.y() <= position.y() && around.y() > position.y() - (CARD_Y + CARD_GAP_Y))
 		return (this);
 	Node* n = nullptr;
@@ -81,7 +80,7 @@ void Transfert::remove()
 {
 	if(parent)
 		this->detach();
-	link->getTop()->remove();
+	//link->getTop()->remove();
 	link = nullptr;
 	delete this;
 }

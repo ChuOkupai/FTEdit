@@ -8,7 +8,13 @@ clipboard(nullptr), selection(nullptr), autoRefresh(autoRefresh)
 {}
 
 Editor::~Editor()
-{}
+{
+	for(int i =0; i< getTrees().size();i++)
+	{
+		if(getTrees()[i].getTop())
+			remove(getTrees()[i].getTop());
+	}
+}
 
 QList<Tree> &Editor::getTrees()
 {
@@ -68,7 +74,7 @@ void Editor::cut(Node *top)
 	CopyVisitor tmp;
 	top->accept(tmp);
 	clipboard = tmp.getCopied();
-	top->remove();//still not working...
+	top->remove();//should be  working...
 	*/
 	(void) top;
 }

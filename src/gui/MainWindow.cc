@@ -174,7 +174,7 @@ void MainWindow::addEvent()
 void MainWindow::addTransfert()
 {
 	modified = true;
-	auto t = new Transfert(editor->generateName(PREFIX_GATE));
+	auto t = new Transfert();
 	t->attach((Gate*)current);
 	RenderVisitor(view, editor->getSelection());
 }

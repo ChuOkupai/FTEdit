@@ -14,7 +14,7 @@ protected:
 
 public:
 	Gate(QString name);
-	~Gate();
+	virtual ~Gate();
 
 	Properties&		getProperties();
 	QList<Node*>&	getChildren();
