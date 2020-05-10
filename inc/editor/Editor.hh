@@ -37,6 +37,8 @@ public:
 	void	setSelection(Tree *selection);
 	void	setAutoRefresh(bool value = true);
 
+	//Retire les noms en doublons des Gates et Tree en partant de top (créé pour paste) 
+	void 	remove_duplicate_names(Node* top);
 	// Copie la structure d'un sous-arbre
 	void	copy(Node *top);
 	// Copie la structure d'un sous-arbre avec sa suppression

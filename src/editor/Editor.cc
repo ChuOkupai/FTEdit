@@ -58,32 +58,55 @@ void Editor::setAutoRefresh(bool value)
 
 void Editor::copy(Node *top)
 {
-	/*
 	resetClipboard();
 	CopyVisitor tmp;
 	top->accept(tmp);
 	clipboard = tmp.getCopied();
-	*/
-	(void) top;
 }
 
 void Editor::cut(Node *top)
 {
-	/*
+	
 	resetClipboard();
 	CopyVisitor tmp;
 	top->accept(tmp);
 	clipboard = tmp.getCopied();
-	top->remove();//should be  working...
-	*/
-	(void) top;
+	top->remove();//should be working but isn't...
+}
+
+void Editor::remove_duplicate_names(Node* top)
+{
+	if(dynamic_cast<Gate*>(top))
+	{
+		Gate* tmp = dynamic_cast<Gate*>(top);
+			if(!isUnique(tmp->getProperties().getName()))
+			{
+				tmp->getProperties().setName(generateName(PREFIX_GATE));
+				getGates()<<tmp;
+			}
+			for(int i =0; i<tmp->getChildren().size();i++)
+			{
+				remove_duplicate_names(tmp->getChildren()[i]);
+			}
+
+	}
+	if(dynamic_cast<Transfert*>(top))
+	{
+		Transfert* tmp = dynamic_cast<Transfert*>(top);
+			if(!isUnique(tmp->getLink()->getProperties().getName()))
+			{
+				tmp->getLink()->getProperties().setName(generateName(PREFIX_TREE));
+			}
+		remove_duplicate_names(tmp->getLink()->getTop());
+	}
 }
 
 void Editor::paste(Gate *parent)
 {
-	//modify clipboard temporarly to change name... somehow.
-	//clipboard->attach(parent);
-	(void) parent;
+	CopyVisitor tmp;
+	clipboard->accept(tmp);
+	remove_duplicate_names(tmp.getCopied());
+	tmp.getCopied()->attach(parent);	
 }
 
 void Editor::move(Node *child, Gate *parent)
@@ -175,5 +198,6 @@ void Editor::refresh()
 void Editor::resetClipboard()
 {
 	// détruire la copie de l'arbre dans clipboard
-	//clipboard->remove();
+	if(clipboard)
+		clipboard->remove();
 }
