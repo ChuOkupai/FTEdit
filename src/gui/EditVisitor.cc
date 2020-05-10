@@ -108,7 +108,7 @@ QDialog(parent), editor(editor), gate(gate)
 	for (int i = 0; i < l.size(); ++i)
 		trees->addItem(l[i].getProperties().getName());
 	Tree *link = gate.getLink();
-	trees->setCurrentIndex(link ? trees->findText(link->getProperties().getName()) + 1 : 0);
+	trees->setCurrentIndex(link ? trees->findText(link->getProperties().getName()) : 0);
 	
 	connect(trees, QOverload<int>::of(&QComboBox::currentIndexChanged),
 	[=](int i) { this->gate.setLink(i ? &this->editor.getTrees()[i - 1] : nullptr); });

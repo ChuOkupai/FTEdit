@@ -1,3 +1,4 @@
+#include "Dialog.hh"
 #include "EditVisitor.hh"
 #include "ManageDistributionsDialog.hh"
 #include "ManageEventsDialog.hh"
@@ -182,7 +183,7 @@ void MainWindow::addEvent()
 void MainWindow::addTransfert()
 {
 	modified = true;
-	auto t = new Transfert(editor->generateName(PREFIX_GATE));
+	auto t = new Transfert();
 	t->attach((Gate*)curItem->node());
 	updateScene(curItem->node());
 }
@@ -321,11 +322,10 @@ void MainWindow::detach()
 
 void MainWindow::join()
 {
-	/*
-	// Choose a tree dialog
-	// Merge the content
+	int index;
+	ChooseTreeDialog(this, *editor, index).exec();
+	editor->join(&editor->getTrees()[index], (Gate*)curItem->node());
 	updateScene(curItem->node());
-	*/
 }
 
 void MainWindow::changeItem()
@@ -716,7 +716,7 @@ void MainWindow::setEnabledButton()
 	editItemAct->setDisabled(curItem == nullptr);
 	removeItemAct->setDisabled(curItem == nullptr);
 	detachItemAct->setEnabled(isNotChild);
-	joinItemAct->setEnabled(isNotChild);
+	joinItemAct->setEnabled(isNotChild && editor->getTrees().size() > 1);
 	addAndAct->setDisabled(isChild);
 	addInhibitAct->setDisabled(isChild);
 	addOrAct->setDisabled(isChild);

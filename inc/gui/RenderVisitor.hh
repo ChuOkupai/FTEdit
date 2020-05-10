@@ -13,8 +13,8 @@ private:
 	Properties *prop;
 	bool child;
 
-	void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-	void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
+	void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
+	void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
 
 public:
 	NodeItem(QMenu *contextMenu, QPixmap icon, Node *n, Properties *prop, bool isChild = false);
@@ -26,7 +26,7 @@ public:
 
 	void setProperties(Properties *prop);
 
-	QRectF boundingRect() const;
+	QRectF boundingRect() const override;
 
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 };
