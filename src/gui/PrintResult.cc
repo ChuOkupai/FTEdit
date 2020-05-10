@@ -1,8 +1,8 @@
 #include "PrintResult.hh"
 
 
-PrintResult::PrintResult(QWidget *parent, ResultMCS *resultMCS, ResultBoolean *resultBoolean)
-        : QDialog(parent), resultMCS(resultMCS), resultBoolean(resultBoolean)
+PrintResult::PrintResult(QWidget *parent, ResultMCS *resultMCS, ResultBoolean *resultBoolean, QList<QString> errors)
+        : QDialog(parent), resultMCS(resultMCS), resultBoolean(resultBoolean), errors(errors)
 {
    
 
@@ -19,6 +19,11 @@ PrintResult::PrintResult(QWidget *parent, Result *result)
     table->setColumnCount(5);
 
     QList<QString> err = result->getErrors();
+    QListWidget *listErrors = new QListWidget(this);
+    for(int i = 0; i< err.size(); ++i)
+    {
+        new QListWidgetItem(err[i], listErrors);
+    }
 
     ResultMCS *resmcs =  result->getResultMCS();
     QList<double> proMcs = resmcs->getProbabilities();
@@ -58,7 +63,13 @@ void PrintResult::PrintResultMCS()
     QTableWidget *table = new QTableWidget(this);
     layout->addWidget(table);
     table->setColumnCount(3);
-    table->setRowCount(resultMCS->getProbabilities().size());
+
+    ResultMCS *resmcs =  result->getResultMCS();
+    QList<double> proMcs = resmcs->getProbabilities();
+    QList<QList<QString>> mcs = resmcs->getMCS();
+    int a = proMcs.size();
+
+    table->setRowCount(a);
     table->setSortingEnabled(true);
     table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     QStringList header;
@@ -66,7 +77,7 @@ void PrintResult::PrintResultMCS()
     table->setHorizontalHeaderLabels(header);
     table->verticalHeader()->setVisible(false);
 
-    for (int i = 0; i < resultMCS->getProbabilities().size(); ++i)
+    for (int i = 0; i < a; ++i)
     {
 
     }
@@ -84,7 +95,12 @@ void PrintResult::PrintResultBoolean()
     QTableWidget *table = new QTableWidget(this);
     layout->addWidget(table);
     table->setColumnCount(2);
-    table->setRowCount(resultBoolean->getProbabilities().size());
+
+    ResultBoolean *resB = result->getResultBoolean();
+    QString topEvenet = resB->getTopEventName();
+    QList<double> proB = resB->getProbabilities();
+    int a = proB.size();
+    table->setRowCount(a);
     table->setSortingEnabled(true);
     table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     QStringList header;
@@ -92,7 +108,7 @@ void PrintResult::PrintResultBoolean()
     table->setHorizontalHeaderLabels(header);
     table->verticalHeader()->setVisible(false);
 
-    for (int i = 0; i < resultBoolean->getProbabilities().size(); ++i)
+    for (int i = 0; i < a; ++i)
     {
 
     }
@@ -102,5 +118,20 @@ void PrintResult::PrintResultBoolean()
     connect(table, SIGNAL(cellChanged(int, int)), this, SLOT(cellChanged(int, int)));
 }
 
+void PrintResult::PrintResultErrors()
+{
+
+    setWindowTitle("Errors");
+    resize(640, 480);
+    auto layout = new QVBoxLayout(this);
+    layout->setMargin(0);
+
+    QList<QString> err = result->getErrors();
+    QListWidget *listErrors = new QListWidget(this);
+    for(int i = 0; i< err.size(); ++i)
+    {
+        new QListWidgetItem(err[i], listErrors);
+    }
+}
 
 
