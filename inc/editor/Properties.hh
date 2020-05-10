@@ -11,6 +11,7 @@ protected:
 
 public:
 	Properties(QString name, bool keep = false);
+	Properties(const Properties&);
 	~Properties();
 
 	QString	getName() const;
