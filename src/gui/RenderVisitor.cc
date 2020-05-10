@@ -33,6 +33,8 @@ void NodeItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 	(void)option;
 	(void)widget;
 	QRectF r = boundingRect();
+	r.setX(r.x() + 4 * BORDER_SIZE);
+	r.setWidth(r.width() - 4 * BORDER_SIZE);
 	r.setHeight(r.height() - ICON_RSIZE);
 	QPen pen(Qt::black, BORDER_SIZE);
 	painter->setPen(pen);
@@ -43,15 +45,15 @@ void NodeItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 	painter->setPen(pen);
 	painter->fillPath(path, (isSelected() ? QColor(213, 236, 255) : Qt::white));
 	painter->drawPath(path);
-	QPointF p(r.x() + ICON_RSIZE, r.y() + 1.89 * ICON_RSIZE + BORDER_SIZE - 1);
+	QPointF p(r.center().x() - ICON_RSIZE / 2, r.y() + 1.89 * ICON_RSIZE + BORDER_SIZE - 1);
 	painter->drawPixmap(p, icon);
 	if (prop)
 	{
 		QFont font = painter->font();
 		font.setPixelSize(ICON_RSIZE / 4);
 		painter->setFont(font);
-		QRect r2(r.x() + ICON_RSIZE / 4, r.y() + ICON_RSIZE / 8,
-		r.width() - ICON_RSIZE / 2, r.height() / 4 - BORDER_SIZE);
+		QRect r2(r.x() + ICON_RSIZE / 8, r.y() + ICON_RSIZE / 8,
+		r.width() - ICON_RSIZE / 4, r.height() / 4 - BORDER_SIZE);
 		painter->drawText(r2, Qt::AlignLeft, prop->getName());
 		r2.setY(r.y() + r.height() / 4);
 		r2.setHeight(r.height() - r.height() / 4 - BORDER_SIZE);
@@ -78,17 +80,39 @@ win(win), selection(selection)
 {}
 
 // Visits the children of gate recursively
-static void visitChildren(Gate &gate, RenderVisitor &visitor)
+static void visitChildren(MainWindow &win, Gate &gate, RenderVisitor &visitor)
 {
-	QList<Node*> &children = gate.getChildren();
+	QList<Node*> &l = gate.getChildren();
+	QPoint p;
+	if (l.size()) // Draw connections
+	{
+		p = l[0]->getPosition();
+		QPoint p2(l.last()->getPosition());
+		QGraphicsRectItem *item = new QGraphicsRectItem(p.x() + CARD_X / 2,
+		p.y() - CARD_GAP_Y / 2 - BORDER_SIZE, p2.x() - p.x(), 2 * BORDER_SIZE);
+		item->setBrush(Qt::black);
+		win.getScene()->addItem(item);
+		p = gate.getPosition();
+		item = new QGraphicsRectItem(p.x() + CARD_X / 2 - BORDER_SIZE,
+		p.y() + CARD_Y - ICON_RSIZE / 2, 2 * BORDER_SIZE, CARD_GAP_Y / 2 + ICON_RSIZE / 2);
+		item->setBrush(Qt::black);
+		win.getScene()->addItem(item);
+	}
 	QList<Node*>::const_iterator i;
-	for (i = children.constBegin(); i != children.constEnd(); ++i)
+	for (i = l.constBegin(); i != l.constEnd(); ++i)
+	{
+		p = (*i)->getPosition();
+		QGraphicsRectItem *item = new QGraphicsRectItem(p.x() + CARD_X / 2 - BORDER_SIZE,
+		p.y() - CARD_GAP_Y / 2 - BORDER_SIZE, 2 * BORDER_SIZE, CARD_GAP_Y / 2);
+		item->setBrush(Qt::black);
+		win.getScene()->addItem(item);
 		(*i)->accept(visitor);
+	}
 }
 
 void RenderVisitor::visit(And &gate)
 {
-	visitChildren(gate, *this);
+	visitChildren(win, gate, *this);
 	static QPixmap icon(QPixmap(":objects/and.png").scaled(ICON_RSIZE, ICON_RSIZE, Qt::KeepAspectRatio, Qt::SmoothTransformation));
 	auto n = new NodeItem(win.itemsContextMenu(), icon, &gate, &gate.getProperties());
 	if (&gate == selection) n->setSelected(true);
@@ -97,7 +121,7 @@ void RenderVisitor::visit(And &gate)
 
 void RenderVisitor::visit(Or &gate)
 {
-	visitChildren(gate, *this);
+	visitChildren(win, gate, *this);
 	static QPixmap icon(QPixmap(":objects/or.png").scaled(ICON_RSIZE, ICON_RSIZE, Qt::KeepAspectRatio, Qt::SmoothTransformation));
 	auto n = new NodeItem(win.itemsContextMenu(), icon, &gate, &gate.getProperties());
 	if (&gate == selection) n->setSelected(true);
@@ -106,7 +130,7 @@ void RenderVisitor::visit(Or &gate)
 
 void RenderVisitor::visit(Xor &gate)
 {
-	visitChildren(gate, *this);
+	visitChildren(win, gate, *this);
 	static QPixmap icon(QPixmap(":objects/xor.png").scaled(ICON_RSIZE, ICON_RSIZE, Qt::KeepAspectRatio, Qt::SmoothTransformation));
 	auto n = new NodeItem(win.itemsContextMenu(), icon, &gate, &gate.getProperties());
 	if (&gate == selection) n->setSelected(true);
@@ -115,7 +139,7 @@ void RenderVisitor::visit(Xor &gate)
 
 void RenderVisitor::visit(VotingOR &gate)
 {
-	visitChildren(gate, *this);
+	visitChildren(win, gate, *this);
 	static QPixmap icon(QPixmap(":objects/kn.png").scaled(ICON_RSIZE, ICON_RSIZE, Qt::KeepAspectRatio, Qt::SmoothTransformation));
 	auto n = new NodeItem(win.itemsContextMenu(), icon, &gate, &gate.getProperties());
 	if (&gate == selection) n->setSelected(true);
@@ -124,7 +148,7 @@ void RenderVisitor::visit(VotingOR &gate)
 
 void RenderVisitor::visit(Inhibit &gate)
 {
-	visitChildren(gate, *this);
+	visitChildren(win, gate, *this);
 	static QPixmap icon(QPixmap(":objects/inhibit.png").scaled(ICON_RSIZE, ICON_RSIZE, Qt::KeepAspectRatio, Qt::SmoothTransformation));
 	auto n = new NodeItem(win.itemsContextMenu(), icon, &gate, &gate.getProperties());
 	if (&gate == selection) n->setSelected(true);
