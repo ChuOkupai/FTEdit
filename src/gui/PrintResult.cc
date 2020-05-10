@@ -10,6 +10,16 @@ PrintResult::PrintResult(QWidget *parent, ResultMCS *resultMCS, ResultBoolean *r
 PrintResult::PrintResult(QWidget *parent, Result *result)
         : QDialog(parent), result(result)
 {
+    //QMenu *m = new QMenu(this);
+    //m = menuBar()->setContextMenuPolicy(Qt::PreventContextMenu);
+    //m = menuBar()->addMenu("&Menu");
+    //QAction *newAct = new QAction("&Export Result", this);
+    //newAct->setShortcuts(QKeySequence::New);
+    //newAct->setStatusTip("Create a new project");
+    //newAct->setToolTip(newAct->statusTip());
+    //connect(newAct, &QAction::triggered, this, &MainWindow::open);
+    //m->addAction(newAct);
+
     setWindowTitle("Results");
     resize(640, 480);
     auto layout = new QVBoxLayout(this);

@@ -1,5 +1,6 @@
 #include "Dialog.hh"
 #include "EditVisitor.hh"
+#include "PrintResult.hh"
 #include "ManageDistributionsDialog.hh"
 #include "ManageEventsDialog.hh"
 
@@ -253,10 +254,10 @@ void MainWindow::showEvents()
 
 void MainWindow::evaluate()
 {
-	// add result entry to resultsHistory on success.
+	//add result entry to resultsHistory on success.
 	//Result *result;
 	//PrintResult(this, result).exec();
-	// Redirect user to error list on failure.
+	//Redirect user to error list on failure.
 }
 
 void MainWindow::about()
@@ -346,10 +347,23 @@ void MainWindow::explorerItemClicked(QTreeWidgetItem *item, int column)
 	(void)item;
 	(void)column;
 	//	verif si parent appartient aux trees
-	//		=> changer l'arbre séléctionné dans l'éditeur
-	//updateScene(editor->getSelection()->getTop()); // pour mettre à jour l'affichage
-	//	verif si parent appartient à l'attribut results
-	//		=> Afficher les résultats (utiliser l'attribut resultsHistory dans la classe)
+    //		=> changer l'arbre séléctionné dans l'éditeur
+    //updateScene(editor->getSelection()->getTop()); // pour mettre à jour l'affichage
+    //verif si parent appartient à l'attribut results
+    //		=> Afficher les résultats (utiliser l'attribut resultsHistory dans la classe)
+    //Result *result;
+    Gate *top = editor->getSelection()->getTop();
+    QList<Tree> tr = editor->getTrees();
+    for(int i = 0;i<tr.size(); ++i)
+    {
+        if(top == tr[i].getTop()){
+            updateScene(editor->getSelection()->getTop());
+        }else{
+            //PrintResult(this,result).exec();
+        }
+    }
+
+
 }
 
 void MainWindow::createActions()
