@@ -14,6 +14,10 @@ Editor::~Editor()
 		if(getTrees()[i].getTop())
 			remove(getTrees()[i].getTop());
 	}
+	getTrees().clear();
+	getGates().clear();
+	getEvents().clear();
+	getDistributions().clear();
 }
 
 QList<Tree> &Editor::getTrees()
@@ -71,7 +75,7 @@ void Editor::cut(Node *top)
 	CopyVisitor tmp;
 	top->accept(tmp);
 	clipboard = tmp.getCopied();
-	top->remove();//should be working but isn't...
+	top->remove();
 }
 
 void Editor::remove_duplicate_names(Node* top)
@@ -98,6 +102,30 @@ void Editor::remove_duplicate_names(Node* top)
 				tmp->getLink()->getProperties().setName(generateName(PREFIX_TREE));
 			}
 		remove_duplicate_names(tmp->getLink()->getTop());
+	}
+	if(dynamic_cast<Container*>(top))
+	{
+		Container* tmp = dynamic_cast<Container*>(top);
+
+			if(!isUnique(tmp->getEvent()->getProperties().getName()))
+			{
+				tmp->getEvent()->getProperties().incrementRefCount();
+			}
+			else
+			{
+				getEvents()<<*(tmp->getEvent());	
+			}
+			if(tmp->getEvent()->getDistribution())
+			{
+				if(!isUnique(tmp->getEvent()->getDistribution()->getProperties().getName()))
+				{
+					tmp->getEvent()->getDistribution()->getProperties().incrementRefCount();
+				}
+				else
+				{
+					getDistributions()<<tmp->getEvent()->getDistribution();
+				}
+			}
 	}
 }
 
