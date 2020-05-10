@@ -464,7 +464,7 @@ void MainWindow::createActions()
 
 	zoomResetAct = new QAction("Reset Zoom", this);
 	zoomResetAct->setStatusTip("Reset Zoom");
-	zoomResetAct->setIcon(QIcon(":icons/edit.png"));
+	zoomResetAct->setIcon(QIcon(":icons/zoomReset.png"));
 	connect(zoomResetAct, &QAction::triggered, this, &MainWindow::zoomReset);
 
 	showToolBarAct = new QAction("Show Toolbar", this);
@@ -638,22 +638,27 @@ void MainWindow::createToolBar()
 	toolBar->addAction(copyAct);
 	toolBar->addAction(pasteAct);
 	toolBar->addSeparator();
-	toolBar->addAction(editItemAct);
-	toolBar->addAction(detachItemAct);
-	toolBar->addAction(joinItemAct);
-	toolBar->addSeparator();
 	auto button = new GateToolButton(this);
 	button->setMenu(gatesMenu);
 	button->setDefaultAction(addAndAct);
 	toolBar->addWidget(button);
 	toolBar->addAction(addEventAct);
 	toolBar->addSeparator();
+	toolBar->addAction(moveItemFirstAct);
+	toolBar->addAction(moveItemLeftAct);
+	toolBar->addAction(moveItemRightAct);
+	toolBar->addAction(moveItemLastAct);
+	toolBar->addSeparator();
+	toolBar->addAction(editItemAct);
+	toolBar->addAction(removeItemAct);
+	toolBar->addAction(detachItemAct);
+	toolBar->addAction(joinItemAct);
+	toolBar->addSeparator();
 	toolBar->addAction(zoomInAct);
 	toolBar->addAction(zoomOutAct);
+	toolBar->addAction(zoomResetAct);
 	toolBar->addSeparator();
 	toolBar->addAction(evaluateAct);
-	toolBar->addSeparator();
-	toolBar->addAction(aboutAct);
 }
 
 bool MainWindow::maybeSave()
