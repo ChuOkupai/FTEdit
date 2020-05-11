@@ -13,9 +13,10 @@ class XmlTreeReader
 		Exponential* createExponential(QString name);
 		Weibull* createWeibull(QString name);
 		int searchEvent(QList<Event>& events, QString name);
+		int searchDistribution(QList<Distribution*>& distribs, QString name);
 		QString getName();
 		QString getLabel();
-		bool getKeep();
+		void getKeep(bool *b);
 	public:
 		XmlTreeReader(QFile* file, Editor* e);
 		~XmlTreeReader();

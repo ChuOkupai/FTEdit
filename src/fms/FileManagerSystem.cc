@@ -54,9 +54,9 @@ int FileManagerSystem::save(Editor* editor)
 	//visit
 	for(Distribution *d :  editor->getDistributions())
 		d->accept(svisitor);
-	/*for(Event e :  editor->getEvents())
+	for(Event e :  editor->getEvents())
 		e.accept(svisitor);
-	*/for(Gate* g :  editor->getGates())
+	for(Gate* g :  editor->getGates())
 		g->accept(svisitor);
 
 	saveStream << domref.toString();

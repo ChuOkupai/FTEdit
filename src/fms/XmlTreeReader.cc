@@ -16,7 +16,7 @@ void XmlTreeReader::readTree()
 		{
 			if(reader.name() == "define-parameter") readDistrib();
 			else if(reader.name() == "define-gate") readGate();
-			//else if(reader.name() == "define-basic-event") readEvent();
+			else if(reader.name() == "define-basic-event") readEvent();
 		}
 	}
 }
@@ -39,29 +39,27 @@ void XmlTreeReader::readDistrib()
 	while(reader.readNextStartElement())
 	{
 		if(reader.name() != "attribute") throw -1; //raise error
-		
-		keep = getKeep();
 
+		getKeep(&keep);
 		if(reader.attributes().value( "", "name").toString().trimmed() == "type") //get type
 		{
 			tmp = reader.attributes().value( "", "value").toString().trimmed();
 			reader.readNextStartElement();
 		}
 	}
-	
+
 	if(tmp == "const") d = createConstant(name);
 	else if(tmp == "exp") d = createExponential(name);
 	else if(tmp == "weibull") d = createWeibull(name);
-
+	
 	d->getProperties().setDesc(desc);
 	d->getProperties().setKeep(keep);
 	
-	/*
 	qDebug() << "name:" << d->getProperties().getName();
 	qDebug() << "Desc:" << d->getProperties().getDesc();
 	qDebug() << "Keep:" << d->getProperties().getKeep();
 	qDebug() << "type:" << tmp;
-	*/
+	
 	e->getDistributions() << d; //ajouter la Distrib à l'éditeur
 }
 
@@ -109,6 +107,16 @@ int XmlTreeReader::searchEvent(QList<Event>& events, QString name)
 	return -1;
 }
 
+int XmlTreeReader::searchDistribution(QList<Distribution*>& distribs, QString name)
+{
+	for(int i = 0; i < distribs.size(); i++)
+	{
+		if(distribs[i]->getProperties().getName() == name)
+			return i;
+	}
+	return -1;
+}
+
 void XmlTreeReader::readGate()
 {
 	Gate* g = nullptr;
@@ -129,7 +137,7 @@ void XmlTreeReader::readGate()
 	reader.readNextStartElement();
 	if(reader.name() != "attribute") throw -1; //raise error
 
-	keep = getKeep();
+	getKeep(&keep);
 
 	reader.readNextStartElement();
 	reader.readNextStartElement();
@@ -139,7 +147,7 @@ void XmlTreeReader::readGate()
 	qDebug() << "type:" << type;
 
 	k = reader.attributes().value( "", "min").toUInt(); //..get k
-	QList<Event> levents = e->getEvents();
+	QList<Event>& levents = e->getEvents();
 	while(reader.readNextStartElement())
 	{
 		if(reader.name() == "basic-event")
@@ -151,28 +159,52 @@ void XmlTreeReader::readGate()
 		else if(reader.name() == "constant")
 		{
 			type = "inhibit";
-			cond = (tmp == "true" ? true : tmp == "1" ? true : 0);
+			cond = (tmp == "true" ? true : false);
 		}
 		reader.readNextStartElement();
 	}
 	
-	if(type == "inhibit" && levents.size() > 1) reader.raiseError();
+	if(type == "inhibit" && levents.size() > 1) throw -1;
 
 	if(type == "inhibit") { g = new Inhibit(name); ((Inhibit*)g)->setCondition(cond);}
 	else if(type == "and") g = new And(name);
 	else if(type == "or") g = new Or(name);
-	//else if(type == "xor") g = new Xor(name);
+	else if(type == "xor") g = new Xor(name);
 	else if(type == "atleast"){ g = new VotingOR(name); ((VotingOR*)g)->setK(k);}
 	else throw -1;
-
 	e->getGates() <<  g; // ajout de la porte à l'éditeur
 	g->getProperties().setKeep(keep);
+	g->getProperties().setDesc(desc);
 	g->getChildren() = childs;
 }
 
 void XmlTreeReader::readEvent()
 {
+	bool keep;
+	QString name = getName(); //get name
+	reader.readNextStartElement();
+	QString desc = getLabel(); //get label
 	
+	if(reader.name() != "attributes") throw -1; //raise error
+	reader.readNextStartElement();
+	if(reader.name() != "attribute") throw -1; //raise error
+
+	getKeep(&keep); //get keep
+	reader.readNextStartElement();
+	reader.readNextStartElement();
+	
+	if(reader.name() != "parameter") throw -1; //get paramaeter
+
+	QList<Distribution*> ldistribs = e->getDistributions();
+	int idst = searchDistribution(ldistribs, reader.attributes().value( "", "name").toString().trimmed());
+
+	if(idst == -1) throw -1;
+
+	QList<Event>& levents = e->getEvents();
+	levents << Event(name);
+	levents.last().getProperties().setKeep(keep);
+	levents.last().getProperties().setDesc(desc);
+	levents.last().setDistribution(ldistribs[idst]);
 }
 
 QString XmlTreeReader::getName()
@@ -184,20 +216,22 @@ QString XmlTreeReader::getName()
 
 QString XmlTreeReader::getLabel()
 {
-	QString desc;
-	if(reader.name() != "label") throw -1;
-	desc = reader.readElementText().trimmed(); //get label
-	reader.readNextStartElement();
+	QString desc = "";
+	if(reader.name() == "label")
+	{
+		desc = reader.readElementText().trimmed(); //get label
+		reader.readNextStartElement();
+	}
 	return desc;
 }
 
-bool XmlTreeReader::getKeep()
+void XmlTreeReader::getKeep(bool *b)
 {
 	QString tmp;
 	if(reader.attributes().value( "", "name").toString().trimmed() == "keep") //get keep
 	{
 		tmp = reader.attributes().value( "", "value").toString().trimmed();
 		reader.readNextStartElement();
+		*b = (tmp == "true" ? true : false);
 	}
-	return (tmp == "true" ? true : tmp == "1" ? true : 0);
 }
