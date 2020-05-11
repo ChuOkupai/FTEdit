@@ -8,9 +8,10 @@ class ManageDistributionsDialog : public QDialog
 
 private slots:
 	void closeEvent(QCloseEvent *event);
-
+    void cellChanged(int y, int x);
 private:
 	QList<Distribution*> &list;
+    QTableWidget *table;
 
 public:
 	ManageDistributionsDialog(QWidget *parent, QList<Distribution*> &list);

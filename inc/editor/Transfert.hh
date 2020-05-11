@@ -9,15 +9,13 @@ class Transfert : public Node
 {
     protected:
     Tree* link;
-    Properties prop;
     public:
-    Transfert(QString name);
+    Transfert();
     Transfert(const Transfert&);
     ~Transfert();
 
     Tree* getLink() const;
     void setLink(Tree* link);
-    Properties& getProperties();
 
     bool check(QList<QString>& errors);
 
