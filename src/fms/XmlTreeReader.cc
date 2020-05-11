@@ -1,6 +1,6 @@
 #include "XmlTreeReader.hh"
 
-XmlTreeReader::XmlTreeReader(QFile *f, Editor* e) : reader(f), e(e), error(false) {}
+XmlTreeReader::XmlTreeReader(QFile *f, Editor* e) : reader(f), e(e) {}
 
 XmlTreeReader::~XmlTreeReader() {}
 
