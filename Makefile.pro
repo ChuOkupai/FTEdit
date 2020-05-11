@@ -12,6 +12,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 RESOURCES += src/assets/icons.qrc \
 src/assets/objects.qrc
 RCC_DIR = src/.qrc
+RC_ICONS = logo.ico
 
 INCLUDEPATH += \
 $$PWD/inc \
@@ -46,12 +47,12 @@ inc/fms/FileManagerSystem.hh \
 inc/fms/SaveVisitor.hh \
 inc/gui/FTEdit_GUI.hh \
 inc/gui/Dialog.hh \
-inc/gui/EditContainerDialog.hh \
 inc/gui/EditDistributionDialog.hh \
+inc/gui/EditVisitor.hh \
 inc/gui/MainWindow.hh \
 inc/gui/ManageDistributionsDialog.hh \
 inc/gui/ManageEventsDialog.hh \
-inc/gui/PrintResultat.hh \
+inc/gui/PrintResult.hh \
 inc/gui/RenderVisitor.hh \
 inc/gui/WidgetLinker.hh
 
@@ -83,12 +84,12 @@ src/evaluator/Result.cc \
 src/fms/FileManagerSystem.cc \
 src/fms/SaveVisitor.cc \
 src/gui/Dialog.cc \
-src/gui/EditContainerDialog.cc \
 src/gui/EditDistributionDialog.cc \
+src/gui/EditVisitor.cc \
 src/gui/MainWindow.cc \
 src/gui/ManageDistributionsDialog.cc \
 src/gui/ManageEventsDialog.cc \
-src/gui/PrintResultat.cc \
+src/gui/PrintResult.cc \
 src/gui/RenderVisitor.cc \
 src/gui/WidgetLinker.cc \
 src/main.cc

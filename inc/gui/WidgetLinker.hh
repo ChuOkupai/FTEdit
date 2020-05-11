@@ -28,6 +28,8 @@ public:
 
 	QRadioButton *addRadioButton(const QString &content);
 
+	QSpinBox *addSpinBox();
+
 	QTextEdit *addTextEdit(const QString &content);
 
 	// Sets the parent widget
@@ -50,9 +52,9 @@ public:
 
 // Custom QGraphicsView widget for smooth edition
 
-#define ZOOM_MIN	0.5
-#define ZOOM_MAX	15.0
-#define ZOOM_STEP	0.1
+#define ZOOM_MIN	0.05
+#define ZOOM_MAX	4.0
+#define ZOOM_STEP	0.2
 
 class GraphicsView : public QGraphicsView
 {

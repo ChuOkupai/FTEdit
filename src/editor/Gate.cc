@@ -144,10 +144,9 @@ void Gate::balanceNodePos()//works sorta
 
 void Gate::remove()
 {
-	this->detach();
-	for (int i = 0; i < children.size(); ++i)
-	{	
-		children[i]->remove();
-		i--;
-	}
+	if(parent)
+		this->detach();
+	while (children.size())
+		children[0]->remove();
+	getProperties().setKeep(false);
 }

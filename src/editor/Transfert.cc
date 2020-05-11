@@ -5,8 +5,10 @@
 Transfert::Transfert() : Node() , link(nullptr)
 {}
 
-Transfert::Transfert(const Transfert& cop) : Node() , link(cop.getLink())
-{}
+Transfert::Transfert(const Transfert& cop) : Node()
+{
+	setLink(cop.getLink());
+}
 
 Transfert::~Transfert()
 {}
@@ -17,18 +19,20 @@ Tree* Transfert::getLink() const
 }
 void Transfert::setLink(Tree* link)
 {
-	if(link)
-	{	
-		if(this->link)
-			this->link->getProperties().decrementRefCount();
-		this->link = link;
+	if (this->link)
+		this->link->getProperties().decrementRefCount();
+	this->link = link;
+	if (link)
 		link->getProperties().incrementRefCount();
-	}
 }
-
 
 bool Transfert::check(QList<QString>& errors)
 {
+	if (!link)
+	{
+		errors << "Transfert: There must be a link to a fault tree.";
+		return (false);
+	}
 	Gate* g = link->getTop();
 	g->check(errors);
 	return(errors.size() > 0);
@@ -80,7 +84,8 @@ void Transfert::remove()
 {
 	if(parent)
 		this->detach();
-	//link->getTop()->remove();
+	if (link)
+		link->getProperties().decrementRefCount();
 	link = nullptr;
 	delete this;
 }
