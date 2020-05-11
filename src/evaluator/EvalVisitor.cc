@@ -21,8 +21,9 @@ EvalVisitor::EvalVisitor(double time,double proba){
 	this->proba = proba;
 }
 
-double EvalVisitor::getProba(){
-	return proba;
+double EvalVisitor::getProba(Gate *top,double time){
+	this->time = time;
+	return top->accept(*this);
 }
 
 void EvalVisitor::setTime(double time){
@@ -35,7 +36,7 @@ void EvalVisitor::reset(){
 
 double EvalVisitor::visit(And& andVisitor){
 	
-
+	
 	for(int i = 0; i < andVisitor.getChildren().size() ; i++){
 		if(this->proba ==0){
 			this->proba = andVisitor.getChildren().at(i)->accept(*this);

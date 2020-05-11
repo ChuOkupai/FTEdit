@@ -1,18 +1,19 @@
 #pragma once
 #include "ResultMCS.hh"
 #include "ResultBoolean.hh"
+#include "QStringList"
 
 class Result
 {
 	private :
-		QList<QString> errors;
+		QStringList errors;
 		ResultMCS *resultMCS;
 		ResultBoolean *resultBoolean;
 
 	public:
 		Result(Gate* top, bool useMCS,bool useBoolean,double missionTime,double step);
 		~Result();
-		QList<QString>& getErrors();
+		QStringList& getErrors();
 		ResultMCS* getResultMCS();
 		ResultBoolean *getResultBoolean();
 	
