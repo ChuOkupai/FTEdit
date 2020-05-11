@@ -2,8 +2,13 @@
 #include "VisitorNode.hh"
 #include "EvalVisitor.hh"
 
-Transfert::Transfert(QString name) : Node() , link(nullptr) , prop(name,false)
+Transfert::Transfert() : Node() , link(nullptr)
 {}
+
+Transfert::Transfert(const Transfert& cop) : Node()
+{
+	setLink(cop.getLink());
+}
 
 Transfert::~Transfert()
 {}
@@ -14,16 +19,20 @@ Tree* Transfert::getLink() const
 }
 void Transfert::setLink(Tree* link)
 {
-	if(link)
-	{	
-		this->link = link;
-	}
+	if (this->link)
+		this->link->getProperties().decrementRefCount();
+	this->link = link;
+	if (link)
+		link->getProperties().incrementRefCount();
 }
-
-
 
 bool Transfert::check(QList<QString>& errors)
 {
+	if (!link)
+	{
+		errors << "Transfert: There must be a link to a fault tree.";
+		return (false);
+	}
 	Gate* g = link->getTop();
 	g->check(errors);
 	return(errors.size() > 0);
@@ -31,11 +40,21 @@ bool Transfert::check(QList<QString>& errors)
 
 Node* Transfert::search(QPoint around)
 {
-	if (around.x() >= position.x() && around.x() < position.x() + NODE_X
-	&& around.y() >= position.y() && around.y() < position.y() + NODE_Y)
+	if (around.x() >= position.x() && around.x() < position.x() + (CARD_X + CARD_GAP_X)
+	&& around.y() <= position.y() && around.y() > position.y() - (CARD_Y + CARD_GAP_Y))
 		return (this);
 	Node* n = nullptr;
 	return (n);
+}
+
+QPoint 	Transfert::top_node_coord(QPoint cpt)
+{
+	return cpt;
+}
+
+void Transfert::balanceNodePos()
+{
+	return;
 }
 
 bool Transfert::detectCycle(Node* n)
@@ -63,7 +82,10 @@ double Transfert::accept(EvalVisitor& eval)
 
 void Transfert::remove()
 {
-	link->getTop()->remove();
+	if(parent)
+		this->detach();
+	if (link)
+		link->getProperties().decrementRefCount();
 	link = nullptr;
 	delete this;
 }

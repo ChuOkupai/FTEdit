@@ -72,6 +72,13 @@ QRadioButton *WidgetLinker::addRadioButton(const QString &content)
 	return (button);
 }
 
+QSpinBox *WidgetLinker::addSpinBox()
+{
+	auto *spinBox = new QSpinBox(parent);
+	layout->addWidget(spinBox);
+	return (spinBox);
+}
+
 QTextEdit *WidgetLinker::addTextEdit(const QString &content)
 {
 	auto *textEdit = new QTextEdit(parent);
@@ -109,6 +116,8 @@ GraphicsView::GraphicsView(QWidget *parent) :
 QGraphicsView(parent)
 {
 	setDragMode(QGraphicsView::ScrollHandDrag);
+	setMouseTracking(true);
+	viewport()->setMouseTracking(true);
 }
 
 void GraphicsView::wheelEvent(QWheelEvent *event)

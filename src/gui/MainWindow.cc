@@ -1,8 +1,8 @@
-#include "MainWindow.hh"
-#include "EditContainerDialog.hh"
+#include "Dialog.hh"
+#include "EditVisitor.hh"
+#include "PrintResult.hh"
 #include "ManageDistributionsDialog.hh"
 #include "ManageEventsDialog.hh"
-#include "RenderVisitor.hh"
 
 MainWindow::MainWindow() : editor(nullptr), modified(false)
 {
@@ -31,6 +31,14 @@ MainWindow::MainWindow() : editor(nullptr), modified(false)
 	explorer = new QTreeWidget(horizontalLayout);
 	explorer->headerItem()->setText(0, "Project Explorer");
 	explorerLayout->addWidget(explorer);
+	connect(explorer, SIGNAL(itemClicked(QTreeWidgetItem *, int)), this, SLOT(explorerItemClicked(QTreeWidgetItem *, int)));
+
+	trees = new QTreeWidgetItem(explorer);
+	trees->setText(0, "Fault tree");
+	QTreeWidgetItem *tree1 = new QTreeWidgetItem(trees);
+	tree1->setText(0, "test");
+	results = new QTreeWidgetItem(explorer);
+	results->setText(0, "Result");
 
 	hSplitter->addWidget(horizontalLayout);
 	vSplitter = new QSplitter(hSplitter);
@@ -66,17 +74,19 @@ MainWindow::MainWindow() : editor(nullptr), modified(false)
 	errorList->resize(errorList->width(), 1);
 	toggleErrorList();
 	this->newFile();
+
+	connect(scene, SIGNAL(selectionChanged()), this, SLOT(changeItem()));
 }
 
 void MainWindow::newFile()
 {
 	if (!maybeSave())
 		return ;
+	scene->clear();
 	reset();
-	current = nullptr;
 	editor = new Editor();
-	editor->detach();
-	setEnabledButton(true, false);
+	editor->detach(); // Creates empty tree
+	setEnabledButton();
 }
 
 void MainWindow::open()
@@ -121,16 +131,18 @@ void MainWindow::closeEvent(QCloseEvent* e)
 
 void MainWindow::cut()
 {
+	editor->cut(curItem->node());
 	modified = true;
 }
 
 void MainWindow::copy()
 {
-	;
+	editor->copy(curItem->node());
 }
 
 void MainWindow::paste()
 {
+	editor->paste((Gate*)curItem->node());
 	modified = true;
 }
 
@@ -156,8 +168,7 @@ void MainWindow::addKN()
 
 void MainWindow::addXor()
 {
-	// ISSUE
-	//addGate(new Xor(editor->generateName(PREFIX_GATE)));
+	addGate(new Xor(editor->generateName(PREFIX_GATE)));
 }
 
 void MainWindow::addEvent()
@@ -166,17 +177,16 @@ void MainWindow::addEvent()
 	QList<Event> &events = editor->getEvents();
 	events << Event(editor->generateName(PREFIX_EVENT));
 	auto cont = new Container(&events.last());
-	cont->attach((Gate*)current);
-	RenderVisitor(view, editor->getSelection());
-	EditContainerDialog(this, *editor, *cont).exec();
+	cont->attach((Gate*)curItem->node());
+	updateScene(curItem->node());
 }
 
 void MainWindow::addTransfert()
 {
 	modified = true;
-	auto t = new Transfert(editor->generateName(PREFIX_GATE));
-	t->attach((Gate*)current);
-	RenderVisitor(view, editor->getSelection());
+	auto t = new Transfert();
+	t->attach((Gate*)curItem->node());
+	updateScene(curItem->node());
 }
 
 void MainWindow::zoomIn()
@@ -193,7 +203,7 @@ void MainWindow::zoomOut()
 
 void MainWindow::zoomReset()
 {
-	view->setZoom(1.5);
+	view->setZoom(1);
 }
 
 void MainWindow::showToolBar()
@@ -244,7 +254,10 @@ void MainWindow::showEvents()
 
 void MainWindow::evaluate()
 {
-	;
+	//add result entry to resultsHistory on success.
+	//Result *result;
+	//PrintResult(this, result).exec();
+	//Redirect user to error list on failure.
 }
 
 void MainWindow::about()
@@ -256,6 +269,101 @@ void MainWindow::about()
 	"License: GPLv3<br>Source code is available on "
 	"<a href='https://github.com/ChuOkupai/FTEdit'>GitHub</a><br>");
 	about.exec();
+}
+
+void MainWindow::moveItemFirst()
+{
+	QList<Node*> &l = curItem->node()->getParent()->getChildren();
+	l.move(l.indexOf(curItem->node()), 0);
+	updateScene(curItem->node());
+}
+
+void MainWindow::moveItemLeft()
+{
+	QList<Node*> &l = curItem->node()->getParent()->getChildren();
+	int pos = l.indexOf(curItem->node());
+	l.move(pos, pos - 1);
+	updateScene(curItem->node());
+}
+
+void MainWindow::moveItemRight()
+{
+	QList<Node*> &l = curItem->node()->getParent()->getChildren();
+	int pos = l.indexOf(curItem->node());
+	l.move(pos, pos + 1);
+	updateScene(curItem->node());
+}
+
+void MainWindow::moveItemLast()
+{
+	QList<Node*> &l = curItem->node()->getParent()->getChildren();
+	l.move(l.indexOf(curItem->node()), l.size() - 1);
+	updateScene(curItem->node());
+}
+
+void MainWindow::editItem()
+{
+	EditVisitor visitor(this, *editor, curItem);
+	curItem->node()->accept(visitor);
+	scene->update();
+}
+
+void MainWindow::removeItem()
+{
+	Node *parent = curItem->node()->getParent();
+	editor->remove(curItem->node());
+	updateScene(parent);
+}
+
+void MainWindow::detach()
+{
+	editor->detach((Gate*)curItem->node());
+	updateScene(curItem->node());
+}
+
+void MainWindow::join()
+{
+	int index;
+	ChooseTreeDialog(this, *editor, index).exec();
+	editor->join(&editor->getTrees()[index], (Gate*)curItem->node());
+	updateScene(curItem->node());
+}
+
+void MainWindow::changeItem()
+{
+	QList<QGraphicsItem*> list = scene->selectedItems();
+	if (list.size() != 1)
+	{
+		curItem->setSelected(!list.size());
+		return ;
+	}
+	curItem = (NodeItem*)list[0];
+	setEnabledButton();
+}
+
+void MainWindow::explorerItemClicked(QTreeWidgetItem *item, int column)
+{
+	qDebug() << "clicked";
+	(void)item;
+	(void)column;
+	//	verif si parent appartient aux trees
+    //		=> changer l'arbre séléctionné dans l'éditeur
+    //updateScene(editor->getSelection()->getTop()); // pour mettre à jour l'affichage
+    //verif si parent appartient à l'attribut results
+    //		=> Afficher les résultats (utiliser l'attribut resultsHistory dans la classe)
+    //Result *result;
+    Gate *top = editor->getSelection()->getTop();
+    QList<Tree> tr = editor->getTrees();
+    for(int i = 0;i<tr.size(); ++i)
+    {
+        if(top == tr[i].getTop()){
+            updateScene(editor->getSelection()->getTop());
+        }else{
+            //PrintResult(this,result).exec();
+        }
+    }
+
+
 }
 
 void MainWindow::createActions()
@@ -370,7 +478,7 @@ void MainWindow::createActions()
 
 	zoomResetAct = new QAction("Reset Zoom", this);
 	zoomResetAct->setStatusTip("Reset Zoom");
-	zoomResetAct->setIcon(QIcon(":icons/edit.png"));
+	zoomResetAct->setIcon(QIcon(":icons/zoomReset.png"));
 	connect(zoomResetAct, &QAction::triggered, this, &MainWindow::zoomReset);
 
 	showToolBarAct = new QAction("Show Toolbar", this);
@@ -414,6 +522,46 @@ void MainWindow::createActions()
 	aboutQtAct->setStatusTip("About Qt");
 	aboutQtAct->setIcon(QIcon(":icons/about.png"));
 	connect(aboutQtAct, &QAction::triggered, qApp, &QApplication::aboutQt);
+
+	moveItemFirstAct = new QAction("Move First", this);
+	moveItemFirstAct->setStatusTip("Move the node to the leftmost position");
+	moveItemFirstAct->setIcon(QIcon(":icons/moveFirst.png"));
+	connect(moveItemFirstAct, &QAction::triggered, this, &MainWindow::moveItemFirst);
+
+	moveItemLeftAct = new QAction("Move Left", this);
+	moveItemLeftAct->setStatusTip("Move the node to the left");
+	moveItemLeftAct->setIcon(QIcon(":icons/moveLeft.png"));
+	connect(moveItemLeftAct, &QAction::triggered, this, &MainWindow::moveItemLeft);
+
+	moveItemRightAct = new QAction("Move Right", this);
+	moveItemRightAct->setStatusTip("Move the node to the right");
+	moveItemRightAct->setIcon(QIcon(":icons/moveRight.png"));
+	connect(moveItemRightAct, &QAction::triggered, this, &MainWindow::moveItemRight);
+
+	moveItemLastAct = new QAction("Move Last", this);
+	moveItemLastAct->setStatusTip("Move the node to the rightmost position");
+	moveItemLastAct->setIcon(QIcon(":icons/moveLast.png"));
+	connect(moveItemLastAct, &QAction::triggered, this, &MainWindow::moveItemLast);
+
+	editItemAct = new QAction("Properties", this);
+	editItemAct->setStatusTip("Edit the node properties");
+	editItemAct->setIcon(QIcon(":icons/edit.png"));
+	connect(editItemAct, &QAction::triggered, this, &MainWindow::editItem);
+
+	removeItemAct = new QAction("Remove", this);
+	removeItemAct->setStatusTip("Remove all nodes starting from here");
+	removeItemAct->setIcon(QIcon(":icons/remove.png"));
+	connect(removeItemAct, &QAction::triggered, this, &MainWindow::removeItem);
+
+	detachItemAct = new QAction("Detach", this);
+	detachItemAct->setStatusTip("Move all nodes starting from here in a new fault tree");
+	detachItemAct->setIcon(QIcon(":icons/detach.png"));
+	connect(detachItemAct, &QAction::triggered, this, &MainWindow::detach);
+
+	joinItemAct = new QAction("Join", this);
+	joinItemAct->setStatusTip("Merge the content of a fault tree as a child of this node");
+	joinItemAct->setIcon(QIcon(":icons/add.png"));
+	connect(joinItemAct, &QAction::triggered, this, &MainWindow::join);
 }
 
 void MainWindow::createMenus()
@@ -435,7 +583,6 @@ void MainWindow::createMenus()
 	m->addAction(copyAct);
 	m->addAction(pasteAct);
 	m->addSeparator();
-
 	gatesMenu = m->addMenu("Add Gate...");
 	gatesMenu->setIcon(QIcon(":icons/add.png"));
 	gatesMenu->addAction(addAndAct);
@@ -445,6 +592,16 @@ void MainWindow::createMenus()
 	gatesMenu->addAction(addXorAct);
 	gatesMenu->addAction(addTransfertAct);
 	m->addAction(addEventAct);
+	m->addSeparator();
+	m->addAction(moveItemFirstAct);
+	m->addAction(moveItemLeftAct);
+	m->addAction(moveItemRightAct);
+	m->addAction(moveItemLastAct);
+	m->addSeparator();
+	m->addAction(editItemAct);
+	m->addAction(removeItemAct);
+	m->addAction(detachItemAct);
+	m->addAction(joinItemAct);
 
 	m = menuBar()->addMenu("&View");
 	m->addAction(zoomInAct);
@@ -465,6 +622,17 @@ void MainWindow::createMenus()
 	m = menuBar()->addMenu("&Help");
 	m->addAction(aboutAct);
 	m->addAction(aboutQtAct);
+
+	itemsMenu = new QMenu(this);
+	itemsMenu->addAction(moveItemFirstAct);
+	itemsMenu->addAction(moveItemLeftAct);
+	itemsMenu->addAction(moveItemRightAct);
+	itemsMenu->addAction(moveItemLastAct);
+	itemsMenu->addSeparator();
+	itemsMenu->addAction(editItemAct);
+	itemsMenu->addAction(removeItemAct);
+	itemsMenu->addAction(detachItemAct);
+	itemsMenu->addAction(joinItemAct);
 }
 
 void MainWindow::createToolBar()
@@ -479,7 +647,6 @@ void MainWindow::createToolBar()
 	toolBar->addAction(openAct);
 	toolBar->addAction(saveAct);
 	toolBar->addAction(saveAsAct);
-	toolBar->addAction(exitAct);
 	toolBar->addSeparator();
 	toolBar->addAction(cutAct);
 	toolBar->addAction(copyAct);
@@ -491,12 +658,21 @@ void MainWindow::createToolBar()
 	toolBar->addWidget(button);
 	toolBar->addAction(addEventAct);
 	toolBar->addSeparator();
+	toolBar->addAction(moveItemFirstAct);
+	toolBar->addAction(moveItemLeftAct);
+	toolBar->addAction(moveItemRightAct);
+	toolBar->addAction(moveItemLastAct);
+	toolBar->addSeparator();
+	toolBar->addAction(editItemAct);
+	toolBar->addAction(removeItemAct);
+	toolBar->addAction(detachItemAct);
+	toolBar->addAction(joinItemAct);
+	toolBar->addSeparator();
 	toolBar->addAction(zoomInAct);
 	toolBar->addAction(zoomOutAct);
+	toolBar->addAction(zoomResetAct);
 	toolBar->addSeparator();
 	toolBar->addAction(evaluateAct);
-	toolBar->addSeparator();
-	toolBar->addAction(aboutAct);
 }
 
 bool MainWindow::maybeSave()
@@ -518,6 +694,8 @@ void MainWindow::reset()
 		delete editor;
 	editor = nullptr;
 	modified = false;
+	curItem = nullptr;
+	resultsHistory.clear();
 }
 
 void MainWindow::resizeSplitter(QSplitter *splitter, int widget1Size, int widget2Size)
@@ -529,29 +707,79 @@ void MainWindow::resizeSplitter(QSplitter *splitter, int widget1Size, int widget
 	l.clear();
 }
 
-void MainWindow::setEnabledButton(bool gates, bool childs)
+void MainWindow::setEnabledButton()
 {
-	addAndAct->setEnabled(gates);
-	addInhibitAct->setEnabled(gates);
-	addOrAct->setEnabled(gates);
-	addKNAct->setEnabled(gates);
-	addXorAct->setEnabled(gates);
-	addTransfertAct->setEnabled(childs);
-	addEventAct->setEnabled(childs);
+	bool isChild = curItem && curItem->isChild();
+	bool isNotChild = curItem && !curItem->isChild();
+	int pos = 0;
+	int size = 0; // children size of parent
+	if (curItem && curItem->node()->getParent())
+	{
+		QList<Node*> &l = curItem->node()->getParent()->getChildren();
+		pos = l.indexOf(curItem->node());
+		size = l.size() - 1;
+	}
+	saveAct->setEnabled(modified);
+	cutAct->setDisabled(curItem == nullptr);
+	copyAct->setDisabled(curItem == nullptr);
+	pasteAct->setEnabled(editor->getClipboard() && isNotChild);
+	moveItemFirstAct->setEnabled(pos > 0);
+	moveItemLeftAct->setEnabled(pos > 0);
+	moveItemRightAct->setEnabled(pos < size);
+	moveItemLastAct->setEnabled(pos < size);
+	editItemAct->setDisabled(curItem == nullptr);
+	removeItemAct->setDisabled(curItem == nullptr);
+	detachItemAct->setEnabled(isNotChild);
+	joinItemAct->setEnabled(isNotChild && editor->getTrees().size() > 1);
+	addAndAct->setDisabled(isChild);
+	addInhibitAct->setDisabled(isChild);
+	addOrAct->setDisabled(isChild);
+	addKNAct->setDisabled(isChild);
+	addXorAct->setDisabled(isChild);
+	addTransfertAct->setEnabled(isNotChild);
+	addEventAct->setEnabled(isNotChild);
+	evaluateAct->setEnabled(isNotChild);
 }
 
 void MainWindow::addGate(Gate *g)
 {
-	editor->getGates() << g;
-	if (current)
-		g->attach((Gate*)current);
-	else
-	{
-		editor->getSelection()->setTop(g);
-		setEnabledButton(true, true);
-	}
-	//editor->move(g, (Gate*)current); ???
-	current = g;
 	modified = true;
-	RenderVisitor(view, editor->getSelection());
+	editor->getGates() << g;
+	if (curItem)
+	{
+		g->attach((Gate*)curItem->node());
+		g = (Gate*)curItem->node();
+	}
+	else
+		editor->getSelection()->setTop(g);
+	updateScene(g);
+}
+
+void MainWindow::updateScene(Node *selection)
+{
+	scene->setSceneRect(0, 0, 0, 0);
+	scene->clear();
+	Node *top = editor->getSelection()->getTop();
+	if (top)
+	{
+		top->balanceNodePos(); // Reset node position
+		RenderVisitor visitor(*this, selection);
+		top->accept(visitor);
+	}
+	else // Reset to empty tree
+	{
+		curItem = nullptr;
+		setEnabledButton();
+	}
+	view->update();
+}
+
+QMenu *MainWindow::itemsContextMenu()
+{
+	return (itemsMenu);
+}
+
+QGraphicsScene *MainWindow::getScene()
+{
+	return (scene);
 }

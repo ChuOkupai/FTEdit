@@ -1,12 +1,15 @@
 #pragma once
 #include <QMainWindow>
 #include "FTEdit_Editor.hh"
+#include "FTEdit_Evaluator.hh"
 #include "WidgetLinker.hh"
 
 #define ICON_SIZE	48
 #define RES_MIN_X	460
 #define RES_MIN_Y	320
 #define MIN(A, B) ((A) < (B) ? (A) : (B))
+
+class NodeItem;
 
 class MainWindow : public QMainWindow
 {
@@ -36,6 +39,14 @@ private slots:
 		void addXor();
 		void addTransfert();
 		void addEvent();
+	void moveItemFirst();
+	void moveItemLeft();
+	void moveItemRight();
+	void moveItemLast();
+	void editItem();
+	void removeItem();
+	void detach();
+	void join();
 	// View
 	void zoomIn();
 	void zoomOut();
@@ -51,10 +62,16 @@ private slots:
 	// Help
 	void about();
 
+	// Change item selection
+	void changeItem();
+	// Check clicked item in explorer
+	void explorerItemClicked(QTreeWidgetItem *item, int column);
+
 private:
-	Editor	*editor;
-	bool	modified;
-	Node	*current;
+	Editor			*editor;
+	bool			modified;
+	NodeItem		*curItem;
+	QList<Result>	resultsHistory;
 
 	QAction *newAct;
 	QAction *openAct;
@@ -71,6 +88,15 @@ private:
 	QAction *addXorAct;
 	QAction *addTransfertAct;
 	QAction *addEventAct;
+		// Context menus actions
+		QAction *moveItemFirstAct;
+		QAction *moveItemLeftAct;
+		QAction *moveItemRightAct;
+		QAction *moveItemLastAct;
+		QAction *editItemAct;
+		QAction *removeItemAct;
+		QAction *detachItemAct;
+		QAction *joinItemAct;
 	QAction *zoomInAct;
 	QAction *zoomOutAct;
 	QAction *zoomResetAct;
@@ -83,9 +109,13 @@ private:
 	QAction *aboutAct;
 	QAction *aboutQtAct;
 
+	QMenu			*childItemsMenu; // for childs (Container + Transfert)
+	QMenu			*itemsMenu; // for gates
 	QMenu			*gatesMenu;
 	QToolBar		*toolBar;
 	QTreeWidget		*explorer;
+	QTreeWidgetItem	*trees; // Fault trees list
+	QTreeWidgetItem	*results; // Results list
 	GraphicsView	*view;
 	QGraphicsScene	*scene;
 	QListWidget		*errorList;
@@ -102,7 +132,13 @@ private:
 	// Redimensionne le layout
 	void resizeSplitter(QSplitter *splitter, int widget1Size, int widget2Size);
 	// Set enabled buttons
-	void setEnabledButton(bool gates, bool childs);
+	void setEnabledButton();
 	// Add new Gate
 	void addGate(Gate *g);
+	// Refresh current scene
+	void updateScene(Node *selection);
+
+public:
+	QMenu *itemsContextMenu();
+	QGraphicsScene *getScene();
 };

@@ -11,6 +11,7 @@ protected:
 
 public:
 	Tree(QString name);
+	Tree(const Tree&);
 	~Tree();
 
 	Properties	&getProperties();
