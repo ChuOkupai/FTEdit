@@ -29,10 +29,9 @@ bool Inhibit::check (QList<QString>& errors)
     if(children.size() != 1)
     {
         errors << prop.getName() + ": There must be only 1 input.";
-		return (false);
     }
     children.at(0)->check(errors);
-    return (errors.size() > 0);
+    return (errors.size() == 0);
 }
 
 void Inhibit::accept(VisitorNode& visitor)

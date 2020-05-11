@@ -31,11 +31,10 @@ bool Transfert::check(QList<QString>& errors)
 	if (!link)
 	{
 		errors << "Transfert: There must be a link to a fault tree.";
-		return (false);
 	}
 	Gate* g = link->getTop();
 	g->check(errors);
-	return(errors.size() > 0);
+	return(errors.size() == 0);
 }
 
 Node* Transfert::search(QPoint around)
