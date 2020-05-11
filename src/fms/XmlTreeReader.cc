@@ -54,12 +54,7 @@ void XmlTreeReader::readDistrib()
 	
 	d->getProperties().setDesc(desc);
 	d->getProperties().setKeep(keep);
-	
-	qDebug() << "name:" << d->getProperties().getName();
-	qDebug() << "Desc:" << d->getProperties().getDesc();
-	qDebug() << "Keep:" << d->getProperties().getKeep();
-	qDebug() << "type:" << tmp;
-	
+
 	e->getDistributions() << d; //ajouter la Distrib à l'éditeur
 }
 
@@ -142,9 +137,6 @@ void XmlTreeReader::readGate()
 	reader.readNextStartElement();
 	reader.readNextStartElement();
 	type = reader.name().toString();
-
-	qDebug() << "name:" << name;
-	qDebug() << "type:" << type;
 
 	k = reader.attributes().value( "", "min").toUInt(); //..get k
 	QList<Event>& levents = e->getEvents();

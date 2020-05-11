@@ -18,7 +18,6 @@ Editor* FileManagerSystem::load(QString path)
 	QFile svfile(path);
 	if(!svfile.open(QIODevice::ReadOnly)){
 		errorMessage = "Cannot read file" + svfile.errorString();
-		qDebug() << errorMessage;
 		return nullptr;
 	}
 	
@@ -30,7 +29,6 @@ Editor* FileManagerSystem::load(QString path)
 	{
 		delete editor;
 		errorMessage = "Failed to Load";
-		qDebug() << errorMessage;
 	}
 	return editor;
 }

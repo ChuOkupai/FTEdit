@@ -8,7 +8,6 @@ class XmlTreeReader
 	private:
 		QXmlStreamReader reader;
 		Editor* e;
-		bool error;
 		Constant* createConstant(QString name);
 		Exponential* createExponential(QString name);
 		Weibull* createWeibull(QString name);
