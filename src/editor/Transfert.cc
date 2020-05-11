@@ -32,6 +32,11 @@ bool Transfert::check(QList<QString>& errors)
 	{
 		errors << "Transfert: There must be a link to a fault tree.";
 	}
+	if(detectCycle(link->getTop()))
+	{
+		errors << "Transfert: fault tree linked result in a loop.";
+		return(false);//no need to check link because the loop was already checked?	
+	}
 	Gate* g = link->getTop();
 	g->check(errors);
 	return(errors.size() == 0);
@@ -60,11 +65,14 @@ bool Transfert::detectCycle(Node* n)
 {
 	bool ret = false;
 	if(n == this)  ret = true;
-	Gate * g = dynamic_cast<Gate*>(n);
-	QList<Node*> tmp = g->getChildren();
-	for(int i=0; i < tmp.size();i++)
+	if(dynamic_cast<Gate*>(n))
 	{
-		ret = ret || detectCycle(tmp.at(i));
+		Gate * g = dynamic_cast<Gate*>(n);
+		QList<Node*> tmp = g->getChildren();
+		for(int i=0; i <g->getChildren().size();i++)
+		{
+			ret = ret || detectCycle(g->getChildren()[i]);
+		}
 	}
 	return ret;
 }
