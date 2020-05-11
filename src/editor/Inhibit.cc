@@ -30,7 +30,8 @@ bool Inhibit::check (QList<QString>& errors)
     {
         errors << prop.getName() + ": There must be only 1 input.";
     }
-    children.at(0)->check(errors);
+	for (int i = 0; i < children.size(); ++i)
+		children.at(i)->check(errors);
     return (errors.size() == 0);
 }
 
