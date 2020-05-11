@@ -62,13 +62,28 @@ public:
 	GateToolButton(QWidget *parent);
 };
 
-// Custom QGraphicsView widget for smooth edition
+// Custom QListView
+class ListWidget : public QListWidget
+{
+	Q_OBJECT
+
+private slots:
+	void contextMenuEvent(QContextMenuEvent *event) override;
+	void mouseReleaseEvent(QMouseEvent *event) override;
+
+private:
+	QAction *removeOne;
+
+public:
+	ListWidget(QWidget *parent);
+};
 
 #define ZOOM_MIN	0.05
 #define ZOOM_MAX	4.0
 #define ZOOM_STEP	0.4
-#define ZOOM_SCROLL	0.1
+#define ZOOM_SCROLL	0.15
 
+// Custom QGraphicsView widget for smooth edition
 class GraphicsView : public QGraphicsView
 {
 	Q_OBJECT

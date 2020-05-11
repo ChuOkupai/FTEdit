@@ -110,8 +110,6 @@ bool PropertiesDialog::valid()
 
 void ChooseResultDialog::closeEvent(QCloseEvent *event)
 {
-	qDebug() << "useMCS: " << useMCS->isChecked();
-	qDebug() << "useBoolean: " << useBoolean->isChecked();
 	Result analysis(top, useMCS->isChecked(), useBoolean->isChecked(),
 	missionTime->value(), step->value());
 	results << analysis; // Add new analysis to the list

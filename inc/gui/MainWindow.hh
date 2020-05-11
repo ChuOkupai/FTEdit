@@ -120,7 +120,7 @@ private:
 	QTreeWidgetItem	*results; // Results list
 	GraphicsView	*view;
 	QGraphicsScene	*scene;
-	QListWidget		*errorList;
+	ListWidget		*errorList;
 	QSplitter		*vSplitter; // vertical split: graphicsView <-> errorList
 	QSplitter		*hSplitter; // horizontal split: explorer <-> vSplitter
 

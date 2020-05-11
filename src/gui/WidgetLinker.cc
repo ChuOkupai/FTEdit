@@ -122,6 +122,35 @@ void WidgetLinker::replace(QBoxLayout *layout, QBoxLayout *with)
 	this->layout = layout;
 }
 
+void ListWidget::contextMenuEvent(QContextMenuEvent *event)
+{
+	if (!itemAt(event->pos()))
+		setCurrentItem(nullptr);
+	QMenu menu;
+	QAction *act = menu.addAction(currentItem() ? "Clear" : "Clear All");
+	if (!count()) act->setEnabled(false);
+	if (menu.exec(event->globalPos()))
+	{
+		if (currentItem())
+		{
+			qDeleteAll(selectedItems());
+			setCurrentItem(nullptr);
+		}
+		else
+			clear();
+	}
+}
+
+void ListWidget::mouseReleaseEvent(QMouseEvent *event)
+{
+	if (event->button() == Qt::LeftButton && !itemAt(event->pos()))
+		setCurrentItem(nullptr);
+}
+
+ListWidget::ListWidget(QWidget *parent) :
+QListWidget(parent)
+{}
+
 GateToolButton::GateToolButton(QWidget *parent) :
 QToolButton(parent)
 {

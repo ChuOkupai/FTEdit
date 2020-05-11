@@ -60,8 +60,9 @@ MainWindow::MainWindow() : editor(nullptr), modified(false)
 	groupBoxLayout->addWidget(groupBox);
 	auto gridLayout2 = new QGridLayout(groupBox);
 	gridLayout2->setContentsMargins(2, 2, 2, 2);
-	errorList = new QListWidget(groupBox);
+	errorList = new ListWidget(groupBox);
 	errorList->setStyleSheet("selection-background-color: #de0b0b;");
+	errorList->setSelectionMode(QAbstractItemView::SingleSelection);
 	gridLayout2->addWidget(errorList, 0, 0, 1, 1);
 
 	vSplitter->addWidget(verticalLayout2);
@@ -258,6 +259,8 @@ void MainWindow::evaluate()
 	{
 		errorList->clear();
 		errorList->addItems(QStringList(result.getErrors()));
+		if (!errorList->height())
+			toggleErrorList(); // show list
 		resultsHistory.removeLast(); // Discard result
 		QMessageBox msg(this);
 		msg.setIcon(QMessageBox::Warning);

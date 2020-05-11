@@ -94,16 +94,16 @@ static void visitChildren(MainWindow &win, Gate &gate, RenderVisitor &visitor)
 		win.getScene()->addItem(item);
 		p = gate.getPosition();
 		item = new QGraphicsRectItem(p.x() + CARD_X / 2 - BORDER_SIZE,
-		p.y() + CARD_Y - ICON_RSIZE / 2, 2 * BORDER_SIZE, CARD_GAP_Y / 2 + ICON_RSIZE / 2);
-		item->setBrush(Qt::black);
+		p.y() + CARD_Y - ICON_RSIZE / 2, 2 * BORDER_SIZE, CARD_GAP_Y / 2 + ICON_RSIZE / 2 - BORDER_SIZE);
 		win.getScene()->addItem(item);
+		item->setBrush(Qt::black);
 	}
 	QList<Node*>::const_iterator i;
 	for (i = l.constBegin(); i != l.constEnd(); ++i)
 	{
 		p = (*i)->getPosition();
 		QGraphicsRectItem *item = new QGraphicsRectItem(p.x() + CARD_X / 2 - BORDER_SIZE,
-		p.y() - CARD_GAP_Y / 2 - BORDER_SIZE, 2 * BORDER_SIZE, CARD_GAP_Y / 2);
+		p.y() - CARD_GAP_Y / 2 - BORDER_SIZE, 2 * BORDER_SIZE, CARD_GAP_Y / 2 + BORDER_SIZE);
 		item->setBrush(Qt::black);
 		win.getScene()->addItem(item);
 		(*i)->accept(visitor);
