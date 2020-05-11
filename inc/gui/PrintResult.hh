@@ -10,6 +10,7 @@ class PrintResult : public QDialog
 public:
     PrintResult(QWidget *parent, ResultMCS *resultMCS, ResultBoolean *resultBoolean,  QList<QString> errors);
     PrintResult(QWidget *parent, Result *result);
+    void cellChanged(int y, int x);
 private:
     Result *result;
     ResultMCS *resultMCS;

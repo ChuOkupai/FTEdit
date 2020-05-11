@@ -72,24 +72,31 @@ void PrintResult::PrintResultMCS()
     layout->setMargin(0);
     QTableWidget *table = new QTableWidget(this);
     layout->addWidget(table);
-    table->setColumnCount(3);
+    table->setColumnCount(2);
 
     ResultMCS *resmcs =  result->getResultMCS();
     QList<double> proMcs = resmcs->getProbabilities();
-    QList<QList<QString>> mcs = resmcs->getMCS();
-    int a = proMcs.size();
+    QList<QList<QString>> cs = resmcs->getMCS();
+    int m = cs.size();
 
-    table->setRowCount(a);
+    table->setRowCount(m);
     table->setSortingEnabled(true);
     table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     QStringList header;
-    header << "Event" << "Name" << "Value";
+    header << "Minimal Cut Set" << "Name";
     table->setHorizontalHeaderLabels(header);
     table->verticalHeader()->setVisible(false);
 
-    for (int i = 0; i < a; ++i)
+    for (int i = 0; i < m; ++i)
     {
+        // MCS
+        auto *item = new QTableWidgetItem();
+        table->setItem(i, 0, item);
 
+        double d = proMcs[i];
+        // Proba pour
+        item = new QTableWidgetItem(d);
+        table->setItem(i, 1, item);
     }
 
     table->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
@@ -114,12 +121,22 @@ void PrintResult::PrintResultBoolean()
     table->setSortingEnabled(true);
     table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     QStringList header;
-    header << "Name" << "Value";
+    header << "Top Event Name" << "Value";
     table->setHorizontalHeaderLabels(header);
     table->verticalHeader()->setVisible(false);
 
-    for (int i = 0; i < a; ++i)
+    // Name
+    auto *item = new QTableWidgetItem(topEvenet);
+    table->setItem(0, 0, item);
+
+
+    for (int i = 1; i < a; ++i)
     {
+        double d = proB[i];
+
+        // Proba
+        item = new QTableWidgetItem(d);
+        table->setItem(i, 1, item);
 
     }
 
@@ -143,5 +160,22 @@ void PrintResult::PrintResultErrors()
         new QListWidgetItem(err[i], listErrors);
     }
 }
+
+
+/*
+void PrintResult::cellChanged(int y, int x)
+{
+    if (x != 2)
+        return ;
+    QString s = table->item(y, 0)->text();
+    bool keep = table->item(y, x)->checkState() == Qt::Checked;
+    for (int i = 0; i < list.size(); ++i)
+        if (s == list[i].getProperties().getName())
+        {
+            list[i].getProperties().setKeep(keep);
+            break ;
+        }
+}
+*/
 
 
