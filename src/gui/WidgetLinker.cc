@@ -1,10 +1,27 @@
 #include "WidgetLinker.hh"
 
+DoubleSpinBox::DoubleSpinBox(QWidget *parent) :
+QDoubleSpinBox(parent)
+{}
+
+QString DoubleSpinBox::textFromValue(double val) const
+{
+	QLocale locale;
+	return (locale.toString(val));
+}
+
 WidgetLinker::WidgetLinker(QWidget *parent, QBoxLayout *layout) :
 parent(parent), layout(layout)
 {}
 
 WidgetLinker::~WidgetLinker() {}
+
+QCheckBox *WidgetLinker::addCheckBox(const QString &content)
+{
+	auto *checkBox = new QCheckBox(content, parent);
+	layout->addWidget(checkBox);
+	return (checkBox);
+}
 
 QComboBox *WidgetLinker::addComboBox()
 {
@@ -13,9 +30,9 @@ QComboBox *WidgetLinker::addComboBox()
 	return (comboBox);
 }
 
-QDoubleSpinBox *WidgetLinker::addDoubleSpinBox()
+DoubleSpinBox *WidgetLinker::addDoubleSpinBox()
 {
-	auto *spinBox = new QDoubleSpinBox(parent);
+	auto *spinBox = new DoubleSpinBox(parent);
 	layout->addWidget(spinBox);
 	return (spinBox);
 }
@@ -124,9 +141,9 @@ void GraphicsView::wheelEvent(QWheelEvent *event)
 {
 	qreal f = 1;
 
-	if (event->delta() < 0 && (f -= ZOOM_STEP) * zoom() < ZOOM_MIN)
+	if (event->delta() < 0 && (f -= ZOOM_SCROLL) * zoom() < ZOOM_MIN)
 		setZoom(ZOOM_MIN);
-	else if (event->delta() > 0 && (f += ZOOM_STEP) * zoom() > ZOOM_MAX)
+	else if (event->delta() > 0 && (f += ZOOM_SCROLL) * zoom() > ZOOM_MAX)
 		setZoom(ZOOM_MAX);
 	else
 		scale(f, f);

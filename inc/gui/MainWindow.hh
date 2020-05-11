@@ -2,6 +2,7 @@
 #include <QMainWindow>
 #include "FTEdit_Editor.hh"
 #include "FTEdit_Evaluator.hh"
+#include "FTEdit_FMS.hh"
 #include "WidgetLinker.hh"
 
 #define ICON_SIZE	48
@@ -68,10 +69,11 @@ private slots:
 	void explorerItemClicked(QTreeWidgetItem *item, int column);
 
 private:
-	Editor			*editor;
-	bool			modified;
-	NodeItem		*curItem;
-	QList<Result>	resultsHistory;
+	Editor				*editor;
+	FileManagerSystem	fileManager;
+	bool				modified;
+	NodeItem			*curItem;
+	QList<Result>		resultsHistory;
 
 	QAction *newAct;
 	QAction *openAct;

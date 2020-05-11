@@ -1,5 +1,5 @@
+#include <limits>
 #include "Dialog.hh"
-#include "WidgetLinker.hh"
 
 void ChooseDistributionDialog::closeEvent(QCloseEvent *event)
 {
@@ -67,7 +67,7 @@ void PropertiesDialog::checkName()
 	{
 		isValid = false;
 		nameWidget->setToolTip(s.size() ? "This name already exists" : "This name is invalid");
-		nameWidget->setStyleSheet("border: 1px solid red;background-color: #ffe3e3;");
+		nameWidget->setStyleSheet("border: 1px solid red;background-color: #ff8a8a;");
 	}
 	nameWidget->setText(s);
 	emit nameChanged(s); // Signal
@@ -106,6 +106,60 @@ void PropertiesDialog::setProperties(Properties *prop)
 bool PropertiesDialog::valid()
 {
 	return (isValid);
+}
+
+void ChooseResultDialog::closeEvent(QCloseEvent *event)
+{
+	qDebug() << "useMCS: " << useMCS->isChecked();
+	qDebug() << "useBoolean: " << useBoolean->isChecked();
+	Result analysis(top, useMCS->isChecked(), useBoolean->isChecked(),
+	missionTime->value(), step->value());
+	results << analysis; // Add new analysis to the list
+	event->accept();
+}
+
+void ChooseResultDialog::checkChanged(int state)
+{
+	(void)state;
+	missionTime->setEnabled(useBoolean->isChecked() || useMCS->isChecked());
+	step->setEnabled(useBoolean->isChecked());
+}
+
+ChooseResultDialog::ChooseResultDialog(QWidget *parent, Gate *top, QList<Result> &results)
+: QDialog(parent), top(top), results(results)
+{
+	setWindowTitle("Fault tree analysis");
+	setWindowIcon(QIcon(":icons/evaluate.png"));
+	auto layout = new QVBoxLayout(this);
+	WidgetLinker linker(this, layout);
+	linker.addLayoutItem(new QSpacerItem(0, 20, QSizePolicy::Minimum, QSizePolicy::Maximum));
+	auto *button = linker.addCheckBox("Perform basic check");
+	button->setToolTip("Check if the tree logic is correct");
+	button->setChecked(true);
+	button->setEnabled(false);
+	useBoolean = linker.addCheckBox("Use boolean algebra");
+	useBoolean->setToolTip("Use Boolean algebra to calculate the probabilities of failure of the top event");
+	useMCS = linker.addCheckBox("Find MCS");
+	useMCS->setToolTip("Calculate the minimal cuts sets and their probability of failure with MOCUS");
+	linker.addLabel("Mission time :");
+	missionTime = linker.addDoubleSpinBox();
+	missionTime->setToolTip("Maximum operating time");
+	missionTime->setSuffix(" s");
+	missionTime->setRange(0, std::numeric_limits<double>::max());
+	missionTime->setDecimals(16);
+	missionTime->setEnabled(false);
+	linker.addLabel("Step :");
+	step = linker.addDoubleSpinBox();
+	step->setToolTip("Time between each calculation");
+	step->setSuffix(" s");
+	step->setRange(0, std::numeric_limits<double>::max());
+	step->setDecimals(16);
+	step->setEnabled(false);
+	linker.addOKButton()->setText("Continue");
+	resize(340, height());
+
+	connect(useBoolean, SIGNAL(stateChanged(int)), this, SLOT(checkChanged(int)));
+	connect(useMCS, SIGNAL(stateChanged(int)), this, SLOT(checkChanged(int)));
 }
 
 ChooseTreeDialog::ChooseTreeDialog(QWidget *parent, Editor &editor, int &treeIndex) :

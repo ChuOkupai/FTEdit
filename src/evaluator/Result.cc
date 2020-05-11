@@ -16,7 +16,7 @@ Result::Result(Gate* top,bool useMCS,bool useBoolean,double missionTime,double s
 	}
 }
 
-Result::~Result(){delete this;}
+Result::~Result(){} // temp fix
 
 QList<QString>& Result::getErrors(){return errors; }
 

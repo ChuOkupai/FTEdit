@@ -43,7 +43,7 @@ void NodeItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 	path.addRoundedRect(r, ICON_RSIZE / 4, ICON_RSIZE / 4);
 	path.addRect(r.x(), r.y() + r.height() / 4 - BORDER_SIZE / 2, r.width(), 0);
 	painter->setPen(pen);
-	painter->fillPath(path, (isSelected() ? QColor(213, 236, 255) : Qt::white));
+	painter->fillPath(path, (isSelected() ? QColor(0xfff59e) : Qt::white));
 	painter->drawPath(path);
 	QPointF p(r.center().x() - ICON_RSIZE / 2, r.y() + 1.89 * ICON_RSIZE + BORDER_SIZE - 1);
 	painter->drawPixmap(p, icon);
