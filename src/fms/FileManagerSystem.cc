@@ -22,10 +22,16 @@ Editor* FileManagerSystem::load(QString path)
 		return nullptr;
 	}
 	
-	Editor* editor = new Editor();
-	XmlTreeReader xtr(&svfile);
-	xtr.readTree();
-	
+	Editor* editor = new Editor(false);
+	XmlTreeReader xtr(&svfile, editor);
+
+	try { xtr.readTree();}
+	catch(int exp)
+	{
+		delete editor;
+		errorMessage = "Failed to Load";
+		qDebug() << errorMessage;
+	}
 	return editor;
 }
 
@@ -41,12 +47,11 @@ int FileManagerSystem::save(Editor* editor)
 	QTextStream saveStream(&file); QDomDocument& domref = svisitor.getDomFile();
 	
 	//create root node of xml file
-	QDomElement root = domref.createElement("open-psa");
+	QDomElement root = domref.createElement("opsa-mef");
 	root.setAttribute("author", "FTEdit");
 	domref.appendChild(root);
 
 	//visit
-	
 	for(Distribution *d :  editor->getDistributions())
 		d->accept(svisitor);
 	/*for(Event e :  editor->getEvents())

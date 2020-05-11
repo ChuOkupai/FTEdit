@@ -8,7 +8,8 @@ class SaveVisitor : public VisitorDistribution, public VisitorNode
 {
 	private :
 		QDomDocument dom;
-		void writeProperties(QDomElement &elem, Gate& gate);
+		void writeTypeDistrib(QDomElement &node, QString type);
+		void writeProperties(QDomElement &elem, QDomElement &propelem, Properties& prop);
 		void writeChildren(QDomElement &node, Gate& gate);
 		void writeGate(Gate& gate, QString type);
 	public :

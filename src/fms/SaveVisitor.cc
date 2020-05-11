@@ -13,17 +13,29 @@ SaveVisitor::~SaveVisitor() {}
 
 QDomDocument& SaveVisitor::getDomFile() { return dom; }
 
-void SaveVisitor::writeProperties(QDomElement &elem, Gate& gate)
+void SaveVisitor::writeProperties(QDomElement &elem, QDomElement &propelem, Properties& prop)
 {
-	Properties& prop = gate.getProperties();
 	elem.setAttribute("name", prop.getName());
-	QDomElement tag;
+	QDomElement tag, attrs;
 	if(!prop.getDesc().isEmpty())
 	{
 		tag = dom.createElement("label");
 		tag.appendChild(dom.createTextNode(prop.getDesc()));
 		elem.appendChild(tag);
 	}
+	
+	tag = dom.createElement("attribute");
+	tag.setAttribute("name", "keep");
+	tag.setAttribute("value", prop.getKeep());
+	propelem.appendChild(tag);
+}
+
+void SaveVisitor::writeTypeDistrib(QDomElement &node, QString type)
+{
+	QDomElement typelem = dom.createElement("attribute");
+	typelem.setAttribute("name", "type");
+	typelem.setAttribute("value", type);
+	node.appendChild(typelem);
 }
 
 void SaveVisitor::writeChildren(QDomElement &node, Gate& gate)
@@ -53,7 +65,10 @@ void SaveVisitor::writeChildren(QDomElement &node, Gate& gate)
 void SaveVisitor::writeGate(Gate& gate, QString type)
 {
 	QDomElement rootgate = dom.createElement("define-gate");
-	writeProperties(rootgate, gate);
+	Properties& prop = gate.getProperties();
+	QDomElement propelem = dom.createElement("attributes");
+	writeProperties(rootgate, propelem, prop);
+	rootgate.appendChild(propelem);
 	QDomElement node = dom.createElement(type);
 	rootgate.appendChild(node);
 	writeChildren(node, gate);
@@ -69,7 +84,10 @@ void SaveVisitor::visit( Xor &xorgate ) { writeGate(xorgate, "xor"); }
 void SaveVisitor::visit( VotingOR &vorgate )
 { 
 	QDomElement rootgate = dom.createElement("define-gate");
-	writeProperties(rootgate, vorgate);
+	Properties& prop = vorgate.getProperties();
+	QDomElement propelem = dom.createElement("attributes");
+	writeProperties(rootgate, propelem, prop);
+	rootgate.appendChild(propelem);
 	QDomElement node = dom.createElement("atleast");
 	node.setAttribute("min", vorgate.getK());
 	rootgate.appendChild(node);
@@ -80,7 +98,10 @@ void SaveVisitor::visit( VotingOR &vorgate )
 void SaveVisitor::visit( Inhibit &inhibgate )
 {
 	QDomElement rootgate = dom.createElement("define-gate");
-	writeProperties(rootgate, inhibgate);
+	Properties& prop = inhibgate.getProperties();
+	QDomElement propelem = dom.createElement("attributes");
+	writeProperties(rootgate, propelem, prop);
+	rootgate.appendChild(propelem);
 	QDomElement node = dom.createElement("and");
 	QDomElement tmp;
 	tmp = dom.createElement("constant");
@@ -98,6 +119,12 @@ void SaveVisitor::visit( Constant &constdistrib )
 	QDomElement distr = dom.createElement("define-parameter");
 	Properties& prop = constdistrib.getProperties();
 	distr.setAttribute("name", prop.getName());
+
+	QDomElement propelem = dom.createElement("attributes");
+	writeProperties(distr, propelem, prop);
+	writeTypeDistrib(propelem, "const");
+	distr.appendChild(propelem);
+
 	QDomElement val = dom.createElement("float");
 	val.setAttribute("value", constdistrib.getValue());
 	distr.appendChild(val);
@@ -110,6 +137,12 @@ void SaveVisitor::visit( Exponential &expdistrib )
 	QDomElement distr = dom.createElement("define-parameter");
 	Properties& prop = expdistrib.getProperties();
 	distr.setAttribute("name", prop.getName());
+
+	QDomElement propelem = dom.createElement("attributes");
+	writeProperties(distr, propelem, prop);
+	writeTypeDistrib(propelem, "exp");
+	distr.appendChild(propelem);
+
 	QDomElement val = dom.createElement("float");
 	val.setAttribute("value", expdistrib.getLambda());
 	distr.appendChild(val);
@@ -121,6 +154,12 @@ void SaveVisitor::visit( Weibull &weibulldistrib )
 	QDomElement distr = dom.createElement("define-parameter");
 	Properties& prop = weibulldistrib.getProperties();
 	distr.setAttribute("name", prop.getName());
+
+	QDomElement propelem = dom.createElement("attributes");
+	writeProperties(distr, propelem, prop);
+	writeTypeDistrib(propelem, "weibull");
+	distr.appendChild(propelem);
+
 	QDomElement val;
 	val = dom.createElement("float");
 	val.setAttribute("value", weibulldistrib.getScale());
