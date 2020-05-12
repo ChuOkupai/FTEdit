@@ -3,16 +3,14 @@
 #include <QPoint>
 #include <QString>
 
-//#define NODE_X	120
-//#define NODE_Y	80
-/*those defines where putted here to remove compilation errors. They should not be here in the first place but in another file.*/
-#define ICON_RSIZE 80
-#define BORDER_SIZE 2
-#define CARD_X (3 * ICON_RSIZE)
-#define CARD_Y (3 * ICON_RSIZE)
-#define CARD_GAP_Y (CARD_Y / 2)
-#define CARD_GAP_X (CARD_X / 2)
+#define ICON_RSIZE	80
+#define BORDER_SIZE	2
+#define CARD_X		(3.5 * ICON_RSIZE)
+#define CARD_Y		(3 * ICON_RSIZE)
+#define CARD_GAP_Y	(CARD_Y / 2)
 
+// DELETE
+#define CARD_GAP_X (CARD_X / 2)
 
 class Editor;
 class Gate;

@@ -146,9 +146,7 @@ void Gate::remove()
 {
 	if(parent)
 		this->detach();
-	for (int i = 0; i < children.size(); ++i)
-	{	
-		children[i]->remove();
-	}
-	children.clear();
+	while (children.size())
+		children[0]->remove();
+	getProperties().setKeep(false);
 }

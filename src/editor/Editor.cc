@@ -8,7 +8,9 @@ clipboard(nullptr), selection(nullptr), autoRefresh(autoRefresh)
 {}
 
 Editor::~Editor()
-{}
+{
+	// LEAK MEMOIRE ICI HELLO
+}
 
 QList<Tree> &Editor::getTrees()
 {
@@ -90,7 +92,6 @@ void Editor::remove(Node *top)
 {
 	if (!top)
 		return ;
-	top->detach();
 	top->remove();
 	if (selection && top == selection->getTop())
 		selection->setTop(nullptr);
@@ -104,12 +105,15 @@ void Editor::detach(Gate *top)
 	if (selection && top == selection->getTop())
 		selection->setTop(nullptr);
 	selection = &trees.last();
+	if (selection->getTop())
+		selection->getTop()->detach();
 }
 
 void Editor::join(Tree *child, Gate *parent)
 {
 	Gate *g = child->getTop();
-	parent->attach(g);
+	if (g)
+		g->attach(parent);
 	child->setTop(nullptr);
 	child->getProperties().setKeep(false);
 	refresh();

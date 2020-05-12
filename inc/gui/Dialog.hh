@@ -55,3 +55,17 @@ protected:
 public:
 	PropertiesDialog(QWidget *parent, Editor &editor, Properties *prop, bool initialized = true);
 };
+
+// Choose a new fault tree from list, store the index in treeIndex
+class ChooseTreeDialog : public QDialog
+{
+	Q_OBJECT
+
+private:
+	Editor &editor;
+	QComboBox *trees; // Possible choices
+	int &treeIndex; // where to store the result
+
+public:
+	ChooseTreeDialog(QWidget *parent, Editor &editor, int &treeIndex);
+};

@@ -37,7 +37,7 @@ ChooseDistributionDialog::ChooseDistributionDialog(QWidget *parent, Editor &edit
 	linker.set(hLayout);
 	linker.addLayoutItem(new QSpacerItem(60, 0, QSizePolicy::Maximum, QSizePolicy::Minimum));
 	linker.set(layout);
-	linker.addOKButton()->setText("Continue");
+	linker.addOKButton();
 }
 
 PropertiesDialog::PropertiesDialog(QWidget *parent, Editor &editor, Properties *prop, bool initialized) :
@@ -106,4 +106,26 @@ void PropertiesDialog::setProperties(Properties *prop)
 bool PropertiesDialog::valid()
 {
 	return (isValid);
+}
+
+ChooseTreeDialog::ChooseTreeDialog(QWidget *parent, Editor &editor, int &treeIndex) :
+QDialog(parent), editor(editor), treeIndex(treeIndex)
+{
+	setWindowTitle("Merge fault tree");
+	setWindowIcon(QIcon(":icons/add.png"));
+	WidgetLinker linker(this, new QVBoxLayout(this));
+	linker.addLayoutItem(new QSpacerItem(0, 20, QSizePolicy::Minimum, QSizePolicy::Maximum));
+	trees = linker.addComboBox();
+	linker.addOKButton();
+
+	QList<Tree> &l = editor.getTrees();
+	QString current = editor.getSelection()->getProperties().getName();
+	for (auto tree : l)
+		if (tree.getProperties().getName().compare(current))
+			trees->addItem(tree.getProperties().getName());
+
+	trees->setCurrentIndex(0);
+	treeIndex = 0;
+	connect(trees, QOverload<int>::of(&QComboBox::currentIndexChanged),
+	[=](int i) { this->treeIndex = i; });
 }
