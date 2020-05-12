@@ -32,7 +32,7 @@ QPoint Gate::top_node_coord(QPoint cpt)
 {
 	QPoint max;
 	QPoint tmp;
-	if(getChildren()[0])
+	if(getChildren().size()>0)
 	{
 		if(!parent || parent->getChildren().indexOf(this) == 0)
 		{
