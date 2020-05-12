@@ -12,7 +12,7 @@ MainWindow::MainWindow() : editor(nullptr), modified(false)
 	createToolBar();
 
 	setWindowTitle("FTEdit");
-	setWindowIcon(QIcon(":icons/ftedit.png"));
+	setWindowIcon(QIcon(":icons/ftedit.ico"));
 	QRect r = QGuiApplication::primaryScreen()->geometry();
 	setMinimumSize(MIN(r.width(), RES_MIN_X), MIN(r.height(), RES_MIN_Y));
 	resize(r.width() / 1.5, r.height() / 1.5);

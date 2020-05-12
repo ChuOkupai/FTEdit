@@ -12,7 +12,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 RESOURCES += src/assets/icons.qrc \
 src/assets/objects.qrc
 RCC_DIR = src/.qrc
-RC_ICONS = logo.ico
 
 INCLUDEPATH += \
 $$PWD/inc \
