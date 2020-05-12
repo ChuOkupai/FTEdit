@@ -15,9 +15,15 @@ Editor::~Editor()
 			remove(getTrees()[i].getTop());
 	}
 	getTrees().clear();
+	qDeleteAll(gates);
 	getGates().clear();
 	getEvents().clear();
+	qDeleteAll(distributions);
 	getDistributions().clear();
+	
+	if(clipboard)
+		delete clipboard;
+	
 }
 
 QList<Tree> &Editor::getTrees()

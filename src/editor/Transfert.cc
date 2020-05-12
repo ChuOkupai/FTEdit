@@ -74,13 +74,15 @@ bool Transfert::detectCycle(Node* n)
 		Gate * g = dynamic_cast<Gate*>(n);
 		for(int i=0; i <g->getChildren().size();i++)
 		{
-			ret = ret || this->detectCycle(g->getChildren()[i]);
+			if((ret = detectCycle(g->getChildren()[i])))
+			break;
 		}
 	}
 	if(dynamic_cast<Transfert*>(n))
 	{
 		Transfert* t = dynamic_cast<Transfert*>(n);
-		ret = ret || this->detectCycle(t);
+		if(t->getLink())
+			ret = detectCycle(t->getLink()->getTop());
 	}
 	return ret;
 }
