@@ -6,7 +6,7 @@ private :
 	double time;
 
 public :
-	EvalVisitor(double time);
+	EvalVisitor();
 	double visit(And& andVisitor);
 	double visit(Or& orVisitor);
     double visit(Xor& XorVisitor);
@@ -15,5 +15,4 @@ public :
 	double visit(Transfert& transVisitor);
 	double visit(Container& eventVisitor);
 	double getProba(Gate* top,double time);
-	void setTime(double time);
 };

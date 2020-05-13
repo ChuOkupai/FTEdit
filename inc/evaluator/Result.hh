@@ -1,7 +1,7 @@
 #pragma once
+#include <QStringList>
 #include "ResultMCS.hh"
 #include "ResultBoolean.hh"
-#include "QStringList"
 
 class Result
 {
