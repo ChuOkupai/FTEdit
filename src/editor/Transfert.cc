@@ -31,16 +31,24 @@ bool Transfert::check(QList<QString>& errors)
 	if (!link)
 	{
 		errors << "Transfert: There must be a link to a fault tree.";
-		return (false);
+		return(errors.size() == 0);
 	}
-	Gate* g = link->getTop();
-	g->check(errors);
-	return(errors.size() > 0);
+	else
+	{
+		if(detectCycle(link->getTop()))
+		{
+			errors << "Transfert: fault tree linked result in a loop.";
+			return(false);//no need to check link because the loop was already checked?	
+		}
+		Gate* g = link->getTop();
+		g->check(errors);
+		return(errors.size() == 0);
+	}
 }
 
 Node* Transfert::search(QPoint around)
 {
-	if (around.x() >= position.x() && around.x() < position.x() + (CARD_X + CARD_GAP_X)
+	if (around.x() >= position.x() && around.x() < position.x() + (CARD_X /*+ CARD_GAP_X*/)
 	&& around.y() <= position.y() && around.y() > position.y() - (CARD_Y + CARD_GAP_Y))
 		return (this);
 	Node* n = nullptr;
@@ -60,12 +68,21 @@ void Transfert::balanceNodePos()
 bool Transfert::detectCycle(Node* n)
 {
 	bool ret = false;
-	if(n == this)  ret = true;
-	Gate * g = dynamic_cast<Gate*>(n);
-	QList<Node*> tmp = g->getChildren();
-	for(int i=0; i < tmp.size();i++)
+	if(n == this) return true;
+	if(dynamic_cast<Gate*>(n))
 	{
-		ret = ret || detectCycle(tmp.at(i));
+		Gate * g = dynamic_cast<Gate*>(n);
+		for(int i=0; i <g->getChildren().size();i++)
+		{
+			if((ret = detectCycle(g->getChildren()[i])))
+			break;
+		}
+	}
+	if(dynamic_cast<Transfert*>(n))
+	{
+		Transfert* t = dynamic_cast<Transfert*>(n);
+		if(t->getLink())
+			ret = detectCycle(t->getLink()->getTop());
 	}
 	return ret;
 }
