@@ -19,7 +19,7 @@ QList<Node*>& Gate::getChildren()
 
 Node* Gate::search(QPoint around)
 { 
-	if (around.x() >= position.x() && around.x() < position.x() + (CARD_X + CARD_GAP_X) 
+	if (around.x() >= position.x() && around.x() < position.x() + (CARD_X /*+ CARD_GAP_X*/) 
 	&& around.y() <= position.y() && around.y() > position.y() - (CARD_Y + CARD_GAP_Y))
 		return (this);
 	Node *n = nullptr;
@@ -32,16 +32,16 @@ QPoint Gate::top_node_coord(QPoint cpt)
 {
 	QPoint max;
 	QPoint tmp;
-	if(getChildren()[0])
+	if(getChildren().size()>0)
 	{
 		if(!parent || parent->getChildren().indexOf(this) == 0)
 		{
 			for(int i = 0; i<(getChildren().size()/2);i++)
 			{	
-				cpt.setX(cpt.x()+CARD_GAP_X+CARD_X);
+				cpt.setX(cpt.x()/*+CARD_GAP_X*/+CARD_X);
 			}
 		}
-			cpt.setY(cpt.y()+CARD_GAP_Y+CARD_Y);
+			//cpt.setY(cpt.y()+CARD_GAP_Y+CARD_Y);
 		
 		max = cpt;
 		for(int i = 0; i<(getChildren().size());i++)
@@ -51,10 +51,10 @@ QPoint Gate::top_node_coord(QPoint cpt)
 			{
 				max.setX(tmp.x());
 			}
-			if(tmp.y() > max.y())
-			{
-				max.setY(tmp.y());
-			}
+			//if(tmp.y() > max.y())
+			//{
+			//	max.setY(tmp.y());
+			//}
 		}
 		return max;
 	}
@@ -74,7 +74,7 @@ void Gate::balanceNodePos()//works sorta
 	int t = 0;
 	QPoint tmp;
 	QPoint top_pos;
-	top_pos.setY(CARD_Y + CARD_GAP_Y);
+	top_pos.setY(0/*CARD_Y + CARD_GAP_Y*/);
 
 	if(!parent)
 	{
@@ -85,27 +85,27 @@ void Gate::balanceNodePos()//works sorta
 	{
 		if(odd)
 		{	
-			tmp.ry() = this->getPosition().y() - (CARD_Y +CARD_GAP_Y);
+			tmp.ry() = this->getPosition().y() +/*-*/ (CARD_Y +CARD_GAP_Y);
 
 			t = i-halfsize;
-			tmp.rx() = this->getPosition().x() + ((t)*CARD_X)+ ((t)*CARD_GAP_X);
+			tmp.rx() = this->getPosition().x() + ((t)*CARD_X)/*+ ((t)*CARD_GAP_X)*/;
 
 			children.at(i)->setPosition(tmp);
 			children.at(i)->balanceNodePos();
 		}
 		else
 		{	
-			tmp.ry() = this->getPosition().y() - (CARD_Y +CARD_GAP_Y);
+			tmp.ry() = this->getPosition().y() +/*-*/ (CARD_Y +CARD_GAP_Y);
 			t = abs(halfsize-i);
 				
 			if(i<halfsize)
 			{
-				tmp.rx() = this->getPosition().x()- ((t*CARD_X) + ((t-1)*CARD_GAP_X));
+				tmp.rx() = this->getPosition().x()- /*(*/(t*CARD_X) /*+ ((t-1)*CARD_GAP_X))*/;
 			}
 			else
 			{
 				t++;
-				tmp.rx() = this->getPosition().x()+(t*CARD_X) + ((t-1)*CARD_GAP_X);
+				tmp.rx() = this->getPosition().x()+(t*CARD_X) /*+ ((t-1)*CARD_GAP_X)*/;
 			}
 
 			children.at(i)->setPosition(tmp);

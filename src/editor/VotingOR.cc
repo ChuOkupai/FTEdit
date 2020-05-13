@@ -87,16 +87,14 @@ bool VotingOR::check(QList<QString>& errors)
 	if (children.size() < k)
 	{
 		errors << prop.getName() + ": k value must be less or equal children value.";
-		return (false);
 	}
 	if(children.size() < 2)
 	{
 		errors << prop.getName() + ": must have a least 2 children.";
-		return(false);
 	}
 	for (int i = 0; i < children.size(); ++i)
 		children.at(i)->check(errors);
-	return (errors.size() > 0);
+	return (errors.size() == 0);
 }
 
 

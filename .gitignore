@@ -41,3 +41,7 @@ src/.moc
 src/.qrc
 
 *.DS_Store
+
+# Save/Export Files
+*.opsa
+*.csv
