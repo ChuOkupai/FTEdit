@@ -7,7 +7,11 @@ inline bool instanceof(const T* a) {
 
 CopyVisitor::CopyVisitor() : copied(nullptr) {}
 
-CopyVisitor::~CopyVisitor() {}
+CopyVisitor::~CopyVisitor() 
+{
+    if(copied)
+        copied->remove();
+}
 
 Node* CopyVisitor::getCopied() const
 {
