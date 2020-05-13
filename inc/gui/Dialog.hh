@@ -58,7 +58,6 @@ public:
 	PropertiesDialog(QWidget *parent, Editor &editor, Properties *prop, bool initialized = true);
 };
 
-<<<<<<< HEAD
 class ChooseResultDialog : public QDialog
 {
 	Q_OBJECT
@@ -81,8 +80,6 @@ public:
 	ChooseResultDialog(QWidget *parent, Gate *top, QList<Result> &list);
 };
 
-=======
->>>>>>> origin/dev
 // Choose a new fault tree from list, store the index in treeIndex
 class ChooseTreeDialog : public QDialog
 {

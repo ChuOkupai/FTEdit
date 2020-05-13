@@ -1,11 +1,7 @@
 #pragma once
 #include <QMainWindow>
-#include "FTEdit_Editor.hh"
 #include "FTEdit_Evaluator.hh"
-<<<<<<< HEAD
 #include "FTEdit_FMS.hh"
-=======
->>>>>>> origin/dev
 #include "WidgetLinker.hh"
 
 #define ICON_SIZE	48
@@ -72,18 +68,10 @@ private slots:
 	void explorerItemClicked(QTreeWidgetItem *item, int column);
 
 private:
-<<<<<<< HEAD
-	Editor				*editor;
-	FileManagerSystem	fileManager;
-	bool				modified;
-	NodeItem			*curItem;
-	QList<Result>		resultsHistory;
-=======
 	Editor			*editor;
 	bool			modified;
 	NodeItem		*curItem;
 	QList<Result>	resultsHistory;
->>>>>>> origin/dev
 
 	QAction *newAct;
 	QAction *openAct;
