@@ -131,17 +131,20 @@ void MainWindow::closeEvent(QCloseEvent* e)
 void MainWindow::cut()
 {
 	editor->cut(curItem->node());
+	updateScene(curItem->node());
 	modified = true;
 }
 
 void MainWindow::copy()
 {
 	editor->copy(curItem->node());
+	updateScene(curItem->node());
 }
 
 void MainWindow::paste()
 {
 	editor->paste((Gate*)curItem->node());
+	updateScene(curItem->node());
 	modified = true;
 }
 

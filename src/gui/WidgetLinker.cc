@@ -124,14 +124,18 @@ void WidgetLinker::replace(QBoxLayout *layout, QBoxLayout *with)
 
 void ListWidget::contextMenuEvent(QContextMenuEvent *event)
 {
+	bool select = true;
 	if (!itemAt(event->pos()))
+	{
 		setCurrentItem(nullptr);
+		select = false;
+	}
 	QMenu menu;
-	QAction *act = menu.addAction(currentItem() ? "Clear" : "Clear All");
+	QAction *act = menu.addAction(select ? "Clear" : "Clear All");
 	if (!count()) act->setEnabled(false);
 	if (menu.exec(event->globalPos()))
 	{
-		if (currentItem())
+		if (select)
 		{
 			qDeleteAll(selectedItems());
 			setCurrentItem(nullptr);
