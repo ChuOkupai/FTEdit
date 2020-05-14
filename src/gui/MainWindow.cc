@@ -130,8 +130,9 @@ void MainWindow::closeEvent(QCloseEvent* e)
 
 void MainWindow::cut()
 {
+	Node *parent = curItem->node()->getParent();
 	editor->cut(curItem->node());
-	updateScene(curItem->node());
+	updateScene(parent);
 	modified = true;
 }
 
