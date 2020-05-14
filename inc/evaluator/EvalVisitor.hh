@@ -4,10 +4,9 @@
 class EvalVisitor{
 private :
 	double time;
-	double proba;
 
 public :
-	EvalVisitor(double time,double proba);
+	EvalVisitor();
 	double visit(And& andVisitor);
 	double visit(Or& orVisitor);
     double visit(Xor& XorVisitor);
@@ -15,7 +14,5 @@ public :
 	double visit(VotingOR& vorVisitor);
 	double visit(Transfert& transVisitor);
 	double visit(Container& eventVisitor);
-	double getProba();
-	void reset();
-	void setTime(double time);
+	double getProba(Gate* top,double time);
 };

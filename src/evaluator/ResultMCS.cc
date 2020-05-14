@@ -15,6 +15,8 @@ ResultMCS::ResultMCS(Gate* top,double missionTime,double step) : Evaluator(top,m
     convertCS(cs, mcs);
     reduceCS(mcs);
 
+    /*qualitative*/
+
     for(int i=0; i<mcs.size(); i++){//recuperer les noms de chaque event
         mcsNames.append(QList<QString>());
         for(int j=0; j<mcs[i].size();j++){
@@ -28,7 +30,94 @@ ResultMCS::ResultMCS(Gate* top,double missionTime,double step) : Evaluator(top,m
         }
     }
 
-    for(int i=0;i<containers.size();i++){//librer les memoire dynamique
+
+    /*quantitative*//*probabilities[0] = proba de top*/
+
+    double probaCoupe;
+    for(int i=0; i<mcs.size(); i++){/*Calculer le proba de chaque coupe minimale */
+        probaCoupe = 1;
+        for(int j=0; j<mcs[i].size();j++){
+            probaCoupe *= mcs[i][j].getDistribution()->getProbability(missionTime);
+        }
+        probabilities << probaCoupe;
+    }
+
+        /*calculer le proba de top event, parce que les coupes minimales ne sont pas indépendantes,
+         * Donc il faut utiliser le Principe d'inclusion-exclusion, mettre le xx = x;*/
+
+    double p=0;/*proba de top*/
+    int klimit;/*limiter le nombre de s*/
+    int n = probabilities.size();
+    if(n<5){
+        klimit = n+1;
+    }else{
+        klimit = 5;/*on calcule que S1-S4, les suivants sont trop petit et influence pas trop le resultat, donc n'a pas de sens a calculer
+                    *sinon il doit calculer trop quand le nombre de coupes minimales est grand, pas la peine.*/
+    }
+    for(int i=1; i<klimit;i++){/**/
+        double s=0;
+
+        if(i==1){
+            for(int j=0; j<n;j++){
+                s += probabilities[j];
+            }
+        }
+        else{/*i=1->klimit: p=∑(-1)^(i-1)Si; j=i/n -> Si=∏Mj*/
+            QList<QList<int>> comb={};
+            int a[i];
+            combo(n,i,a,comb,0);/*trouver les compositions*/
+
+            for(int j=0;j<comb.size();j++){
+                QList<Event> l={};/*soit m1={e1,e2},m2={e1,e3}, donc P(m1m2)=p(e1e2e1e3)=p(e1e2e3)*/
+                for(int m=0;m<i;m++){
+                    QList<Event>& temp = mcs[comb[j][m]-1];/*l'index de coupe minimale commence de 0*/
+                    for(int k=0; k<temp.size();k++){
+                        if(!l.contains(temp[k])){/*ee=e -> p(e1e2e1e3)=p(e1e2e3)*/
+                            l.append(temp[k]);
+                        }
+                    }
+                }
+                double mul=l[0].getDistribution()->getProbability(missionTime);
+                for(int k=1; k<l.size();k++){
+                    mul *= l[k].getDistribution()->getProbability(missionTime);/*p(e1e2e3)*/
+                }
+                s += mul;
+            }
+        }
+
+        if(i%2==0){/*p=s1-s2+s3-0.5s4*/
+            if(i==klimit-1 && mcs.size()>4){/*quand on a trop de coupes minimales >4, on prend que S1,S2,S3 et moitie de S4
+                                               *pour obtenir un resultat approché*/
+                p -= s/2;
+            }
+            p -= s;
+        }
+        else{
+            if(i==klimit-1 && mcs.size()>4){
+                p += s/2;
+            }
+            p += s;/*proba de top*/
+        }
+
+    }
+    probabilities << p;/*probabilities.last() = proba de top*/
+
+
+    /*tester*/
+    QList<double> probas = probabilities;
+
+    for(int i=0; i < probas.size();i++){
+        qDebug()<< probas[i];
+    }
+
+
+
+
+
+
+    /*librer les memoire dynamique*/
+
+    for(int i=0;i<containers.size();i++){
         delete containers[i]->getEvent()->getDistribution();
         delete containers[i]->getEvent();
         delete containers[i];
@@ -39,6 +128,25 @@ ResultMCS::ResultMCS(Gate* top,double missionTime,double step) : Evaluator(top,m
 ResultMCS::~ResultMCS(){}
 
 
+void ResultMCS::combo(int n,int k,int a[],QList<QList<int>>& comb,int m){/*calculer les compositions des coupes minimales*/
+
+    //当k==0的时候，将数组里面的三个数依次输出
+    if( k == 0 ){
+        QList<int>* lst = new QList<int>;
+        for(int j= 0; j < m; ++j)
+            *lst<<a[j];
+        comb.append(*lst);
+    }
+
+    else
+    {
+        for(int i = n; i >= k; --i )
+        {
+            a[m] = i;
+            combo(i-1,k-1,a,comb,m+1);
+        }
+    }
+}
 
 void ResultMCS::computeCS(QList<QList<Node*>>& cs, QList<Container*>& containers){// trouver tous les coupes
     CutVisitor visitor(cs, containers);
@@ -74,7 +182,7 @@ void ResultMCS::reduceCS(QList<QList<Event>>& mcs){/*enlever les doublons et red
 	QMap<int, int> mapMul;/*Key est l'index dechaque coupe dans mcs, valeur est resultatMul de chaque coupe correspondant*/
 	int mul;/*y mettre le mul de premier dans chaque coupe*/
 
-    sortCut(mcs);/*enlever les doublons dans les coupes */
+    sortCut(mcs);/*enlever les doublons dans les coupes et sort croissant les coupes par size de coupe*/
 
 	for(int i=0; i<mcs.size(); i++){/*trouver tous les events non-doublons dans cet arbre*/
 		for(int j=0; j<mcs[i].size();j++){
@@ -138,7 +246,7 @@ void ResultMCS::reduceCS(QList<QList<Event>>& mcs){/*enlever les doublons et red
 
 
 
-void ResultMCS::sortCut(QList<QList<Event>>& mcs){/*enlever les doublons dans les coupes */
+void ResultMCS::sortCut(QList<QList<Event>>& mcs){/*enlever les doublons dans les coupes et sort croissant les coupes par size de coupe*/
 
 	for(int i=0; i<mcs.size(); i++){/*enlever les doublons dans les coupes */
 
@@ -151,6 +259,17 @@ void ResultMCS::sortCut(QList<QList<Event>>& mcs){/*enlever les doublons dans le
 			}
 		}
 	}
+    
+    QList<Event> temp;
+    for(int j=mcs.size(); j>=1; j--){/*sort croissant les coupes par size de coupe*/
+        for(int i=0;i<j-1;i++){
+            if(mcs[i].size()>mcs[i+1].size()){
+                temp = mcs[i];
+                mcs[i] = mcs[i+1];
+                mcs[i+1] = temp;
+            }
+        }
+    }
 }
 
 QList<int> ResultMCS::sieveOfAtkin(int limit){/*Génère un nombre de nombres premiers selon le nombre limite n.*/
