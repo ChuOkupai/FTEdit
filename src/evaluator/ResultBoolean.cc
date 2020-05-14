@@ -4,6 +4,10 @@
 ResultBoolean::ResultBoolean(Gate* top,double missionTime,double step) : Evaluator(top,missionTime,step)
 {
 	this->topEventName = top->getProperties().getName();
+	EvalVisitor eval;
+	for(int i = 0; i < this->missionTime; i = i + this->step){
+		this->probabilities << eval.getProba(top,i);
+	}
 }
 
 ResultBoolean::~ResultBoolean(){
@@ -11,13 +15,7 @@ ResultBoolean::~ResultBoolean(){
 
 //TODO
 QList<double> ResultBoolean::getProbabilities(){
-	EvalVisitor *eval = new EvalVisitor(0,0);
-	for(int i = 0; i < missionTime; i = i + step){
-		eval->setTime(i);
-		//this->probabilities.at(i) = top->accept(eval);
-		eval->reset();
-	}
-	delete eval;
+
 	return probabilities;;
 }
 
