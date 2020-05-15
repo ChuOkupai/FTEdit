@@ -110,20 +110,30 @@ bool PropertiesDialog::valid()
 
 void ChooseResultDialog::closeEvent(QCloseEvent *event)
 {
-	Result analysis(top, useMCS->isChecked(), useBoolean->isChecked(),
-	missionTime->value(), step->value());
-	results << analysis; // Add new analysis to the list
+	if (useBoolean->isChecked() && missionTime->value() > 0.0 && step->value() == 0.0)
+	{
+		QMessageBox msg(this);
+		msg.setIcon(QMessageBox::Critical);
+		msg.setWindowTitle("Error");
+		msg.setText("The step must be positive.");
+		msg.exec();
+		event->ignore();
+		return ;
+	}
+	results << new Result(top, useMCS->isChecked(), useBoolean->isChecked(),
+	missionTime->value(), step->value()); // Add new analysis to the list
 	event->accept();
 }
 
 void ChooseResultDialog::checkChanged(int state)
 {
+
 	(void)state;
 	missionTime->setEnabled(useBoolean->isChecked() || useMCS->isChecked());
 	step->setEnabled(useBoolean->isChecked());
 }
 
-ChooseResultDialog::ChooseResultDialog(QWidget *parent, Gate *top, QList<Result> &results)
+ChooseResultDialog::ChooseResultDialog(QWidget *parent, Gate *top, QList<Result*> &results)
 : QDialog(parent), top(top), results(results)
 {
 	setWindowTitle("Fault tree analysis");

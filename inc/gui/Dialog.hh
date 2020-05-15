@@ -64,7 +64,7 @@ class ChooseResultDialog : public QDialog
 
 private:
 	Gate *top;
-	QList<Result> &results;
+	QList<Result*> &results;
 	QCheckBox *useBoolean;
 	QCheckBox *useMCS;
 	DoubleSpinBox *missionTime;
@@ -77,7 +77,7 @@ private slots:
 
 public:
 	// Stores Result in results list
-	ChooseResultDialog(QWidget *parent, Gate *top, QList<Result> &list);
+	ChooseResultDialog(QWidget *parent, Gate *top, QList<Result*> &list);
 };
 
 // Choose a new fault tree from list, store the index in treeIndex

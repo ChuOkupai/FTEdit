@@ -96,6 +96,20 @@ QSpinBox *WidgetLinker::addSpinBox()
 	return (spinBox);
 }
 
+QTabWidget *WidgetLinker::addTabWidget()
+{
+	auto *widget = new QTabWidget(parent);
+	layout->addWidget(widget);
+	return (widget);
+}
+
+QTableWidget *WidgetLinker::addTableWidget()
+{
+	auto *widget = new QTableWidget(parent);
+	layout->addWidget(widget);
+	return (widget);
+}
+
 QTextEdit *WidgetLinker::addTextEdit(const QString &content)
 {
 	auto *textEdit = new QTextEdit(parent);

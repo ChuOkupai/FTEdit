@@ -71,7 +71,7 @@ private:
 	Editor			*editor;
 	bool			modified;
 	NodeItem		*curItem;
-	QList<Result>	resultsHistory;
+	QList<Result*>	resultsHistory;
 
 	QAction *newAct;
 	QAction *openAct;

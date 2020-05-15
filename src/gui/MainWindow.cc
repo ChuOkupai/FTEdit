@@ -34,8 +34,6 @@ MainWindow::MainWindow() : editor(nullptr), modified(false)
 
 	trees = new QTreeWidgetItem(explorer);
 	trees->setText(0, "Fault tree");
-	QTreeWidgetItem *tree1 = new QTreeWidgetItem(trees);
-	tree1->setText(0, "test");
 	results = new QTreeWidgetItem(explorer);
 	results->setText(0, "Result");
 
@@ -86,6 +84,8 @@ void MainWindow::newFile()
 	editor = new Editor();
 	editor->detach(); // Creates empty tree
 	setEnabledButton();
+	QTreeWidgetItem *tree1 = new QTreeWidgetItem(trees);
+	tree1->setText(0, editor->getSelection()->getProperties().getName());
 }
 
 void MainWindow::open()
@@ -258,11 +258,11 @@ void MainWindow::showEvents()
 void MainWindow::evaluate()
 {
 	ChooseResultDialog(this, (Gate*)curItem->node(), resultsHistory).exec();
-	Result &result = resultsHistory.last();
-	if (result.getErrors().size()) // invalid tree
+	Result *result = resultsHistory.last();
+	if (result->getErrors().size()) // invalid tree
 	{
 		errorList->clear();
-		errorList->addItems(QStringList(result.getErrors()));
+		errorList->addItems(QStringList(result->getErrors()));
 		if (!errorList->height())
 			toggleErrorList(); // show list
 		resultsHistory.removeLast(); // Discard result
@@ -274,7 +274,7 @@ void MainWindow::evaluate()
 		msg.exec();
 		return ;
 	}
-	if (!result.getResultBoolean() && !result.getResultMCS())
+	if (!result->getResultBoolean() && !result->getResultMCS())
 	{
 		resultsHistory.removeLast(); // Discard result
 		QMessageBox msg(this);
@@ -286,6 +286,7 @@ void MainWindow::evaluate()
 	}
 	auto *resultItem = new QTreeWidgetItem(results);
 	resultItem->setText(0, QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss"));
+	PrintResult(this, result).exec();
 }
 
 void MainWindow::about()
@@ -340,6 +341,7 @@ void MainWindow::removeItem()
 {
 	Node *parent = curItem->node()->getParent();
 	editor->remove(curItem->node());
+	editor->refresh();
 	updateScene(parent);
 }
 
@@ -719,7 +721,9 @@ void MainWindow::reset()
 	editor = nullptr;
 	modified = false;
 	curItem = nullptr;
-	resultsHistory.clear();
+	qDeleteAll(resultsHistory); // Discard all results
+	qDeleteAll(trees->takeChildren());
+	qDeleteAll(results->takeChildren());
 }
 
 void MainWindow::resizeSplitter(QSplitter *splitter, int widget1Size, int widget2Size)

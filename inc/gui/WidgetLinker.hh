@@ -42,6 +42,10 @@ public:
 
 	QSpinBox *addSpinBox();
 
+	QTabWidget *addTabWidget();
+
+	QTableWidget *addTableWidget();
+
 	QTextEdit *addTextEdit(const QString &content);
 
 	// Sets the parent widget
