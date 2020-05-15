@@ -1,5 +1,5 @@
 #pragma once
-
+#include <QFile>
 #include <QXmlStreamReader>
 #include "FTEdit_Editor.hh"
 
