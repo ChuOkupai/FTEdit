@@ -3,6 +3,7 @@ CONFIG += object_parallel_to_source
 QMAKE_CXXFLAGS += -Wall -Wextra -Werror
 TARGET = FTEdit
 QT += widgets xml
+win32:RC_ICONS += ./src/assets/icons/ftedit.ico
 
 DESTDIR = bin
 MOC_DIR = src/.moc
