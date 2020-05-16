@@ -22,3 +22,7 @@ QList<double> Evaluator::getProbabilities()
 {
 	return probabilities;
 }
+
+QString Evaluator::getTopEventName(){
+    return top->getProperties().getName();
+}

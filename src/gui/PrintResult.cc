@@ -32,7 +32,7 @@ void PrintResult::initMCS(ResultMCS *res)
 	QList<double> l = res->getProbabilities();
 	QList<QList<QString>> l2 = res->getMCS();
 	QString set;
-	mcs->setRowCount(l.size());
+    mcs->setRowCount(l2.size());
 	for (int i = 0; i < l2.size(); ++i)
 	{
 		// Probability
