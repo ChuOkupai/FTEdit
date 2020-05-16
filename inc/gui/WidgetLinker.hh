@@ -82,8 +82,8 @@ public:
 	ListWidget(QWidget *parent);
 };
 
-#define ZOOM_MIN	0.05
-#define ZOOM_MAX	4.0
+#define ZOOM_MIN	0.042
+#define ZOOM_MAX	2.5
 #define ZOOM_STEP	0.4
 #define ZOOM_SCROLL	0.15
 

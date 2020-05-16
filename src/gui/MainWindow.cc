@@ -786,7 +786,6 @@ void MainWindow::addGate(Gate *g)
 
 void MainWindow::updateScene(Node *selection)
 {
-	scene->setSceneRect(0, 0, 0, 0);
 	scene->clear();
 	Node *top = editor->getSelection()->getTop();
 	if (top)
@@ -800,6 +799,7 @@ void MainWindow::updateScene(Node *selection)
 		curItem = nullptr;
 		setEnabledButton();
 	}
+	scene->setSceneRect(scene->itemsBoundingRect());
 	view->update();
 }
 
