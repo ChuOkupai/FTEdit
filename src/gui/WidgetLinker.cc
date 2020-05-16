@@ -59,17 +59,18 @@ QLineEdit *WidgetLinker::addLineEdit(const QString &content)
 	return (lineEdit);
 }
 
-QPushButton *WidgetLinker::addOKButton()
+QPushButton *WidgetLinker::addOKButton(bool link)
 {
-	layout->addItem(new QSpacerItem(0, 20, QSizePolicy::Minimum, QSizePolicy::Minimum));
+	layout->addItem(new QSpacerItem(0, 20, QSizePolicy::Minimum, QSizePolicy::Maximum));
 	auto hLayout = new QHBoxLayout();
 	layout->addLayout(hLayout);
 	hLayout->addItem(new QSpacerItem(20, 0, QSizePolicy::Expanding, QSizePolicy::Maximum));
 	auto *button = new QPushButton(parent);
 	button->setText("OK");
 	hLayout->addWidget(button);
-	button->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Minimum);
-	parent->connect(button, SIGNAL(released()), parent, SLOT(close()));
+	button->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
+	if (link)
+		parent->connect(button, SIGNAL(released()), parent, SLOT(close()));
 	return (button);
 }
 

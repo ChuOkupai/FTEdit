@@ -1,7 +1,7 @@
 #include <limits>
 #include "Dialog.hh"
 
-void ChooseDistributionDialog::closeEvent(QCloseEvent *event)
+void ChooseDistributionDialog::confirm()
 {
 	QString name = editor.generateName("Model");
 	Distribution *dist;
@@ -12,7 +12,7 @@ void ChooseDistributionDialog::closeEvent(QCloseEvent *event)
 	else
 		dist = new Weibull(name);
 	editor.getDistributions() << dist; // Append new distribution to list
-	event->accept();
+	accept();
 }
 
 ChooseDistributionDialog::ChooseDistributionDialog(QWidget *parent, Editor &editor)
@@ -37,7 +37,8 @@ ChooseDistributionDialog::ChooseDistributionDialog(QWidget *parent, Editor &edit
 	linker.set(hLayout);
 	linker.addLayoutItem(new QSpacerItem(60, 0, QSizePolicy::Maximum, QSizePolicy::Minimum));
 	linker.set(layout);
-	linker.addOKButton();
+
+	connect(linker.addOKButton(false), SIGNAL(released()), this, SLOT(confirm()));
 }
 
 PropertiesDialog::PropertiesDialog(QWidget *parent, Editor &editor, Properties *prop, bool initialized) :
@@ -108,7 +109,7 @@ bool PropertiesDialog::valid()
 	return (isValid);
 }
 
-void ChooseResultDialog::closeEvent(QCloseEvent *event)
+void ChooseResultDialog::confirm()
 {
 	if (useBoolean->isChecked() && missionTime->value() > 0.0 && step->value() == 0.0)
 	{
@@ -117,12 +118,11 @@ void ChooseResultDialog::closeEvent(QCloseEvent *event)
 		msg.setWindowTitle("Error");
 		msg.setText("The step must be positive.");
 		msg.exec();
-		event->ignore();
 		return ;
 	}
 	results << new Result(top, useMCS->isChecked(), useBoolean->isChecked(),
 	missionTime->value(), step->value()); // Add new analysis to the list
-	event->accept();
+	accept();
 }
 
 void ChooseResultDialog::checkChanged(int state)
@@ -163,11 +163,13 @@ ChooseResultDialog::ChooseResultDialog(QWidget *parent, Gate *top, QList<Result*
 	step->setRange(0, std::numeric_limits<double>::max());
 	step->setDecimals(16);
 	step->setEnabled(false);
-	linker.addOKButton()->setText("Continue");
+	auto *button2 = linker.addOKButton(false);
+	button2->setText("Continue");
 	resize(340, height());
 
 	connect(useBoolean, SIGNAL(stateChanged(int)), this, SLOT(checkChanged(int)));
 	connect(useMCS, SIGNAL(stateChanged(int)), this, SLOT(checkChanged(int)));
+	connect(button2, SIGNAL(released()), this, SLOT(confirm()));
 }
 
 ChooseTreeDialog::ChooseTreeDialog(QWidget *parent, Editor &editor, int &treeIndex) :

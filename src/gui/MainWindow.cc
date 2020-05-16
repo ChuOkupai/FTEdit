@@ -257,7 +257,8 @@ void MainWindow::showEvents()
 
 void MainWindow::evaluate()
 {
-	ChooseResultDialog(this, (Gate*)curItem->node(), resultsHistory).exec();
+	if (ChooseResultDialog(this, (Gate*)curItem->node(), resultsHistory).exec() == QDialog::Rejected)
+		return ; // cancel
 	Result *result = resultsHistory.last();
 	if (result->getErrors().size()) // invalid tree
 	{

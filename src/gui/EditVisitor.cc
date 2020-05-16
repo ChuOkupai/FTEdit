@@ -202,7 +202,8 @@ void EditContainerDialog::editDistribution()
 
 void EditContainerDialog::addDistribution()
 {
-	ChooseDistributionDialog(this, editor).exec();
+	if (ChooseDistributionDialog(this, editor).exec() == QDialog::Rejected)
+		return ; // cancel
 	Distribution *dist = editor.getDistributions().last();
 	distributions->addItem(dist->getProperties().getName());
 	distributions->setCurrentIndex(distributions->count() - 1);
