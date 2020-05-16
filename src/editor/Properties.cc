@@ -20,6 +20,11 @@ QString Properties::getDesc() const
 	return (desc);
 }
 
+int Properties::getRefCount() const
+{
+	return (refCount);
+}
+
 bool Properties::getKeep() const
 {
 	return (keep);

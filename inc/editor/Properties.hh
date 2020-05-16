@@ -16,6 +16,7 @@ public:
 
 	QString	getName() const;
 	QString	getDesc() const;
+	int		getRefCount() const;
 	bool	getKeep() const;
 
 	void	setName(QString name);

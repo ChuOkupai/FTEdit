@@ -356,7 +356,18 @@ void MainWindow::join()
 {
 	int index;
 	ChooseTreeDialog(this, *editor, index).exec();
-	editor->join(&editor->getTrees()[index], (Gate*)curItem->node());
+	Tree *tree = &editor->getTrees()[index];
+	if (tree->getProperties().getRefCount())
+	{
+		QMessageBox msg(this);
+		msg.setIcon(QMessageBox::Critical);
+		msg.setWindowTitle("Error");
+		msg.setText("Could not merge a fault tree already linked to a transfer in gate."
+		"\n\nPlease remove the link in the transfer in gate first before merging the tree");
+		msg.exec();
+		return ;
+	}
+	editor->join(tree, (Gate*)curItem->node());
 	updateScene(curItem->node());
 }
 
