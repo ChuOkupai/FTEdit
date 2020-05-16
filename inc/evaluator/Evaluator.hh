@@ -13,6 +13,6 @@ public :
 	Evaluator(Gate* top,double missionTime, double step);
 	double getMissionTime();
 	double getStep();
-	virtual QList<double> getProbabilities() = 0;
+	QList<double> getProbabilities();
 	~Evaluator();
 };

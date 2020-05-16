@@ -9,7 +9,7 @@ private :
 
 public:
 	ResultBoolean(Gate* top, double missionTime,double step);
-	virtual ~ResultBoolean();
+	~ResultBoolean();
 	QString getTopEventName();
 	QList<double> getProbabilities();
 	

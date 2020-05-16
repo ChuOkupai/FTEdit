@@ -17,3 +17,7 @@ double Evaluator::getStep()
 {
 	return step;
 }
+
+QList<double> Evaluator::getProbabilities(){
+	return probabilities;
+}

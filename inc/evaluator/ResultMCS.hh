@@ -19,7 +19,7 @@ class ResultMCS : public Evaluator
 	public :
 
 	ResultMCS(Gate* top, double missionTime, double step);
-	virtual ~ResultMCS();
+	~ResultMCS();
     QList<QList<QString>> getMCS();
     QList<double> getProbabilities();/*probabilities[0] = proba de top*/
 

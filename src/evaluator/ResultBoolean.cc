@@ -5,18 +5,12 @@ ResultBoolean::ResultBoolean(Gate* top,double missionTime,double step) : Evaluat
 {
 	this->topEventName = top->getProperties().getName();
 	EvalVisitor eval;
-	for(int i = 0; i < this->missionTime; i = i + this->step){
+	for(double i = 0; i < this->missionTime; i = i + this->step){
 		this->probabilities << eval.getProba(top,i);
 	}
 }
 
 ResultBoolean::~ResultBoolean(){
-}
-
-//TODO
-QList<double> ResultBoolean::getProbabilities(){
-
-	return probabilities;;
 }
 
 QString ResultBoolean::getTopEventName(){

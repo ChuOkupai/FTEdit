@@ -323,6 +323,3 @@ QList<QList<QString>> ResultMCS::getMCS(){//rentrer les noms des events
     return mcsNames;
 }
 
-QList<double> ResultMCS::getProbabilities(){
-    return probabilities;
-}
