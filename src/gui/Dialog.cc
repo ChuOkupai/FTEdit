@@ -180,16 +180,25 @@ QDialog(parent), editor(editor), treeIndex(treeIndex)
 	WidgetLinker linker(this, new QVBoxLayout(this));
 	linker.addLayoutItem(new QSpacerItem(0, 20, QSizePolicy::Minimum, QSizePolicy::Maximum));
 	trees = linker.addComboBox();
-	linker.addOKButton();
+	connect(linker.addOKButton(false), SIGNAL(released()), this, SLOT(accept()));
 
 	QList<Tree> &l = editor.getTrees();
 	QString current = editor.getSelection()->getProperties().getName();
+	int i = 0;
 	for (auto tree : l)
-		if (tree.getProperties().getName().compare(current))
-			trees->addItem(tree.getProperties().getName());
+	{
+		trees->addItem(tree.getProperties().getName());
+		if (!tree.getProperties().getName().compare(current))
+		{
+			auto model = qobject_cast<QStandardItemModel *>(trees->model());
+			i = model->rowCount() - 1;
+			QStandardItem *item = model->item(i);
+			item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
+		}
+	}
 
-	trees->setCurrentIndex(0);
-	treeIndex = 0;
+	trees->setCurrentIndex(i < 1);
+	treeIndex = trees->currentIndex();
 	connect(trees, QOverload<int>::of(&QComboBox::currentIndexChanged),
 	[=](int i) { this->treeIndex = i; });
 }

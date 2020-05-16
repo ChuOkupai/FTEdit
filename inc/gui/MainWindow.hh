@@ -64,14 +64,16 @@ private slots:
 
 	// Change item selection
 	void changeItem();
-	// Check clicked item in explorer
+	// Check new selected item
 	void explorerItemClicked(QTreeWidgetItem *item, int column);
+
 
 private:
 	Editor			*editor;
 	bool			modified;
 	NodeItem		*curItem;
 	QList<Result*>	resultsHistory;
+	int				curTreeRow;
 
 	QAction *newAct;
 	QAction *openAct;

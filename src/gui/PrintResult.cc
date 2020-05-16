@@ -57,7 +57,7 @@ PrintResult::PrintResult(QWidget *parent, Result *result) :
 QDialog(parent), result(result)
 {
 	QStringList header;
-	setWindowTitle("Events list");
+	setWindowTitle("Analysis results");
 	setWindowIcon(QIcon(":icons/manage.png"));
 	resize(640, 480);
 	auto layout = new QVBoxLayout(this);

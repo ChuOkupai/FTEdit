@@ -30,12 +30,13 @@ MainWindow::MainWindow() : editor(nullptr), modified(false)
 	explorer = new QTreeWidget(horizontalLayout);
 	explorer->headerItem()->setText(0, "Project Explorer");
 	explorerLayout->addWidget(explorer);
-	connect(explorer, SIGNAL(itemClicked(QTreeWidgetItem *, int)), this, SLOT(explorerItemClicked(QTreeWidgetItem *, int)));
 
 	trees = new QTreeWidgetItem(explorer);
 	trees->setText(0, "Fault tree");
+	explorer->addTopLevelItem(trees);
 	results = new QTreeWidgetItem(explorer);
 	results->setText(0, "Result");
+	explorer->addTopLevelItem(results);
 
 	hSplitter->addWidget(horizontalLayout);
 	vSplitter = new QSplitter(hSplitter);
@@ -73,6 +74,8 @@ MainWindow::MainWindow() : editor(nullptr), modified(false)
 	this->newFile();
 
 	connect(scene, SIGNAL(selectionChanged()), this, SLOT(changeItem()));
+	connect(explorer, SIGNAL(itemClicked(QTreeWidgetItem *, int)),
+	this, SLOT(explorerItemClicked(QTreeWidgetItem *, int)));
 }
 
 void MainWindow::newFile()
@@ -85,7 +88,9 @@ void MainWindow::newFile()
 	editor->detach(); // Creates empty tree
 	setEnabledButton();
 	QTreeWidgetItem *tree1 = new QTreeWidgetItem(trees);
-	tree1->setText(0, editor->getSelection()->getProperties().getName());
+	tree1->setText(0, " * " + editor->getSelection()->getProperties().getName());
+	trees->addChild(tree1);
+	curTreeRow = 0;
 }
 
 void MainWindow::open()
@@ -287,7 +292,6 @@ void MainWindow::evaluate()
 	}
 	auto *resultItem = new QTreeWidgetItem(results);
 	resultItem->setText(0, QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss"));
-	PrintResult(this, result).exec();
 }
 
 void MainWindow::about()
@@ -349,13 +353,17 @@ void MainWindow::removeItem()
 void MainWindow::detach()
 {
 	editor->detach((Gate*)curItem->node());
-	updateScene(curItem->node());
+	auto t = new QTreeWidgetItem(trees);
+	t->setText(0, editor->getSelection()->getProperties().getName());
+	trees->addChild(t);
+	explorerItemClicked(t, 0);
 }
 
 void MainWindow::join()
 {
 	int index;
-	ChooseTreeDialog(this, *editor, index).exec();
+	if (ChooseTreeDialog(this, *editor, index).exec() == QDialog::Rejected)
+		return ; // cancel
 	Tree *tree = &editor->getTrees()[index];
 	if (tree->getProperties().getRefCount())
 	{
@@ -367,7 +375,12 @@ void MainWindow::join()
 		msg.exec();
 		return ;
 	}
+	if (index < curTreeRow)
+		--curTreeRow;
 	editor->join(tree, (Gate*)curItem->node());
+	auto child = trees->child(index);
+	trees->removeChild(child);
+	delete child;
 	updateScene(curItem->node());
 }
 
@@ -385,27 +398,22 @@ void MainWindow::changeItem()
 
 void MainWindow::explorerItemClicked(QTreeWidgetItem *item, int column)
 {
-	qDebug() << "clicked";
-	(void)item;
 	(void)column;
-	//	verif si parent appartient aux trees
-    //		=> changer l'arbre séléctionné dans l'éditeur
-    //updateScene(editor->getSelection()->getTop()); // pour mettre à jour l'affichage
-    //verif si parent appartient à l'attribut results
-    //		=> Afficher les résultats (utiliser l'attribut resultsHistory dans la classe)
-    //Result *result;
-    Gate *top = editor->getSelection()->getTop();
-    QList<Tree> tr = editor->getTrees();
-    for(int i = 0;i<tr.size(); ++i)
-    {
-        if(top == tr[i].getTop()){
-            updateScene(editor->getSelection()->getTop());
-        }else{
-            //PrintResult(this,result).exec();
-        }
-    }
-
-
+	if (item->parent())
+	{
+		if (explorer->indexOfTopLevelItem(item->parent())) // == 1 (Results)
+			PrintResult(this, resultsHistory[results->indexOfChild(item)]).exec();
+		else // Fault tree
+		{
+			auto child = trees->child(curTreeRow);
+			if (child == item) return ;
+			child->setText(0, child->text(0).mid(3));
+			curTreeRow = trees->indexOfChild(item);
+			item->setText(0, " * " + item->text(0));
+			editor->setSelection(&editor->getTrees()[curTreeRow]);
+			updateScene(editor->getSelection()->getTop());
+		}
+	}
 }
 
 void MainWindow::createActions()
@@ -736,6 +744,7 @@ void MainWindow::reset()
 	qDeleteAll(resultsHistory); // Discard all results
 	qDeleteAll(trees->takeChildren());
 	qDeleteAll(results->takeChildren());
+	errorList->clear();
 }
 
 void MainWindow::resizeSplitter(QSplitter *splitter, int widget1Size, int widget2Size)
