@@ -4,7 +4,7 @@
 #include "VisitorDistribution.hh"
 
 Weibull::Weibull(QString name) :
-Distribution(name)
+Distribution(name), shape(0)
 {}
 
 Weibull::~Weibull()
