@@ -3,6 +3,7 @@ CONFIG += object_parallel_to_source
 QMAKE_CXXFLAGS += -Wall -Wextra -Werror
 TARGET = FTEdit
 QT += widgets xml
+win32:RC_ICONS += ./src/assets/icons/ftedit.ico
 
 DESTDIR = bin
 MOC_DIR = src/.moc
@@ -12,7 +13,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 RESOURCES += src/assets/icons.qrc \
 src/assets/objects.qrc
 RCC_DIR = src/.qrc
-RC_ICONS = logo.ico
 
 INCLUDEPATH += \
 $$PWD/inc \

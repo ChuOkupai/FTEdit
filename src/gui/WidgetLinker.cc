@@ -1,10 +1,27 @@
 #include "WidgetLinker.hh"
 
+DoubleSpinBox::DoubleSpinBox(QWidget *parent) :
+QDoubleSpinBox(parent)
+{}
+
+QString DoubleSpinBox::textFromValue(double val) const
+{
+	QLocale locale;
+	return (locale.toString(val));
+}
+
 WidgetLinker::WidgetLinker(QWidget *parent, QBoxLayout *layout) :
 parent(parent), layout(layout)
 {}
 
 WidgetLinker::~WidgetLinker() {}
+
+QCheckBox *WidgetLinker::addCheckBox(const QString &content)
+{
+	auto *checkBox = new QCheckBox(content, parent);
+	layout->addWidget(checkBox);
+	return (checkBox);
+}
 
 QComboBox *WidgetLinker::addComboBox()
 {
@@ -13,9 +30,9 @@ QComboBox *WidgetLinker::addComboBox()
 	return (comboBox);
 }
 
-QDoubleSpinBox *WidgetLinker::addDoubleSpinBox()
+DoubleSpinBox *WidgetLinker::addDoubleSpinBox()
 {
-	auto *spinBox = new QDoubleSpinBox(parent);
+	auto *spinBox = new DoubleSpinBox(parent);
 	layout->addWidget(spinBox);
 	return (spinBox);
 }
@@ -79,6 +96,20 @@ QSpinBox *WidgetLinker::addSpinBox()
 	return (spinBox);
 }
 
+QTabWidget *WidgetLinker::addTabWidget()
+{
+	auto *widget = new QTabWidget(parent);
+	layout->addWidget(widget);
+	return (widget);
+}
+
+QTableWidget *WidgetLinker::addTableWidget()
+{
+	auto *widget = new QTableWidget(parent);
+	layout->addWidget(widget);
+	return (widget);
+}
+
 QTextEdit *WidgetLinker::addTextEdit(const QString &content)
 {
 	auto *textEdit = new QTextEdit(parent);
@@ -105,6 +136,39 @@ void WidgetLinker::replace(QBoxLayout *layout, QBoxLayout *with)
 	this->layout = layout;
 }
 
+void ListWidget::contextMenuEvent(QContextMenuEvent *event)
+{
+	bool select = true;
+	if (!itemAt(event->pos()))
+	{
+		setCurrentItem(nullptr);
+		select = false;
+	}
+	QMenu menu;
+	QAction *act = menu.addAction(select ? "Clear" : "Clear All");
+	if (!count()) act->setEnabled(false);
+	if (menu.exec(event->globalPos()))
+	{
+		if (select)
+		{
+			qDeleteAll(selectedItems());
+			setCurrentItem(nullptr);
+		}
+		else
+			clear();
+	}
+}
+
+void ListWidget::mouseReleaseEvent(QMouseEvent *event)
+{
+	if (event->button() == Qt::LeftButton && !itemAt(event->pos()))
+		setCurrentItem(nullptr);
+}
+
+ListWidget::ListWidget(QWidget *parent) :
+QListWidget(parent)
+{}
+
 GateToolButton::GateToolButton(QWidget *parent) :
 QToolButton(parent)
 {
@@ -124,9 +188,9 @@ void GraphicsView::wheelEvent(QWheelEvent *event)
 {
 	qreal f = 1;
 
-	if (event->delta() < 0 && (f -= ZOOM_STEP) * zoom() < ZOOM_MIN)
+	if (event->delta() < 0 && (f -= ZOOM_SCROLL) * zoom() < ZOOM_MIN)
 		setZoom(ZOOM_MIN);
-	else if (event->delta() > 0 && (f += ZOOM_STEP) * zoom() > ZOOM_MAX)
+	else if (event->delta() > 0 && (f += ZOOM_SCROLL) * zoom() > ZOOM_MAX)
 		setZoom(ZOOM_MAX);
 	else
 		scale(f, f);

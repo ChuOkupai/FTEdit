@@ -11,6 +11,5 @@ public:
 	ResultBoolean(Gate* top, double missionTime,double step);
 	~ResultBoolean();
 	QString getTopEventName();
-	QList<double> getProbabilities();
 	
 };

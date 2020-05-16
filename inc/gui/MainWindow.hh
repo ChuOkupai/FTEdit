@@ -1,7 +1,7 @@
 #pragma once
 #include <QMainWindow>
-#include "FTEdit_Editor.hh"
 #include "FTEdit_Evaluator.hh"
+#include "FTEdit_FMS.hh"
 #include "WidgetLinker.hh"
 
 #define ICON_SIZE	48
@@ -71,7 +71,7 @@ private:
 	Editor			*editor;
 	bool			modified;
 	NodeItem		*curItem;
-	QList<Result>	resultsHistory;
+	QList<Result*>	resultsHistory;
 
 	QAction *newAct;
 	QAction *openAct;
@@ -118,7 +118,7 @@ private:
 	QTreeWidgetItem	*results; // Results list
 	GraphicsView	*view;
 	QGraphicsScene	*scene;
-	QListWidget		*errorList;
+	ListWidget		*errorList;
 	QSplitter		*vSplitter; // vertical split: graphicsView <-> errorList
 	QSplitter		*hSplitter; // horizontal split: explorer <-> vSplitter
 

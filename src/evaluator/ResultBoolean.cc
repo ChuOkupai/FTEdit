@@ -1,4 +1,3 @@
-#include "Evaluator.hh"
 #include "ResultBoolean.hh"
 
 ResultBoolean::ResultBoolean(Gate* top,double missionTime,double step) : Evaluator(top,missionTime,step)
@@ -12,7 +11,6 @@ ResultBoolean::ResultBoolean(Gate* top,double missionTime,double step) : Evaluat
 
 ResultBoolean::~ResultBoolean(){
 }
-
 QString ResultBoolean::getTopEventName(){
 	return topEventName;
 }
