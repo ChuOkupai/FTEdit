@@ -6,17 +6,18 @@ VisitorDistributionName::VisitorDistributionName()
 
 void VisitorDistributionName::visit(Constant &distribution)
 {
-	distType.sprintf("Constant(%.2e)", distribution.getValue());
+	distType = QString{ "Constant(%1)" }.arg(distribution.getValue(), 1, 'e', 2, '0');
 }
 
 void VisitorDistributionName::visit(Exponential &distribution)
 {
-	distType.sprintf("Exponential(%.2e)", distribution.getLambda());
+	distType = QString{ "Exponential(%1)" }.arg(distribution.getLambda(), 1, 'e', 2, '0');
 }
 
 void VisitorDistributionName::visit(Weibull &distribution)
 {
-	distType.sprintf("Weibull(%.2e, %.2e)", distribution.getScale(), distribution.getShape());
+	distType = QString{ "Weibull(%1, %2)" }.arg(distribution.getScale(), 1, 'e', 2, '0')
+	.arg(distribution.getShape(), 1, 'e', 2, '0');
 }
 
 QString VisitorDistributionName::type(Distribution *dist)
