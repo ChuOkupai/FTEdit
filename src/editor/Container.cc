@@ -15,7 +15,10 @@ Container::Container(const Container& cop) : Node() , event(cop.getEvent())
 Container::~Container()
 {
 	if(this->event)
+	{
+		event->setDistribution(nullptr);
 		event->getProperties().decrementRefCount();
+	}
 }
 
 void Container::setEvent(Event* event)

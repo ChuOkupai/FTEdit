@@ -43,7 +43,7 @@ void NodeItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 	path.addRoundedRect(r, ICON_RSIZE / 4, ICON_RSIZE / 4);
 	path.addRect(r.x(), r.y() + r.height() / 4 - BORDER_SIZE / 2, r.width(), 0);
 	painter->setPen(pen);
-	painter->fillPath(path, (isSelected() ? QColor(213, 236, 255) : Qt::white));
+	painter->fillPath(path, (isSelected() ? QColor(0xfff59e) : Qt::white));
 	painter->drawPath(path);
 	QPointF p(r.center().x() - ICON_RSIZE / 2, r.y() + 1.89 * ICON_RSIZE + BORDER_SIZE - 1);
 	painter->drawPixmap(p, icon);
@@ -94,16 +94,16 @@ static void visitChildren(MainWindow &win, Gate &gate, RenderVisitor &visitor)
 		win.getScene()->addItem(item);
 		p = gate.getPosition();
 		item = new QGraphicsRectItem(p.x() + CARD_X / 2 - BORDER_SIZE,
-		p.y() + CARD_Y - ICON_RSIZE / 2, 2 * BORDER_SIZE, CARD_GAP_Y / 2 + ICON_RSIZE / 2);
-		item->setBrush(Qt::black);
+		p.y() + CARD_Y - ICON_RSIZE / 2, 2 * BORDER_SIZE, CARD_GAP_Y / 2 + ICON_RSIZE / 2 - BORDER_SIZE);
 		win.getScene()->addItem(item);
+		item->setBrush(Qt::black);
 	}
 	QList<Node*>::const_iterator i;
 	for (i = l.constBegin(); i != l.constEnd(); ++i)
 	{
 		p = (*i)->getPosition();
 		QGraphicsRectItem *item = new QGraphicsRectItem(p.x() + CARD_X / 2 - BORDER_SIZE,
-		p.y() - CARD_GAP_Y / 2 - BORDER_SIZE, 2 * BORDER_SIZE, CARD_GAP_Y / 2);
+		p.y() - CARD_GAP_Y / 2 - BORDER_SIZE, 2 * BORDER_SIZE, CARD_GAP_Y / 2 + BORDER_SIZE);
 		item->setBrush(Qt::black);
 		win.getScene()->addItem(item);
 		(*i)->accept(visitor);

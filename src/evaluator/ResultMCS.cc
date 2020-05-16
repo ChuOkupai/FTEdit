@@ -322,7 +322,3 @@ QList<int> ResultMCS::sieveOfAtkin(int limit){/*Génère un nombre de nombres pr
 QList<QList<QString>> ResultMCS::getMCS(){//rentrer les noms des events
     return mcsNames;
 }
-
-QList<double> ResultMCS::getProbabilities(){
-    return probabilities;
-}

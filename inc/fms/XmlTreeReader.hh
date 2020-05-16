@@ -1,7 +1,7 @@
 #pragma once
-
+#include <QFile>
 #include <QXmlStreamReader>
-#include "FTEdit.hh"
+#include "FTEdit_Editor.hh"
 
 class XmlTreeReader
 {

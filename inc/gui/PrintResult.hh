@@ -1,23 +1,22 @@
 #pragma once
-#include "WidgetLinker.hh"
+#include <QtWidgets>
 #include "Result.hh"
-
 
 class PrintResult : public QDialog
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    PrintResult(QWidget *parent, ResultMCS *resultMCS, ResultBoolean *resultBoolean,  QList<QString> errors);
-    PrintResult(QWidget *parent, Result *result);
-    void cellChanged(int y, int x);
-private:
-    Result *result;
-    ResultMCS *resultMCS;
-    ResultBoolean *resultBoolean;
-    QList<QString> errors;
+	PrintResult(QWidget *parent, Result *result);
+
 private slots:
-    void PrintResultMCS();
-    void PrintResultBoolean();
-    void PrintResultErrors();
+	void exportResult();
+
+private:
+	Result *result;
+	QTableWidget *prb;
+	QTableWidget *mcs;
+
+	void initBoolean(ResultBoolean *res);
+	void initMCS(ResultMCS *res);
 };

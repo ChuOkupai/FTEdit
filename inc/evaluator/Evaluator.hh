@@ -11,8 +11,8 @@ protected :
 
 public : 
 	Evaluator(Gate* top,double missionTime, double step);
+	virtual ~Evaluator();
 	double getMissionTime();
 	double getStep();
-	virtual QList<double> getProbabilities() = 0;
-	~Evaluator();
+	QList<double> getProbabilities();
 };

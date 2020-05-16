@@ -12,15 +12,14 @@ MainWindow::MainWindow() : editor(nullptr), modified(false)
 	createToolBar();
 
 	setWindowTitle("FTEdit");
-	setWindowIcon(QIcon(":icons/ftedit.png"));
+	setWindowIcon(QIcon(":icons/ftedit.ico"));
 	QRect r = QGuiApplication::primaryScreen()->geometry();
 	setMinimumSize(MIN(r.width(), RES_MIN_X), MIN(r.height(), RES_MIN_Y));
 	resize(r.width() / 1.5, r.height() / 1.5);
 
 	auto centralwidget = new QWidget(this);
 	setCentralWidget(centralwidget);
-	centralwidget->setStyleSheet("selection-background-color: #4684e3;"
-	"background-color:0xfcfcfc;");
+	centralwidget->setStyleSheet("selection-background-color: #4684e3;");
 	auto gridLayout = new QGridLayout(centralwidget);
 	gridLayout->setMargin(0);
 	hSplitter = new QSplitter(centralwidget);
@@ -35,8 +34,6 @@ MainWindow::MainWindow() : editor(nullptr), modified(false)
 
 	trees = new QTreeWidgetItem(explorer);
 	trees->setText(0, "Fault tree");
-	QTreeWidgetItem *tree1 = new QTreeWidgetItem(trees);
-	tree1->setText(0, "test");
 	results = new QTreeWidgetItem(explorer);
 	results->setText(0, "Result");
 
@@ -61,9 +58,9 @@ MainWindow::MainWindow() : editor(nullptr), modified(false)
 	groupBoxLayout->addWidget(groupBox);
 	auto gridLayout2 = new QGridLayout(groupBox);
 	gridLayout2->setContentsMargins(2, 2, 2, 2);
-	errorList = new QListWidget(groupBox);
-	errorList->setStyleSheet("selection-background-color: #d62b2b;"
-	"background-color:#ffe3e3;");
+	errorList = new ListWidget(groupBox);
+	errorList->setStyleSheet("selection-background-color: #de0b0b;");
+	errorList->setSelectionMode(QAbstractItemView::SingleSelection);
 	gridLayout2->addWidget(errorList, 0, 0, 1, 1);
 
 	vSplitter->addWidget(verticalLayout2);
@@ -87,6 +84,8 @@ void MainWindow::newFile()
 	editor = new Editor();
 	editor->detach(); // Creates empty tree
 	setEnabledButton();
+	QTreeWidgetItem *tree1 = new QTreeWidgetItem(trees);
+	tree1->setText(0, editor->getSelection()->getProperties().getName());
 }
 
 void MainWindow::open()
@@ -131,18 +130,22 @@ void MainWindow::closeEvent(QCloseEvent* e)
 
 void MainWindow::cut()
 {
+	Node *parent = curItem->node()->getParent();
 	editor->cut(curItem->node());
+	updateScene(parent);
 	modified = true;
 }
 
 void MainWindow::copy()
 {
 	editor->copy(curItem->node());
+	updateScene(curItem->node());
 }
 
 void MainWindow::paste()
 {
 	editor->paste((Gate*)curItem->node());
+	updateScene(curItem->node());
 	modified = true;
 }
 
@@ -191,13 +194,13 @@ void MainWindow::addTransfert()
 
 void MainWindow::zoomIn()
 {
-	qreal f = 1 + 2 * ZOOM_STEP;
+	qreal f = 1 + ZOOM_STEP;
 	f * view->zoom() > ZOOM_MAX ? view->setZoom(ZOOM_MAX) : view->scale(f, f);
 }
 
 void MainWindow::zoomOut()
 {
-	qreal f = 1 - 2 * ZOOM_STEP;
+	qreal f = 1 - ZOOM_STEP;
 	f * view->zoom() < ZOOM_MIN ? view->setZoom(ZOOM_MIN) : view->scale(f, f);
 }
 
@@ -254,10 +257,36 @@ void MainWindow::showEvents()
 
 void MainWindow::evaluate()
 {
-	//add result entry to resultsHistory on success.
-	//Result *result;
-	//PrintResult(this, result).exec();
-	//Redirect user to error list on failure.
+	ChooseResultDialog(this, (Gate*)curItem->node(), resultsHistory).exec();
+	Result *result = resultsHistory.last();
+	if (result->getErrors().size()) // invalid tree
+	{
+		errorList->clear();
+		errorList->addItems(QStringList(result->getErrors()));
+		if (!errorList->height())
+			toggleErrorList(); // show list
+		resultsHistory.removeLast(); // Discard result
+		QMessageBox msg(this);
+		msg.setIcon(QMessageBox::Warning);
+		msg.setWindowTitle("Error");
+		msg.setText("The analysis could not be performed due to errors detected in the fault tree."
+		"\n\nPlease correct these errors before starting the analysis.");
+		msg.exec();
+		return ;
+	}
+	if (!result->getResultBoolean() && !result->getResultMCS())
+	{
+		resultsHistory.removeLast(); // Discard result
+		QMessageBox msg(this);
+		msg.setIcon(QMessageBox::Information);
+		msg.setWindowTitle("Information");
+		msg.setText("Fault tree check completed successfully.");
+		msg.exec();
+		return ;
+	}
+	auto *resultItem = new QTreeWidgetItem(results);
+	resultItem->setText(0, QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss"));
+	PrintResult(this, result).exec();
 }
 
 void MainWindow::about()
@@ -312,6 +341,7 @@ void MainWindow::removeItem()
 {
 	Node *parent = curItem->node()->getParent();
 	editor->remove(curItem->node());
+	editor->refresh();
 	updateScene(parent);
 }
 
@@ -454,8 +484,8 @@ void MainWindow::createActions()
 	addXorAct->setIcon(QIcon(":objects/xor.png"));
 	connect(addXorAct, &QAction::triggered, this, &MainWindow::addXor);
 
-	addTransfertAct = new QAction("Transfert in", this);
-	addTransfertAct->setStatusTip("Add a new transfert in gate into the current tree");
+	addTransfertAct = new QAction("Add transfert in", this);
+	addTransfertAct->setStatusTip("Add a new transfert in into the current tree");
 	addTransfertAct->setToolTip(addTransfertAct->statusTip());
 	addTransfertAct->setIcon(QIcon(":objects/transfert.png"));
 	connect(addTransfertAct, &QAction::triggered, this, &MainWindow::addTransfert);
@@ -590,7 +620,7 @@ void MainWindow::createMenus()
 	gatesMenu->addAction(addOrAct);
 	gatesMenu->addAction(addKNAct);
 	gatesMenu->addAction(addXorAct);
-	gatesMenu->addAction(addTransfertAct);
+	m->addAction(addTransfertAct);
 	m->addAction(addEventAct);
 	m->addSeparator();
 	m->addAction(moveItemFirstAct);
@@ -656,17 +686,13 @@ void MainWindow::createToolBar()
 	button->setMenu(gatesMenu);
 	button->setDefaultAction(addAndAct);
 	toolBar->addWidget(button);
+	toolBar->addAction(addTransfertAct);
 	toolBar->addAction(addEventAct);
 	toolBar->addSeparator();
 	toolBar->addAction(moveItemFirstAct);
 	toolBar->addAction(moveItemLeftAct);
 	toolBar->addAction(moveItemRightAct);
 	toolBar->addAction(moveItemLastAct);
-	toolBar->addSeparator();
-	toolBar->addAction(editItemAct);
-	toolBar->addAction(removeItemAct);
-	toolBar->addAction(detachItemAct);
-	toolBar->addAction(joinItemAct);
 	toolBar->addSeparator();
 	toolBar->addAction(zoomInAct);
 	toolBar->addAction(zoomOutAct);
@@ -695,7 +721,9 @@ void MainWindow::reset()
 	editor = nullptr;
 	modified = false;
 	curItem = nullptr;
-	resultsHistory.clear();
+	qDeleteAll(resultsHistory); // Discard all results
+	qDeleteAll(trees->takeChildren());
+	qDeleteAll(results->takeChildren());
 }
 
 void MainWindow::resizeSplitter(QSplitter *splitter, int widget1Size, int widget2Size)

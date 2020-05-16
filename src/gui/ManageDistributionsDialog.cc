@@ -39,9 +39,6 @@ ManageDistributionsDialog::ManageDistributionsDialog(QWidget *parent, QList<Dist
     table->setHorizontalHeaderLabels(header);
     table->verticalHeader()->setVisible(false);
 
-    auto *statusBar = new QStatusBar(this);
-    layout->addWidget(statusBar);
-
     for (int i = 0; i < list.size(); ++i)
     {
         Distribution *e = list[i];

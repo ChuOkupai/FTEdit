@@ -1,6 +1,8 @@
 #pragma once
 #include <QtWidgets>
 #include "FTEdit_Editor.hh"
+#include "FTEdit_Evaluator.hh"
+#include "WidgetLinker.hh"
 
 // Choose a new distribution dialog
 class ChooseDistributionDialog : public QDialog
@@ -31,7 +33,7 @@ private:
 	bool isValid;
 
 private slots:
-	// Qui when name is valid
+	// Quit when name is valid
 	void closeEvent(QCloseEvent *event);
 	// Checks if new name is unique
 	void checkName();
@@ -54,6 +56,28 @@ protected:
 
 public:
 	PropertiesDialog(QWidget *parent, Editor &editor, Properties *prop, bool initialized = true);
+};
+
+class ChooseResultDialog : public QDialog
+{
+	Q_OBJECT
+
+private:
+	Gate *top;
+	QList<Result*> &results;
+	QCheckBox *useBoolean;
+	QCheckBox *useMCS;
+	DoubleSpinBox *missionTime;
+	DoubleSpinBox *step;
+
+private slots:
+	void closeEvent(QCloseEvent *event);
+
+	void checkChanged(int state);
+
+public:
+	// Stores Result in results list
+	ChooseResultDialog(QWidget *parent, Gate *top, QList<Result*> &list);
 };
 
 // Choose a new fault tree from list, store the index in treeIndex
