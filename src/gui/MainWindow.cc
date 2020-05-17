@@ -29,10 +29,12 @@ MainWindow::MainWindow() : editor(nullptr), modified(false)
 	explorerLayout->setContentsMargins(0, 0, 0, 0);
 	explorer = new QTreeWidget(horizontalLayout);
 	explorer->headerItem()->setText(0, "Project Explorer");
+	explorer->setContextMenuPolicy(Qt::CustomContextMenu);
 	explorerLayout->addWidget(explorer);
 
 	trees = new QTreeWidgetItem(explorer);
 	trees->setText(0, "Fault tree");
+	trees->setExpanded(true);
 	explorer->addTopLevelItem(trees);
 	results = new QTreeWidgetItem(explorer);
 	results->setText(0, "Result");
@@ -76,6 +78,8 @@ MainWindow::MainWindow() : editor(nullptr), modified(false)
 	connect(scene, SIGNAL(selectionChanged()), this, SLOT(changeItem()));
 	connect(explorer, SIGNAL(itemClicked(QTreeWidgetItem *, int)),
 	this, SLOT(explorerItemClicked(QTreeWidgetItem *, int)));
+	connect(explorer, SIGNAL(customContextMenuRequested(const QPoint &)),
+	this, SLOT(explorerShowContextMenu(const QPoint &)));
 }
 
 void MainWindow::newFile()
@@ -291,6 +295,7 @@ void MainWindow::evaluate()
 		return ;
 	}
 	auto *resultItem = new QTreeWidgetItem(results);
+	results->addChild(resultItem);
 	resultItem->setText(0, QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss"));
 }
 
@@ -414,6 +419,64 @@ void MainWindow::explorerItemClicked(QTreeWidgetItem *item, int column)
 			updateScene(editor->getSelection()->getTop());
 		}
 	}
+}
+
+void MainWindow::explorerShowContextMenu(const QPoint &pos)
+{
+	auto item = explorer->itemAt(pos);
+	if (!item || !item->parent()) return ;
+	QMenu menu;
+	if (explorer->topLevelItem(0) == item->parent())
+	{
+		menu.addAction(editTreePropertiesAct);
+		menu.addAction(removeTreeAct);
+		selectedRow = trees->indexOfChild(item);
+		removeTreeAct->setDisabled(selectedRow == curTreeRow ||
+		editor->getTrees()[selectedRow].getProperties().getRefCount());
+	}
+	else
+	{
+		selectedRow = results->indexOfChild(item);
+		menu.addAction(removeResultAct);
+	}
+	menu.exec(QCursor::pos());
+}
+
+void MainWindow::editTreeProperties()
+{
+	auto tree = &editor->getTrees()[selectedRow];
+	PropertiesDialog(this, *editor, &tree->getProperties()).exec();
+	auto treeItem = trees->child(selectedRow);
+	if (curTreeRow == selectedRow)
+		treeItem->setText(0, " * " + tree->getProperties().getName());
+	else
+		treeItem->setText(0, tree->getProperties().getName());
+}
+
+void MainWindow::removeTree()
+{
+	auto tree = &editor->getTrees()[selectedRow];
+	if (tree->getTop())
+	{
+		tree->getTop()->remove();
+		tree->setTop(nullptr);
+	}
+	editor->getTrees().removeAt(selectedRow);
+	editor->refresh();
+	if (selectedRow < curTreeRow)
+		--curTreeRow;
+	auto child = trees->child(selectedRow);
+	trees->removeChild(child);
+	delete child;
+}
+
+void MainWindow::removeResult()
+{
+	delete resultsHistory[selectedRow];
+	resultsHistory.removeAt(selectedRow);
+	auto child = results->child(selectedRow);
+	results->removeChild(child);
+	delete child;
 }
 
 void MainWindow::createActions()
@@ -612,6 +675,21 @@ void MainWindow::createActions()
 	joinItemAct->setStatusTip("Merge the content of a fault tree as a child of this node");
 	joinItemAct->setIcon(QIcon(":icons/add.png"));
 	connect(joinItemAct, &QAction::triggered, this, &MainWindow::join);
+
+	editTreePropertiesAct = new QAction("Properties", this);
+	editTreePropertiesAct->setStatusTip("Edit the properties of the fault tree");
+	editTreePropertiesAct->setIcon(QIcon(":icons/edit.png"));
+	connect(editTreePropertiesAct, &QAction::triggered, this, &MainWindow::editTreeProperties);
+
+	removeTreeAct = new QAction("Delete", this);
+	removeTreeAct->setStatusTip("Delete the fault tree and its content");
+	removeTreeAct->setIcon(QIcon(":icons/remove.png"));
+	connect(removeTreeAct, &QAction::triggered, this, &MainWindow::removeTree);
+
+	removeResultAct = new QAction("Delete", this);
+	removeResultAct->setStatusTip("Delete fault tree analysis results");
+	removeResultAct->setIcon(QIcon(":icons/remove.png"));
+	connect(removeResultAct, &QAction::triggered, this, &MainWindow::removeResult);
 }
 
 void MainWindow::createMenus()
