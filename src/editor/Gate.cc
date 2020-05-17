@@ -1,7 +1,7 @@
 #include "Gate.hh"
 #include <cmath>
 
-Gate::Gate(QString name) :Node(),prop(name, false)
+Gate::Gate(QString name,bool keep) :Node(),prop(name, keep)
 {}
 
 Gate::~Gate()
@@ -19,7 +19,7 @@ QList<Node*>& Gate::getChildren()
 
 Node* Gate::search(QPoint around)
 { 
-	if (around.x() >= position.x() && around.x() < position.x() + (CARD_X /*+ CARD_GAP_X*/) 
+	if (around.x() >= position.x() && around.x() < position.x() + (CARD_X) 
 	&& around.y() <= position.y() && around.y() > position.y() - (CARD_Y + CARD_GAP_Y))
 		return (this);
 	Node *n = nullptr;
@@ -38,11 +38,9 @@ QPoint Gate::top_node_coord(QPoint cpt)
 		{
 			for(int i = 0; i<(getChildren().size()/2);i++)
 			{	
-				cpt.setX(cpt.x()/*+CARD_GAP_X*/+CARD_X);
+				cpt.setX(cpt.x()+CARD_X);
 			}
 		}
-			//cpt.setY(cpt.y()+CARD_GAP_Y+CARD_Y);
-		
 		max = cpt;
 		for(int i = 0; i<(getChildren().size());i++)
 		{
@@ -51,10 +49,6 @@ QPoint Gate::top_node_coord(QPoint cpt)
 			{
 				max.setX(tmp.x());
 			}
-			//if(tmp.y() > max.y())
-			//{
-			//	max.setY(tmp.y());
-			//}
 		}
 		return max;
 	}
@@ -64,7 +58,78 @@ QPoint Gate::top_node_coord(QPoint cpt)
 	}
 }
 
+void Gate::balanceNodePos()
+{
+	int size = getChildren().size();
+	int halfsize = size/2;
+	int odd = size%2;
+	QPoint tmp;
+	QPoint top_pos;
+	top_pos.setY(0);
+	
+	if(!parent)
+	{
+		this->setPosition(this->top_node_coord(top_pos));
+	}
+	
+	if(size != 0)
+	{
+		tmp.ry() = this->getPosition().y() + CARD_Y+ CARD_GAP_Y;
+		if(odd)
+			tmp.rx() = this->getPosition().x() - ((halfsize) * CARD_X);
+		else
+			tmp.rx() = this->getPosition().x() - ((halfsize) * CARD_X)+(CARD_X/2);
+		
+		getChildren()[0]->setPosition(tmp);
+		if(parent)
+		{
+			for(int k = 0;k<parent->getChildren().indexOf(this);k++)
+				{	
+					if(parent->getChildren()[k]->search(getChildren()[0]->getPosition()))
+					{
+						if(!odd)
+							tmp.rx() = this->getPosition().x() + CARD_X;
+						else
+							tmp.rx() = this->getPosition().x() + CARD_X/2;
+						tmp.ry() = this->getPosition().y();
+						this->setPosition(tmp);
+						this->balanceNodePos();
+					}
+				}
+		}
+		getChildren()[0]->balanceNodePos();
+	}
+	if(size >= 2)
+	{
+		for(int i = 1;i<size;i++)
+		{
+			tmp.rx() = getChildren()[i-1]->getPosition().x() + CARD_X;
+			tmp.ry() = getChildren()[i-1]->getPosition().y();
+			
+			getChildren()[i]->setPosition(tmp);	
+			if(parent)
+			{
+				
+				for(int k = 0;k<parent->getChildren().indexOf(this);k++)
+				{	
+					if(parent->getChildren()[k]->search(getChildren()[i]->getPosition()))
+					{
+						if(!odd)
+							tmp.rx() = this->getPosition().x() + CARD_X;
+						else
+							tmp.rx() = this->getPosition().x() + CARD_X/2;
+						tmp.ry() = this->getPosition().y();
+						this->setPosition(tmp);
+						this->balanceNodePos();
+					}
+				}
+			}
+			getChildren()[i]->balanceNodePos();
+		}
+	}
+}
 
+/*
 void Gate::balanceNodePos()//works sorta
 {
 	int size = getChildren().size();
@@ -74,7 +139,7 @@ void Gate::balanceNodePos()//works sorta
 	int t = 0;
 	QPoint tmp;
 	QPoint top_pos;
-	top_pos.setY(0/*CARD_Y + CARD_GAP_Y*/);
+	top_pos.setY(0);
 
 	if(!parent)
 	{
@@ -85,40 +150,40 @@ void Gate::balanceNodePos()//works sorta
 	{
 		if(odd)
 		{	
-			tmp.ry() = this->getPosition().y() +/*-*/ (CARD_Y +CARD_GAP_Y);
+			tmp.ry() = this->getPosition().y() + (CARD_Y +CARD_GAP_Y);
 
 			t = i-halfsize;
-			tmp.rx() = this->getPosition().x() + ((t)*CARD_X)/*+ ((t)*CARD_GAP_X)*/;
+			tmp.rx() = this->getPosition().x() + ((t)*CARD_X);
 
 			children.at(i)->setPosition(tmp);
 			children.at(i)->balanceNodePos();
 		}
 		else
 		{	
-			tmp.ry() = this->getPosition().y() +/*-*/ (CARD_Y +CARD_GAP_Y);
+			tmp.ry() = this->getPosition().y() + (CARD_Y +CARD_GAP_Y);
 			t = abs(halfsize-i);
 				
 			if(i<halfsize)
 			{
-				tmp.rx() = this->getPosition().x()- /*(*/(t*CARD_X) /*+ ((t-1)*CARD_GAP_X))*/;
+				tmp.rx() = this->getPosition().x()-((t-1)*CARD_X)-(CARD_X/2);
 			}
 			else
 			{
 				t++;
-				tmp.rx() = this->getPosition().x()+(t*CARD_X) /*+ ((t-1)*CARD_GAP_X)*/;
+				tmp.rx() = this->getPosition().x()+((t-1)*CARD_X)+(CARD_X/2);
 			}
-
 			children.at(i)->setPosition(tmp);
 			children.at(i)->balanceNodePos();	
 		}
 		if(parent)
 		{
 			tmp_2 = parent->getChildren().indexOf(this);
+
 			for(int k =0 ; k<tmp_2;k++)
 			{
 				if(parent->getChildren()[k]->search(tmp))
 				{	
-					if(tmp_2 < ((parent->getChildren().size())/2))
+					if(tmp_2 < ((parent->getChildren().size())/2)+odd)
 					{
 						
 						for(int j = 0;j< tmp_2;j++)
@@ -131,22 +196,31 @@ void Gate::balanceNodePos()//works sorta
 					}
 					else
 					{
-						tmp.setX(this->getPosition().x() + CARD_X);
-						tmp.setY(this->getPosition().y());
-						this->setPosition(tmp);
-						this->balanceNodePos();				
+						for(int j =(parent->getChildren().size()-1);j>=tmp_2;j--)
+						{
+							tmp.setX(parent->getChildren().at(j)->getPosition().x() + CARD_X);
+							tmp.setY(parent->getChildren().at(j)->getPosition().y());
+							parent->getChildren().at(j)->setPosition(tmp);
+						}
+						//tmp.setX(this->getPosition().x() + CARD_X);
+						//tmp.setY(this->getPosition().y());
+						//this->setPosition(tmp);
+						this->balanceNodePos();
 					}			
 				}	
 			}
 		}
 	}
 }
-
+*/
 void Gate::remove()
 {
 	if(parent)
 		this->detach();
 	while (children.size())
 		children[0]->remove();
-	getProperties().setKeep(false);
+	if(getProperties().getKeep() == false)
+		delete this;
+	else
+		getProperties().setKeep(false);	
 }

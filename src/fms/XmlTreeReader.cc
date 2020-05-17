@@ -158,11 +158,11 @@ void XmlTreeReader::readGate()
 	
 	if(type == "inhibit" && levents.size() > 1) throw -1;
 
-	if(type == "inhibit") { g = new Inhibit(name); ((Inhibit*)g)->setCondition(cond);}
-	else if(type == "and") g = new And(name);
-	else if(type == "or") g = new Or(name);
-	else if(type == "xor") g = new Xor(name);
-	else if(type == "atleast"){ g = new VotingOR(name); ((VotingOR*)g)->setK(k);}
+	if(type == "inhibit") { g = new Inhibit(name,true); ((Inhibit*)g)->setCondition(cond);}
+	else if(type == "and") g = new And(name,true);
+	else if(type == "or") g = new Or(name,true);
+	else if(type == "xor") g = new Xor(name,true);
+	else if(type == "atleast"){ g = new VotingOR(name,true); ((VotingOR*)g)->setK(k);}
 	else throw -1;
 	e->getGates() <<  g; // ajout de la porte à l'éditeur
 	g->getProperties().setKeep(keep);

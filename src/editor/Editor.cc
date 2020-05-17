@@ -137,10 +137,11 @@ void Editor::remove_duplicate_names(Node* top)
 
 void Editor::paste(Gate *parent)
 {
-	CopyVisitor tmp;
-	clipboard->accept(tmp);
-	remove_duplicate_names(tmp.getCopied());
-	tmp.getCopied()->attach(parent);	
+	//CopyVisitor tmp;
+	//clipboard->accept(tmp);
+	//remove_duplicate_names(tmp.getCopied());
+	//tmp.getCopied()->attach(parent);	
+	clipboard->attach(parent);
 }
 
 void Editor::move(Node *child, Gate *parent)

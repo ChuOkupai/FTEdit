@@ -3,10 +3,10 @@
 #include "VisitorNode.hh"
 #include "EvalVisitor.hh"
 
-Xor::Xor(QString name) : Gate(name)
+Xor::Xor(QString name,bool keep) : Gate(name,keep)
 {}
 
-Xor::Xor(Xor& cop) : Gate(cop.getProperties().getName())
+Xor::Xor(Xor& cop) : Gate(cop.getProperties().getName(),cop.getProperties().getKeep())
 {}
 
 
