@@ -156,27 +156,27 @@ void MainWindow::paste()
 
 void MainWindow::addAnd()
 {
-	addGate(new And(editor->generateName(PREFIX_GATE)));
+	addGate(new And(editor->generateName(PREFIX_GATE),true));
 }
 
 void MainWindow::addInhibit()
 {
-	addGate(new Inhibit(editor->generateName(PREFIX_GATE)));
+	addGate(new Inhibit(editor->generateName(PREFIX_GATE),true));
 }
 
 void MainWindow::addOr()
 {
-	addGate(new Or(editor->generateName(PREFIX_GATE)));
+	addGate(new Or(editor->generateName(PREFIX_GATE),true));
 }
 
 void MainWindow::addKN()
 {
-	addGate(new VotingOR(editor->generateName(PREFIX_GATE)));
+	addGate(new VotingOR(editor->generateName(PREFIX_GATE),true));
 }
 
 void MainWindow::addXor()
 {
-	addGate(new Xor(editor->generateName(PREFIX_GATE)));
+	addGate(new Xor(editor->generateName(PREFIX_GATE),true));
 }
 
 void MainWindow::addEvent()

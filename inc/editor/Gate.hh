@@ -13,7 +13,7 @@ protected:
 	QList<Node*> children;
 
 public:
-	Gate(QString name);
+	Gate(QString name,bool keep);
 	virtual ~Gate();
 
 	Properties&		getProperties();
@@ -27,7 +27,7 @@ public:
 class And : public Gate
 {
 public:
-	And(QString name);
+	And(QString name,bool keep);
 	And( And&);
 	~And();
 
@@ -43,7 +43,7 @@ class Inhibit : public Gate
 	bool condition;
 
 	public:
-	Inhibit(QString name);
+	Inhibit(QString name,bool keep);
 	Inhibit( Inhibit&);
 	~Inhibit();
 
@@ -60,7 +60,7 @@ class Inhibit : public Gate
 class Or : public Gate
 {
 public:
-	Or(QString name);
+	Or(QString name,bool keep);
 	Or( Or&);
 	~Or();
 
@@ -71,13 +71,13 @@ public:
 
 };
 
-class VotingOR : public Gate // TODO
+class VotingOR : public Gate
 {
 	protected:
 	int k;
 	Gate* subTree;
 	public:
-	VotingOR(QString name);
+	VotingOR(QString name,bool keep);
 	VotingOR( VotingOR&);
 	~VotingOR();
 
@@ -88,6 +88,7 @@ class VotingOR : public Gate // TODO
 	void setK(int k);
 	Gate* getSubTree() const;
 	bool check(QList<QString>& errors);
+	void remove() override;
 	void accept(VisitorNode& visitor);
 	double accept(EvalVisitor& eval);
 
@@ -96,7 +97,7 @@ class VotingOR : public Gate // TODO
 class Xor : public Gate
 {
 public:
-	Xor(QString name);
+	Xor(QString name,bool keep);
 	Xor( Xor&);
 	~Xor();
 
@@ -104,6 +105,6 @@ public:
 	bool check(QList<QString>& errors);
 
 	void accept(VisitorNode& visitor);
-    double accept(EvalVisitor& eval); /*xor gate undefined in EvalVisitor*/
+    double accept(EvalVisitor& eval);
 
 };

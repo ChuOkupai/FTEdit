@@ -3,10 +3,10 @@
 #include "EvalVisitor.hh"
 
 
-Inhibit::Inhibit(QString name) : Gate(name)
+Inhibit::Inhibit(QString name,bool keep) : Gate(name,keep)
 {}
 
-Inhibit::Inhibit (Inhibit& cop) : Gate(cop.getProperties().getName()) , condition(cop.getCondition())
+Inhibit::Inhibit (Inhibit& cop) : Gate(cop.getProperties().getName(),cop.getProperties().getKeep()) , condition(cop.getCondition())
 {}
 
 

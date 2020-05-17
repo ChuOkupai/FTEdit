@@ -2,10 +2,10 @@
 #include "VisitorNode.hh"
 #include "EvalVisitor.hh"
 
-And::And(QString name) : Gate(name)
+And::And(QString name,bool keep) : Gate(name,keep)
 {}
 
-And::And(And& cop) : Gate (cop.getProperties().getName())
+And::And(And& cop) : Gate (cop.getProperties().getName(),cop.getProperties().getKeep())
 {}
 
 And::~And()

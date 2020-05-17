@@ -3,10 +3,10 @@
 #include "EvalVisitor.hh"
 #include "CopyVisitor.hh"
 
-VotingOR::VotingOR(QString name) : Gate(name), k(1) , subTree(nullptr)
+VotingOR::VotingOR(QString name,bool keep) : Gate(name,keep), k(1) , subTree(nullptr)
 {}
 
-VotingOR::VotingOR(VotingOR& cop) : Gate(cop.getProperties().getName()) ,k(cop.getK()) , subTree(cop.getSubTree())
+VotingOR::VotingOR(VotingOR& cop) : Gate(cop.getProperties().getName(),cop.getProperties().getKeep()) ,k(cop.getK()) , subTree(cop.getSubTree())
 {}
 
 
@@ -35,11 +35,11 @@ Gate* VotingOR::generateComb(int i,int k,int n)
 	{
 		if(k == 1)
 		{
-			t = new Or("");
+			t = new Or("",false);
 		}
 		else
 		{
-			t = new And("");
+			t = new And("",false);
 		}
 		for(j=0;j<n;j++)
 		{
@@ -50,10 +50,10 @@ Gate* VotingOR::generateComb(int i,int k,int n)
 		return t;
 	}
 
-	t = new Or("");
+	t = new Or("",false);
 	for(j=0; j< n-k;j++)
 	{
-		t2 = new And("");
+		t2 = new And("",false);
 		t2->attach(t);
 		this->children.at(i+j)->accept(v);
 		v.getCopied()->attach(t2);
@@ -95,6 +95,20 @@ bool VotingOR::check(QList<QString>& errors)
 	for (int i = 0; i < children.size(); ++i)
 		children.at(i)->check(errors);
 	return (errors.size() == 0);
+}
+
+void VotingOR::remove()
+{
+	if(parent)
+		this->detach();
+	while (children.size())
+		children[0]->remove();
+	if(subTree)
+		subTree->remove();
+	if(getProperties().getKeep() == false)
+		delete this;
+	else
+		getProperties().setKeep(false);	
 }
 
 
