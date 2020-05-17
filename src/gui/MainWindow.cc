@@ -4,7 +4,7 @@
 #include "ManageDistributionsDialog.hh"
 #include "ManageEventsDialog.hh"
 
-MainWindow::MainWindow() : editor(nullptr), modified(false)
+MainWindow::MainWindow() : editor(nullptr), fileManager(nullptr)
 {
 	statusBar();
 	createActions();
@@ -73,6 +73,7 @@ MainWindow::MainWindow() : editor(nullptr), modified(false)
 	toggleExplorer();
 	errorList->resize(errorList->width(), 1);
 	toggleErrorList();
+	fileManager = new FileManagerSystem;
 	this->newFile();
 
 	connect(scene, SIGNAL(selectionChanged()), this, SLOT(changeItem()));
@@ -99,41 +100,85 @@ void MainWindow::newFile()
 
 void MainWindow::open()
 {
+	bool oldModified = modified;
 	if (!maybeSave())
 		return ;
 	QString path = QFileDialog::getOpenFileName(this, "Open project", QDir::homePath(),
 	"Open-PSA project (*.opsa);;All Files (*)");
 	if (path.isEmpty())
 		return ;
-	// chargement du projet
-	reset(); // a enlever si implémenté
+	auto newEditor = fileManager->load(path);
+	if (newEditor)
+	{
+		delete editor;
+		editor = newEditor;
+		editor->setAutoRefresh(true);
+		editor->refresh();
+		return ;
+	}
+	QMessageBox msg(this);
+	msg.setIcon(QMessageBox::Critical);
+	msg.setWindowTitle("Error");
+	msg.setText(fileManager->getErrorMessage());
+	msg.exec();
+	modified = oldModified;
 }
 
 void MainWindow::save()
 {
-	// save file
-	modified = false; // si pas d'erreurs
+	if (fileManager->getPath().isEmpty())
+	{
+		saveAs();
+		return ;
+	}
+	fileManager->save(editor);
+	if (fileManager->getErrorMessage().isEmpty())
+	{
+		modified = false; // si pas d'erreurs
+		return ;
+	}
+	QMessageBox msg(this);
+	msg.setIcon(QMessageBox::Critical);
+	msg.setWindowTitle("Error");
+	msg.setText(fileManager->getErrorMessage());
 }
 
 void MainWindow::saveAs()
 {
-	QString path = QFileDialog::getSaveFileName(this, "Save project as", QDir::homePath(),
-	"Open-PSA project (*.opsa);;All Files (*)");
-	if (path.isEmpty())
-		return ;
-	// save file
-	modified = false; // si pas d'erreurs
+	QString path;
+	while (1)
+	{
+		path = QFileDialog::getSaveFileName(this, "Save project as", QDir::homePath(), "Open-PSA project (*.opsa)");
+		if (path.isEmpty()) return ;
+		if (!path.endsWith(".opsa"))
+			path += ".opsa";
+		fileManager->saveAs(path, editor);
+		if (fileManager->getErrorMessage().isEmpty())
+		{
+			modified = false; // si pas d'erreurs
+			break ;
+		}
+		QMessageBox msg(this);
+		msg.setIcon(QMessageBox::Critical);
+		msg.setStandardButtons(QMessageBox::Retry | QMessageBox::Cancel);
+		msg.setWindowTitle("Error");
+		msg.setText(fileManager->getErrorMessage());
+		int ret = msg.exec();
+		if (ret == QMessageBox::Cancel)
+		{
+			fileManager->setPath("");
+			break ;
+		}
+	}
 }
 
 void MainWindow::closeEvent(QCloseEvent* e)
 {
-	if (!maybeSave())
+	if (!maybeSave() || modified)
 	{
 		e->ignore();
 		return ;
 	}
-	if (modified)
-		save(); // appeler saveAs tant que path vide
 	QMainWindow::closeEvent(e);
 }
 
@@ -808,7 +853,11 @@ bool MainWindow::maybeSave()
 	if (ret == QMessageBox::Cancel)
 		return (false);
 	else if (ret == QMessageBox::Save)
+	{
 		save();
+		return (!fileManager->getPath().isEmpty() && fileManager->getErrorMessage().isEmpty());
+	}
+	modified = false;
 	return (true);
 }
 
@@ -823,6 +872,7 @@ void MainWindow::reset()
 	qDeleteAll(trees->takeChildren());
 	qDeleteAll(results->takeChildren());
 	errorList->clear();
+	fileManager->setPath("");
 }
 
 void MainWindow::resizeSplitter(QSplitter *splitter, int widget1Size, int widget2Size)
@@ -846,7 +896,7 @@ void MainWindow::setEnabledButton()
 		pos = l.indexOf(curItem->node());
 		size = l.size() - 1;
 	}
-	saveAct->setEnabled(modified);
+	saveAct->setEnabled(!fileManager->getPath().isEmpty() && modified);
 	cutAct->setDisabled(curItem == nullptr);
 	copyAct->setDisabled(curItem == nullptr);
 	pasteAct->setEnabled(editor->getClipboard() && isNotChild);

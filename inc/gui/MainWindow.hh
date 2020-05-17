@@ -73,12 +73,13 @@ private slots:
 	void removeResult();
 
 private:
-	Editor			*editor;
-	bool			modified;
-	NodeItem		*curItem;
-	QList<Result*>	resultsHistory;
-	int				curTreeRow;
-	int				selectedRow;
+	Editor				*editor;
+	FileManagerSystem	*fileManager;
+	bool				modified;
+	NodeItem			*curItem;
+	QList<Result*>		resultsHistory;
+	int					curTreeRow;
+	int					selectedRow;
 
 	QAction *newAct;
 	QAction *openAct;
