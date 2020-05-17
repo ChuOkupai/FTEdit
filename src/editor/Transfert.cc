@@ -92,7 +92,7 @@ bool Transfert::detectCycle(Node* n)
 		if(t->getLink())
 		{
 			if(t->getLink()->getTop() == this->getLink()->getTop())
-				return false;
+				return true;
 			ret = detectCycle(t->getLink()->getTop());
 		}
 	}
