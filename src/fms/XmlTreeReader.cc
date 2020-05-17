@@ -1,105 +1,298 @@
+#include <QDebug>
 #include "XmlTreeReader.hh"
 
-XmlTreeReader::XmlTreeReader(QFile *f, Editor* e) : reader(f), e(e) {}
+XmlTreeReader::XmlTreeReader(QFile *f, Editor* e) : e(e) ,nodelistcursor(0) { dom.setContent(f);}
 
 XmlTreeReader::~XmlTreeReader() {}
 
-void XmlTreeReader::readTree()
+void XmlTreeReader::read()
 {
-	QXmlStreamReader::TokenType toktype;
+	QList<QDomElement> lparams;
+	QList<QDomElement> ltree;
+	QList<QDomElement> levents;
 	
-	while(!reader.atEnd())
-	{
-		toktype = reader.readNext();
+	QDomElement root=dom.documentElement();
 
-		if(toktype == QXmlStreamReader::StartElement)
+	QDomNodeList childs = root.childNodes();
+	for(int i=0; i<childs.size(); i++)
+	{
+		QDomElement elem = childs.at(i).toElement();
+		QString tagname = elem.tagName();
+		if(tagname == "define-parameter") lparams << elem;
+		else if(tagname == "define-basic-event") levents << elem;
+		else if(tagname == "define-fault-tree") ltree << elem;
+	}
+	
+	for(QDomElement& e : lparams)
+		readDistrib(e);
+	for(QDomElement& e : levents)
+		readEvent(e);
+	for(QDomElement& e : ltree)
+		readTree(e);
+
+	//association des transfert avec les Trees de même nom
+	for(Transfert* transfert : transtreeMap.keys())
+	{
+		for(Tree &t : e->getTrees())
 		{
-			if(reader.name() == "define-parameter") readDistrib();
-			else if(reader.name() == "define-gate") readGate();
-			else if(reader.name() == "define-basic-event") readEvent();
+			if(t.getProperties().getName() == transtreeMap[transfert]) 
+			{
+				transfert->setLink(&t);
+				break;
+			}
 		}
+		if(!transfert->getLink()) throw -1;
 	}
 }
 
-void XmlTreeReader::readDistrib()
+void XmlTreeReader::readTree(QDomElement &elem)
+{
+	QList<QDomNodeList> lgates;
+	QString name, type, topevt;
+	bool keep = false;
+	
+	name = elem.attribute("name").trimmed();
+	if(!e->isUnique(name)) throw -1;
+
+	QDomNodeList attrs = elem.namedItem("attributes").childNodes();
+
+	for(int i=0; i < attrs.size(); i++)
+	{
+		QDomElement attr = attrs.at(i).toElement();
+		if(attr.tagName() != "attribute") throw -1;
+		QString attrname = attr.attribute("name").trimmed();
+		if(attrname.isEmpty()) throw -1;
+		if(attrname == "keep") keep = attr.attribute("value").trimmed() == "true";
+		if(attrname == "top-event") topevt = attr.attribute("value").trimmed();
+	}
+	
+	
+	e->getTrees() << Tree(name);
+	Tree &t = e->getTrees().last();
+	t.getProperties().setDesc(elem.namedItem("label").toElement().text().trimmed());
+	t.getProperties().setKeep(keep);
+
+	//visit des gate pour les créer
+	QDomElement elmgate = elem.namedItem("define-gate").toElement();
+	unsigned nbgates = 0;
+	while(!elmgate.isNull())
+	{
+		Gate* g = readGateParams(elmgate, lgates);
+		if(g->getProperties().getName() == topevt)
+		{
+			t.setTop(g);
+		}
+		nbgates++;
+		e->getGates() <<  g; // ajout de la porte à l'éditeur
+		elmgate = elmgate.nextSiblingElement("define-gate");
+	}
+/*
+	for(int j=0; j<lgates.size();j++)
+	{
+		QDomNodeList nl = lgates[j];
+		qDebug() << e->getGates()[j]->getProperties().getName()<< "----------";
+		for(int i=0; i<lgates.size(); i++)
+		{
+			qDebug() << nl.at(i).toElement().attribute("name");
+		}
+	}
+*/
+	//visit pour les lier à leur fils
+	
+	for(int i=0; i < lgates.size(); i++)
+	{
+		readGateChilds(e->getGates()[nodelistcursor+i], lgates.at(i));
+	}
+	
+	nodelistcursor += nbgates;
+	/*
+	qDebug() << "name: "<< t.getProperties().getName();
+	qDebug() << "desc: "<< t.getProperties().getDesc();
+	qDebug() << "keep: "<< t.getProperties().getKeep();
+	if(t.getTop())
+		qDebug() << "Top: " << t.getTop()->getProperties().getName();
+	*/
+}
+
+void XmlTreeReader::readDistrib(QDomElement &elem)
 {
 	Distribution *d = nullptr;
-	QXmlStreamAttributes attrs;
-	QString name, desc, tmp;
+	QString name, type;
+	bool keep = false;
+	
+	name = elem.attribute("name").trimmed();
+	if(!e->isUnique(name)) throw -1;
+
+	QDomNodeList attrs = elem.namedItem("attributes").childNodes();
+
+	for(int i=0; i < attrs.size(); i++)
+	{
+		QDomElement attr = attrs.at(i).toElement();
+		if(attr.tagName() != "attribute") throw -1;
+		QString attrname = attr.attribute("name").trimmed();
+		if(attrname.isEmpty()) throw -1;
+		
+		if(attrname == "keep") keep = attr.attribute("value").trimmed() == "true";
+		else if(attrname == "type") type = attr.attribute("value").trimmed();
+	}
+	
+	if(type == "const") d = new Constant(name);
+	else if(type == "exp") d = new Exponential(name);
+	else if(type == "weibull") d = new Weibull(name);
+	else throw -1;
+
+	d->getProperties().setDesc(elem.namedItem("label").toElement().text().trimmed());
+	d->getProperties().setKeep(keep);
+	
+	QDomElement valelem = elem.firstChildElement("float");
+	d->setValue(valelem.attribute("value").toDouble());
+	if(type == "weibull")
+		(dynamic_cast<Weibull*>(d))->setShape(valelem.nextSiblingElement("float").attribute("value").toDouble());
+	
+	e->getDistributions() << d;
+	/*
+	qDebug() << "name: "<< d->getProperties().getName();
+	qDebug() << "desc: "<< d->getProperties().getDesc();
+	qDebug() << "keep: "<< d->getProperties().getKeep();
+	qDebug() << "val: "<< d->getValue();
+	if(Weibull* w = dynamic_cast<Weibull*>(d))
+		qDebug() << "val2: "<< w->getShape();
+	*/
+}
+
+void XmlTreeReader::readGateChilds(Gate *g, QDomNodeList list)
+{
+	bool ok = false;
+	for(int j=0; j<list.size(); j++)
+	{
+		QDomElement elem = list.at(j).toElement();
+		QString name = elem.attribute("name").trimmed();
+		
+		if(elem.tagName() == "basic-event")
+		{
+			for(Event evt : e->getEvents())
+			{
+				if(evt.getProperties().getName() == name) 
+				{
+					ok = true;
+					//qDebug() << evt.getProperties().getName();
+					g->getChildren() << new Container(&evt);
+					break;
+				}
+			}
+		}
+		else if(elem.tagName() == "gate")
+		{
+			for(Gate* gg : e->getGates())
+			{
+				if(gg->getProperties().getName() == name) 
+				{
+					ok = true;
+					//qDebug() << gg->getProperties().getName();
+					g->getChildren() << gg;
+					break;
+				}
+			}
+		}
+		else if(elem.tagName() == "transfert")
+		{
+			//PB: Transfert cherche Tree pas encore chargé
+			//SOLVED: QMap<Transfert*, QString> dans Reader puis recherche parmis les Trees
+			ok = true;
+			Transfert* transfert = new Transfert();
+			//qDebug()<<"Transf";
+			g->getChildren() << transfert;
+			transtreeMap.insert(transfert, name);
+			break;
+		}
+		if(ok == false) {throw -1;}
+		ok = false;
+		
+	}
+}
+
+Gate* XmlTreeReader::readGateParams(QDomElement &elem, QList<QDomNodeList>& lelems)
+{
+	Gate* g = nullptr;
+	bool keep = false, cond = false;
+	unsigned k = 0;
+	QString type;
+	
+	QString name = elem.attribute("name").trimmed();
+	if(!e->isUnique(name)) throw -1;
+	
+	QDomNodeList attrs = elem.namedItem("attributes").childNodes();
+
+	for(int i=0; i < attrs.size(); i++)
+	{
+		QDomElement attr = attrs.at(i).toElement();
+		if(attr.tagName() != "attribute") throw -1;
+		QString attrname = attr.attribute("name").trimmed();
+		if(attrname.isEmpty()) throw -1;
+		if(attrname == "keep") keep = attr.attribute("value").trimmed() == "true";
+	}
+	
+	//get Gate Type
+	QDomNodeList subelem = elem.childNodes();
+	for(int i=0; i<subelem.size(); i++)
+	{
+		QString type = subelem.at(i).nodeName();
+		if(type == "and")
+		{
+			if(!subelem.at(i).namedItem("constant").isNull())
+				{g = new Inhibit(name); ((Inhibit*)g)->setCondition(cond);}
+			else g = new And(name);
+		}
+		else if(type == "or") g = new Or(name);
+		else if(type == "xor") g = new Xor(name);
+		else if(type == "atleast"){ g = new VotingOR(name); ((VotingOR*)g)->setK(k);}
+		
+		if(g) {lelems << subelem.at(i).childNodes(); break;}
+	}
+
+	if(!g) throw -1;
+	g->getProperties().setKeep(keep);
+	g->getProperties().setDesc(elem.namedItem("label").toElement().text().trimmed());
+	
+	return g;
+}
+
+void XmlTreeReader::readEvent(QDomElement &elem)
+{
 	bool keep = false;
 
-	name = getName(); //get name
-	reader.readNextStartElement();
+	QString name = elem.attribute("name").trimmed();
+	if(!e->isUnique(name)) throw -1;
 
-	desc = getLabel();
+	QDomNodeList attrs = elem.namedItem("attributes").childNodes();
 
-	if(reader.name() != "attributes") throw -1; //raise error
-
-
-	while(reader.readNextStartElement())
+	for(int i=0; i < attrs.size(); i++)
 	{
-		if(reader.name() != "attribute") throw -1; //raise error
-
-		getKeep(&keep);
-		if(reader.attributes().value( "", "name").toString().trimmed() == "type") //get type
-		{
-			tmp = reader.attributes().value( "", "value").toString().trimmed();
-			reader.readNextStartElement();
-		}
+		QDomElement attr = attrs.at(i).toElement();
+		if(attr.tagName() != "attribute") throw -1;
+		QString attrname = attr.attribute("name").trimmed();
+		if(attrname.isEmpty()) throw -1;
+		if(attrname == "keep") keep = attr.attribute("value").trimmed() == "true";
 	}
-
-	if(tmp == "const") d = createConstant(name);
-	else if(tmp == "exp") d = createExponential(name);
-	else if(tmp == "weibull") d = createWeibull(name);
 	
-	d->getProperties().setDesc(desc);
-	d->getProperties().setKeep(keep);
+	QList<Distribution*> ldistribs = e->getDistributions();
+	int idst = searchDistribution(ldistribs, elem.namedItem("parameter").toElement().attribute("name").trimmed());
 
-	e->getDistributions() << d; //ajouter la Distrib à l'éditeur
-}
+	if(idst == -1) throw -1;
 
-Constant* XmlTreeReader::createConstant(QString name)
-{
-	reader.readNextStartElement();
-	if(reader.name() != "float") throw -1;
-	Constant* d = new Constant(name);
-	d->setValue(reader.attributes().value( "", "value").toString().toDouble());
-	reader.readNextStartElement();
-	return d;
-}
-
-Exponential* XmlTreeReader::createExponential(QString name)
-{
-	reader.readNextStartElement();
-	if(reader.name() != "float") throw -1;
-	Exponential* d = new Exponential(name);
-	d->setValue(reader.attributes().value( "", "value").toString().toDouble());
-	reader.readNextStartElement();
-	return d;
-}
-
-Weibull* XmlTreeReader::createWeibull(QString name)
-{
-	Weibull* d = new Weibull(name);
-	reader.readNextStartElement();
-	if(reader.name() != "float") { delete d; throw -1; }
-	d->setValue(reader.attributes().value( "", "value").toString().toDouble());
-	reader.readNextStartElement();
-	reader.readNextStartElement();
-	if(reader.name() != "float") { delete d; throw -1; }
-	d->setShape(reader.attributes().value( "", "value").toString().toDouble());
-	reader.readNextStartElement();
-	return d;
-}
-
-int XmlTreeReader::searchEvent(QList<Event>& events, QString name)
-{
-	for(int i = 0; i < events.size(); i++)
-	{
-		if(events[i].getProperties().getName() == name)
-			return i;
-	}
-	return -1;
+	QList<Event>& levents = e->getEvents();
+	levents << Event(name);
+	levents.last().getProperties().setKeep(keep);
+	levents.last().getProperties().setDesc(elem.namedItem("label").toElement().text().trimmed());
+	levents.last().setDistribution(ldistribs[idst]);
+	
+	/*
+	qDebug() << "name: "<< levents.last().getProperties().getName();
+	qDebug() << "desc: "<< levents.last().getProperties().getDesc();
+	qDebug() << "keep: "<< levents.last().getProperties().getKeep();
+	if(levents.last().getDistribution() != nullptr)
+		qDebug() << "distrib: "<< levents.last().getDistribution()->getProperties().getName();
+	*/
 }
 
 int XmlTreeReader::searchDistribution(QList<Distribution*>& distribs, QString name)
@@ -110,120 +303,4 @@ int XmlTreeReader::searchDistribution(QList<Distribution*>& distribs, QString na
 			return i;
 	}
 	return -1;
-}
-
-void XmlTreeReader::readGate()
-{
-	Gate* g = nullptr;
-	int ievt = -1, k = 0;
-	QList<Node*> childs;
-	bool cond = false;
-
-	QXmlStreamAttributes attrs;
-	QString name, desc, type, tmp;
-	bool keep = false;
-
-	name = getName(); //get name
-
-	reader.readNextStartElement();
-	desc = getLabel();
-
-	if(reader.name() != "attributes") throw -1; //raise error
-	reader.readNextStartElement();
-	if(reader.name() != "attribute") throw -1; //raise error
-
-	getKeep(&keep);
-
-	reader.readNextStartElement();
-	reader.readNextStartElement();
-	type = reader.name().toString();
-
-	k = reader.attributes().value( "", "min").toUInt(); //..get k
-	QList<Event>& levents = e->getEvents();
-	while(reader.readNextStartElement())
-	{
-		if(reader.name() == "basic-event")
-		{
-			ievt = searchEvent(levents, reader.attributes().value( "", "name").toString().trimmed());
-			if(ievt == -1) throw -1;
-			childs << new Container(&levents[ievt]);
-		}
-		else if(reader.name() == "constant")
-		{
-			type = "inhibit";
-			cond = (tmp == "true" ? true : false);
-		}
-		reader.readNextStartElement();
-	}
-	
-	if(type == "inhibit" && levents.size() > 1) throw -1;
-
-	if(type == "inhibit") { g = new Inhibit(name,true); ((Inhibit*)g)->setCondition(cond);}
-	else if(type == "and") g = new And(name,true);
-	else if(type == "or") g = new Or(name,true);
-	else if(type == "xor") g = new Xor(name,true);
-	else if(type == "atleast"){ g = new VotingOR(name,true); ((VotingOR*)g)->setK(k);}
-	else throw -1;
-	e->getGates() <<  g; // ajout de la porte à l'éditeur
-	g->getProperties().setKeep(keep);
-	g->getProperties().setDesc(desc);
-	g->getChildren() = childs;
-}
-
-void XmlTreeReader::readEvent()
-{
-	bool keep;
-	QString name = getName(); //get name
-	reader.readNextStartElement();
-	QString desc = getLabel(); //get label
-	
-	if(reader.name() != "attributes") throw -1; //raise error
-	reader.readNextStartElement();
-	if(reader.name() != "attribute") throw -1; //raise error
-
-	getKeep(&keep); //get keep
-	reader.readNextStartElement();
-	reader.readNextStartElement();
-	
-	if(reader.name() != "parameter") throw -1; //get paramaeter
-
-	QList<Distribution*> ldistribs = e->getDistributions();
-	int idst = searchDistribution(ldistribs, reader.attributes().value( "", "name").toString().trimmed());
-
-	if(idst == -1) throw -1;
-
-	QList<Event>& levents = e->getEvents();
-	levents << Event(name);
-	levents.last().getProperties().setKeep(keep);
-	levents.last().getProperties().setDesc(desc);
-	levents.last().setDistribution(ldistribs[idst]);
-}
-
-QString XmlTreeReader::getName()
-{
-	QString name = reader.attributes().value( "", "name").toString().trimmed(); //get name
-	if(!e->isUnique(name)) throw -1;
-	return name;
-}
-
-QString XmlTreeReader::getLabel()
-{
-	QString desc = "";
-	if(reader.name() == "label")
-	{
-		desc = reader.readElementText().trimmed(); //get label
-		reader.readNextStartElement();
-	}
-	return desc;
-}
-
-void XmlTreeReader::getKeep(bool *b)
-{
-	QString tmp;
-	if(reader.attributes().value( "", "name").toString().trimmed() == "keep") //get keep
-	{
-		tmp = reader.attributes().value( "", "value").toString().trimmed();
-		reader.readNextStartElement();
-		*b = (tmp == "true" ? true : false);
-	}
 }

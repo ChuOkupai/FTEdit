@@ -1,26 +1,30 @@
 #pragma once
-#include <QFile>
-#include <QXmlStreamReader>
+
+#include <QDomDocument>
+#include <QMap>
 #include "FTEdit_Editor.hh"
 
 class XmlTreeReader
 {
 	private:
-		QXmlStreamReader reader;
+		QDomDocument dom;
 		Editor* e;
-		Constant* createConstant(QString name);
-		Exponential* createExponential(QString name);
-		Weibull* createWeibull(QString name);
-		int searchEvent(QList<Event>& events, QString name);
+		unsigned nodelistcursor;
+		QMap<Transfert*, QString> transtreeMap;
 		int searchDistribution(QList<Distribution*>& distribs, QString name);
+		Gate* readGateParams(QDomElement &elem, QList<QDomNodeList>& lelems);
+		void readGateChilds(Gate *g, QDomNodeList list);
+
+		/*
 		QString getName();
 		QString getLabel();
-		void getKeep(bool *b);
+		*/
+		
 	public:
 		XmlTreeReader(QFile* file, Editor* e);
 		~XmlTreeReader();
-		void readTree();
-		void readDistrib();
-		void readEvent();
-		void readGate();
+		void read();
+		void readTree(QDomElement &elem);
+		void readDistrib(QDomElement &elem);
+		void readEvent(QDomElement &elem);
 };
