@@ -27,7 +27,8 @@ void Node::attach(Gate* parent)
 {
 	if (!parent || this->parent)
 		return ;
-	this->parent = parent;
+	if(parent->getProperties().getKeep())
+		this->parent = parent;
 	parent->getChildren() << this;
 }
 

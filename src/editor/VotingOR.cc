@@ -2,6 +2,7 @@
 #include "VisitorNode.hh"
 #include "EvalVisitor.hh"
 #include "CopyVisitor.hh"
+#include <QDebug>
 
 VotingOR::VotingOR(QString name,bool keep) : Gate(name,keep), k(1) , subTree(nullptr)
 {}
@@ -36,10 +37,12 @@ Gate* VotingOR::generateComb(int i,int k,int n)
 		if(k == 1)
 		{
 			t = new Or("",false);
+			qDebug() << "creer Or car k ==1";
 		}
 		else
 		{
 			t = new And("",false);
+			qDebug() << "creer And car k ==1";
 		}
 		for(j=0;j<n;j++)
 		{
@@ -51,9 +54,11 @@ Gate* VotingOR::generateComb(int i,int k,int n)
 	}
 
 	t = new Or("",false);
+	qDebug() << "creer Or";
 	for(j=0; j< n-k;j++)
 	{
 		t2 = new And("",false);
+		qDebug() << "creer And";
 		t2->attach(t);
 		this->children.at(i+j)->accept(v);
 		v.getCopied()->attach(t2);

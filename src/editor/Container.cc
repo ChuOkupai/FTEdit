@@ -6,7 +6,8 @@
 Container::Container(Event* event) :
 Node::Node(), event(event)
 {
-	event->getProperties().incrementRefCount();
+	if(this->event)
+		this->event->getProperties().incrementRefCount();
 }
 
 Container::Container(const Container& cop) : Node() , event(cop.getEvent())

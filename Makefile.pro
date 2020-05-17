@@ -36,6 +36,8 @@ inc/editor/Tree.hh \
 inc/editor/VisitorNode.hh \
 inc/editor/VisitorDistribution.hh \
 inc/editor/CopyVisitor.hh \
+inc/editor/ClipVisitor.hh \
+inc/editor/PasteVisitor.hh \
 inc/evaluator/FTEdit_Evaluator.hh \
 inc/evaluator/EvalVisitor.hh\
 inc/evaluator/CutVisitor.hh\
@@ -77,6 +79,8 @@ src/editor/VotingOR.cc \
 src/editor/Weibull.cc \
 src/editor/Xor.cc \
 src/editor/CopyVisitor.cc \
+src/editor/ClipVisitor.cc \
+src/editor/PasteVisitor.cc \
 src/evaluator/EvalVisitor.cc \
 src/evaluator/CutVisitor.cc \
 src/evaluator/Evaluator.cc \

@@ -9,8 +9,8 @@ CopyVisitor::CopyVisitor() : copied(nullptr) {}
 
 CopyVisitor::~CopyVisitor() 
 {
-    if(copied)
-        copied->remove();
+    //if(copied)
+    //    copied->remove();
 }
 
 Node* CopyVisitor::getCopied() const

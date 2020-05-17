@@ -13,7 +13,7 @@ protected:
 	QList<Node*> children;
 
 public:
-	Gate(QString name,bool keep);
+	Gate(QString name,bool keep = true);
 	virtual ~Gate();
 
 	Properties&		getProperties();
@@ -27,7 +27,7 @@ public:
 class And : public Gate
 {
 public:
-	And(QString name,bool keep);
+	And(QString name,bool keep = true);
 	And( And&);
 	~And();
 
@@ -43,7 +43,7 @@ class Inhibit : public Gate
 	bool condition;
 
 	public:
-	Inhibit(QString name,bool keep);
+	Inhibit(QString name,bool keep = true);
 	Inhibit( Inhibit&);
 	~Inhibit();
 
@@ -60,7 +60,7 @@ class Inhibit : public Gate
 class Or : public Gate
 {
 public:
-	Or(QString name,bool keep);
+	Or(QString name,bool keep = true);
 	Or( Or&);
 	~Or();
 
@@ -77,7 +77,7 @@ class VotingOR : public Gate
 	int k;
 	Gate* subTree;
 	public:
-	VotingOR(QString name,bool keep);
+	VotingOR(QString name,bool keep = true);
 	VotingOR( VotingOR&);
 	~VotingOR();
 
@@ -97,7 +97,7 @@ class VotingOR : public Gate
 class Xor : public Gate
 {
 public:
-	Xor(QString name,bool keep);
+	Xor(QString name,bool keep = true);
 	Xor( Xor&);
 	~Xor();
 
