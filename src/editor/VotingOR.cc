@@ -62,6 +62,8 @@ int VotingOR::getK()const
 
 void VotingOR::setK(int k)
 {
+	this->k = 0;
+	updateSubTree();
     this->k = k;
 }
 
@@ -85,6 +87,11 @@ bool VotingOR::check(QList<QString>& errors)
 	}
 	for (int i = 0; i < children.size(); ++i)
 		children.at(i)->check(errors);
+	if (subTree)
+	{
+		subTree->remove();
+		subTree = nullptr;
+	}
 	return (errors.size() == 0);
 }
 

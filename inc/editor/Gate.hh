@@ -87,10 +87,10 @@ class VotingOR : public Gate
 	int getK() const;
 	void setK(int k);
 	Gate* getSubTree();
-	bool check(QList<QString>& errors);
+	bool check(QList<QString>& errors) override;
 	void remove() override;
-	void accept(VisitorNode& visitor);
-	double accept(EvalVisitor& eval);
+	void accept(VisitorNode& visitor) override;
+	double accept(EvalVisitor& eval) override;
 
 };
 
