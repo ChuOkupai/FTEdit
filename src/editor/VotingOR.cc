@@ -30,7 +30,6 @@ Node* VotingOR::generateComb(int i,int k,int n)
 	Gate *t;
 	Gate *t2;
 
-	qDebug() << "n = 1 normal";
 	if(n == 1)
 		return children[i];
 	if(k == 1 || k == n)
@@ -49,11 +48,9 @@ Node* VotingOR::generateComb(int i,int k,int n)
 		t2 = new And("",false);
 		t2->attach(t);
 		t2->getChildren() << children[i + j];
-		if (n - j - 1 == 1)
-			qDebug() << "PTDR = 1 frère";
-		t2->getChildren() << generateComb(i + j + 1, k - 1, n - j - 1);
+		generateComb(i + j + 1, k - 1, n - j - 1)->attach(t2);
 	}
-	t->getChildren() << generateComb(i + n - k, k, k);
+	generateComb(i + n - k, k, k)->attach(t);
 	return t;
 }
 
