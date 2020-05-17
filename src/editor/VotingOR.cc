@@ -4,7 +4,7 @@
 #include "CopyVisitor.hh"
 #include <QDebug>
 
-VotingOR::VotingOR(QString name,bool keep) : Gate(name,keep), k(1) , subTree(nullptr)
+VotingOR::VotingOR(QString name,bool keep) : Gate(name,keep), k(0) , subTree(nullptr)
 {}
 
 VotingOR::VotingOR(VotingOR& cop) : Gate(cop.getProperties().getName(),cop.getProperties().getKeep()) ,k(cop.getK()) , subTree(cop.getSubTree())
@@ -27,7 +27,7 @@ Gate* VotingOR::generateComb(int i,int k,int n)
 	CopyVisitor v;
 	int j = 0;
 
-	if(n == 1)
+	if(n < 2)
 	{
 		return nullptr;
 	}
