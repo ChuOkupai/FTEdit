@@ -215,7 +215,7 @@ void Gate::balanceNodePos()//works sorta
 */
 void Gate::remove()
 {
-	if(getProperties().getKeep())
+	if(getProperties().getKeep()) // Gate from Editor
 	{
 		if(parent)
 			this->detach();
@@ -224,7 +224,9 @@ void Gate::remove()
 		getProperties().setKeep(false);
 		return ;
 	}
+	// Else Clipboard / VotingOR subtree
 	for (int i = 0; i < children.size(); ++i)
+		if (children[i]->getParent() == this)
 			children[i]->remove();
 	delete this;
 }

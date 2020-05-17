@@ -17,57 +17,44 @@ VotingOR::~VotingOR()
 
 void VotingOR::updateSubTree()
 {
-	subTree = generateComb(0,k,children.size());	
+	if (subTree)
+		subTree->remove();
+	if (k > 0 && k < children.size())
+		subTree = (Gate*)generateComb(0,k,children.size());
+	else
+		subTree = nullptr;
 }
 
-Gate* VotingOR::generateComb(int i,int k,int n)
+Node* VotingOR::generateComb(int i,int k,int n)
 {
 	Gate *t;
 	Gate *t2;
-	CopyVisitor v;
-	int j = 0;
 
-	if(n < 2)
+	qDebug() << "n = 1 normal";
+	if(n == 1)
+		return children[i];
+	if(k == 1 || k == n)
 	{
-		return nullptr;
-	}
-
-	if(k==1 || (k==n))
-	{
-		if(k == 1)
-		{
-			t = new Or("",false);
-			qDebug() << "creer Or car k ==1";
-		}
+		if (k == 1)
+			t = new Or("", false);
 		else
-		{
-			t = new And("",false);
-			qDebug() << "creer And car k ==1";
-		}
-		for(j=0;j<n;j++)
-		{
-			this->children.at(i+j)->accept(v);
-			v.getCopied()->attach(t);
-			v.setCopied(nullptr);
-		}
+			t = new And("", false);
+		for(int j = 0; j < n; ++j)
+			t->getChildren() << children[i + j];
 		return t;
 	}
-
-	t = new Or("",false);
-	qDebug() << "creer Or";
-	for(j=0; j< n-k;j++)
+	t = new Or("", false);
+	for(int j = 0; j < n - k; ++j)
 	{
 		t2 = new And("",false);
-		qDebug() << "creer And";
 		t2->attach(t);
-		this->children.at(i+j)->accept(v);
-		v.getCopied()->attach(t2);
-		v.setCopied(nullptr);
-		this->generateComb(i+j+1,k-1,n-j-1)->attach(t2);
+		t2->getChildren() << children[i + j];
+		if (n - j - 1 == 1)
+			qDebug() << "PTDR = 1 frère";
+		t2->getChildren() << generateComb(i + j + 1, k - 1, n - j - 1);
 	}
-	this->generateComb(i+n-k,k,k)->attach(t);
+	t->getChildren() << generateComb(i + n - k, k, k);
 	return t;
-	
 }
 
 
@@ -81,8 +68,10 @@ void VotingOR::setK(int k)
     this->k = k;
 }
 
-Gate* VotingOR::getSubTree()const
+Gate* VotingOR::getSubTree()
 {
+	if (!subTree)
+		updateSubTree();
     return subTree;
 }
 
@@ -106,14 +95,14 @@ void VotingOR::remove()
 {
 	if(parent)
 		this->detach();
-	while (children.size())
-		children[0]->remove();
 	if(subTree)
 		subTree->remove();
+	while (children.size())
+		children[0]->remove();
 	if(getProperties().getKeep() == false)
 		delete this;
 	else
-		getProperties().setKeep(false);	
+		getProperties().setKeep(false);
 }
 
 

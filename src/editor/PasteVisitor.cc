@@ -10,15 +10,15 @@ Node* PasteVisitor::getPasted() const
     return pasted;
 }
 
-void PasteVisitor::visitChildren(Gate& gate,Gate* parent)
+void PasteVisitor::visitChildren(Gate& gate,Gate* child)
 {
-    e.getGates() << parent;
+    e.getGates() << child;
     if(!pasted)
-        pasted = parent; 
-    parent->attach(this->parent);
+        pasted = child; 
+    child->attach(this->parent);
     for(int i =0; i< gate.getChildren().size();i++)
 	{
-        this->parent = parent;
+        this->parent = child;
 		gate.getChildren().at(i)->accept(*this);
     }
 }

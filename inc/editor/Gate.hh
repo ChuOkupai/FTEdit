@@ -83,10 +83,10 @@ class VotingOR : public Gate
 
 
 	void updateSubTree();
-	Gate* generateComb(int i,int k,int n);
+	Node* generateComb(int i,int k,int n);
 	int getK() const;
 	void setK(int k);
-	Gate* getSubTree() const;
+	Gate* getSubTree();
 	bool check(QList<QString>& errors);
 	void remove() override;
 	void accept(VisitorNode& visitor);
