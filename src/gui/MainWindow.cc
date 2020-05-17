@@ -198,8 +198,8 @@ void MainWindow::copy()
 
 void MainWindow::paste()
 {
-	editor->paste((Gate*)curItem->node());
-	updateScene(curItem->node());
+	editor->paste(curItem ? (Gate*)curItem->node() : nullptr);
+	updateScene(curItem ? curItem->node() : editor->getSelection()->getTop());
 	modified = true;
 }
 
@@ -899,7 +899,7 @@ void MainWindow::setEnabledButton()
 	saveAct->setEnabled(!fileManager->getPath().isEmpty() && modified);
 	cutAct->setDisabled(curItem == nullptr);
 	copyAct->setDisabled(curItem == nullptr);
-	pasteAct->setEnabled(editor->getClipboard() && isNotChild);
+	pasteAct->setEnabled(editor->getClipboard() && (isNotChild || dynamic_cast<Gate*>(editor->getClipboard())));
 	moveItemFirstAct->setEnabled(pos > 0);
 	moveItemLeftAct->setEnabled(pos > 0);
 	moveItemRightAct->setEnabled(pos < size);

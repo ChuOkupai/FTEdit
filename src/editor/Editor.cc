@@ -77,12 +77,8 @@ void Editor::copy(Node *top)
 
 void Editor::cut(Node *top)
 {
-	
-	resetClipboard();
-	ClipVisitor tmp;
-	top->accept(tmp);
-	clipboard = tmp.getCopied();
-	top->remove();
+	copy(top);
+	remove(top);
 }
 
 void Editor::paste(Gate *parent)
@@ -91,7 +87,9 @@ void Editor::paste(Gate *parent)
 	{
 	PasteVisitor tmp(*this);
 	clipboard->accept(tmp);
-	tmp.getPasted()->attach(parent);	
+	tmp.getPasted()->attach(parent);
+	if (!selection->getTop())
+		selection->setTop((Gate*)tmp.getPasted());
 	}
 }
 
