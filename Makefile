@@ -10,7 +10,7 @@ ifeq ($(UNAME_S),Darwin)
 	DEPLOY = macdeployqt
 	DEPLOY_TARGET = release/$(NAME).dmg
 	MKBUILD = \
-	ln -s ~/Applications ./release/Applications && \
+	ln -s /Applications ./release/Applications && \
 	hdiutil create -fs HFS+ -srcfolder ./release -volname "$(NAME)" "$(DEPLOY_TARGET)"
 endif
 
