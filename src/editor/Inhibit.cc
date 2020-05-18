@@ -26,7 +26,11 @@ void Inhibit::setCondition(bool condition)
 
 bool Inhibit::check (QList<QString>& errors)
 {
-    if(children.size() != 1)
+    if(children.size() < 1)
+    {
+        errors << prop.getName() + ": There must be 1 input.";
+    }
+    if(children.size() > 1)
     {
         errors << prop.getName() + ": There must be only 1 input.";
     }

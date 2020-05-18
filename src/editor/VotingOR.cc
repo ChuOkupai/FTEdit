@@ -19,7 +19,7 @@ void VotingOR::updateSubTree()
 {
 	if (subTree)
 		subTree->remove();
-	if (k > 0 && k < children.size())
+	if (k > 0 && k <= children.size())
 		subTree = (Gate*)generateComb(0,k,children.size());
 	else
 		subTree = nullptr;
@@ -77,21 +77,23 @@ Gate* VotingOR::getSubTree()
 
 bool VotingOR::check(QList<QString>& errors)
 {
-	if (children.size() < k)
-	{
-		errors << prop.getName() + ": k value must be less or equal children value.";
-	}
-	if(children.size() < 2)
-	{
-		errors << prop.getName() + ": must have a least 2 children.";
-	}
-	for (int i = 0; i < children.size(); ++i)
-		children.at(i)->check(errors);
 	if (subTree)
 	{
 		subTree->remove();
 		subTree = nullptr;
 	}
+	if (!k)
+		errors << prop.getName() + ": k value must have a strictly positive value.";
+	else if (children.size() < k)
+	{
+		errors << prop.getName() + ": k value must be less or equal children value.";
+	}
+	else if(children.size() < 2)
+	{
+		errors << prop.getName() + ": must have a least 2 children.";
+	}
+	for (int i = 0; i < children.size(); ++i)
+		children.at(i)->check(errors);
 	return (errors.size() == 0);
 }
 

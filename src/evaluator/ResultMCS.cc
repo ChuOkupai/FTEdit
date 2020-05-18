@@ -117,10 +117,13 @@ ResultMCS::ResultMCS(Gate* top,double missionTime,double step) : Evaluator(top,m
 
     /*librer les memoire dynamique*/
 
-    for(int i=0;i<containers.size();i++){
-        delete containers[i]->getEvent()->getDistribution();
-        delete containers[i]->getEvent();
-        delete containers[i];
+    while(containers.size()){
+        Event *event = containers.first()->getEvent();
+        Distribution *dist = event->getDistribution();
+        delete containers.first();
+        delete event;
+        delete dist;
+        containers.removeFirst();
     }
 
 }

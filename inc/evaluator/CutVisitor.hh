@@ -10,11 +10,6 @@ private :
     int i;//index de cutset[i][j]
     int j;//index de cutset[i][j]
 
-    void visitGate(Gate &gate)
-    {
-        qDebug() << gate.getProperties().getName() << "Nombre d'enfants: "<<gate.getChildren().size();
-    }
-
 public :
     CutVisitor(QList<QList<Node*>>& cutset, QList<Container*>& containers);
     ~CutVisitor();

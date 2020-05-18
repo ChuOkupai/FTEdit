@@ -1,5 +1,10 @@
 #include "CutVisitor.hh"
 
+static void visitGate(Gate &gate)
+{
+    qDebug() << gate.getProperties().getName() << "Nombre d'enfants: "<<gate.getChildren().size();
+}
+
 CutVisitor::CutVisitor(QList<QList<Node*>>& cutset, QList<Container*>& containers) :
     cutset(cutset), containers(containers){}//：后括号初始化赋值，ex:a(10),对于对象、引用、常量的赋值必须在引入函数前就进行初始化，之后不能再改变
 
@@ -66,7 +71,7 @@ void CutVisitor::visit(VotingOR& vorgate){
 void CutVisitor::visit(Inhibit& inhibgate){
     visitGate(inhibgate);
 
-    Event* cond = new Event("conditon " + inhibgate.getProperties().getName());
+    Event* cond = new Event("condition " + inhibgate.getProperties().getName());
     Constant* proba = new Constant("proba " + inhibgate.getProperties().getName());
     proba->setValue(inhibgate.getCondition()==true);
     cond->setDistribution(proba);
