@@ -35,9 +35,9 @@ FTEdit
 # Qt
 .qmake.stash
 Makefile.pro.user
-src/.build
+.build
 release/*
-src/Makefile
+Makefile
 
 *.DS_Store
 
