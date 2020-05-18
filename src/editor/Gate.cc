@@ -1,5 +1,4 @@
 #include "Gate.hh"
-#include <cmath>
 
 Gate::Gate(QString name,bool keep) :Node(),prop(name, keep)
 {}
@@ -28,51 +27,23 @@ Node* Gate::search(QPoint around)
 	return (n);
 }
 
-static void first_pass(Node* me,int niveau,QVector<int>& liste)//first pass
-{	
-	QPoint tmp;
-
-	if(liste[niveau] == -1)
+static void first_pass(Node *n, int i, QVector<int> &levelNextX) //first pass
+{
+	n->setPosition(QPoint(levelNextX[i],
+	(n->getParent() ? n->getParent()->getPosition().y() + CARD_Y + CARD_GAP_Y : 0)));
+	levelNextX[i] += CARD_X;
+	if (dynamic_cast<Gate*>(n))
 	{
-		if(!me->getParent())
-		{
-			liste[niveau] = 0;
-			tmp.setX(liste[niveau]);
-		}
-		else
-		{
-			liste[niveau] = me->getParent()->getPosition().x();
-			tmp.setX(liste[niveau]);
-			tmp.setY(me->getParent()->getPosition().y());
-		}
-	}
-	else
-	{
-		liste[niveau] += CARD_X;
-		tmp.setX(liste[niveau]);
-	}
-	tmp.setY(niveau * (CARD_Y + CARD_GAP_Y));
-	me->setPosition(tmp);
-
-	if(dynamic_cast<Gate*>(me))
-	{
-		Gate* tmp = dynamic_cast<Gate*>(me);
-		for(int i =0; i<tmp->getChildren().size();i++)
-		{	
-			first_pass(tmp->getChildren()[i],niveau+1,liste);
-		}
+		Gate *g = dynamic_cast<Gate*>(n);
+		for (int j = 0; j < g->getChildren().size(); ++j)
+			first_pass(g->getChildren()[j], i + 1, levelNextX);
 	}
 }
 
 void Gate::balanceNodePos()
 {
-	QVector<int> liste(50);
-	for(int i =0;i<50;i++)
-	{
-		liste[i] = -1;
-	}
-	int niveau = 0;
-	first_pass(this,niveau,liste);
+	QVector<int> levelNextX(64);
+	first_pass(this, 0, levelNextX);
 }
 
 
