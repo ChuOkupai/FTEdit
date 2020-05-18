@@ -43,6 +43,9 @@ void XmlTreeReader::read()
 		}
 		if(!transfert->getLink()) throw -1;
 	}
+
+	//add a tree if there is none
+	if(ltree.isEmpty()) e->getTrees() << Tree(e->generateName(PREFIX_TREE));
 }
 
 void XmlTreeReader::readTree(QDomElement &elem)
@@ -167,6 +170,8 @@ void XmlTreeReader::readGateChilds(Gate *g, QDomNodeList list)
 	{
 		QDomElement elem = list.at(j).toElement();
 		QString name = elem.attribute("name").trimmed();
+		
+		if(g->getProperties().getName() == name) throw -1;
 		
 		if(elem.tagName() == "basic-event")
 		{

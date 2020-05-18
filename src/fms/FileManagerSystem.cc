@@ -37,6 +37,7 @@ Editor* FileManagerSystem::load(QString path)
 	for(Gate* g : editor->getGates())
 		qDebug() << g->getProperties().getName() << ": " << g->getChildren().size();
 	*/
+	file.close();
 	editor->setAutoRefresh(true);
 	return editor;
 }
@@ -130,12 +131,13 @@ int FileManagerSystem::exportAs(QString path, Result &result)
 		return -1;
 	}
 	QTextStream saveStream(&file);
-	
+
 	ResultMCS *resmcs =  result.getResultMCS();
 	ResultBoolean *resB = result.getResultBoolean();
 
 	if(resmcs)
 	{
+		saveStream << "Probability,Quantity,Events" << '\n';
 		QList<double> proMcs = resmcs->getProbabilities();
 		QList<QList<QString>> cs = resmcs->getMCS();
 		int m = cs.size();
@@ -147,12 +149,14 @@ int FileManagerSystem::exportAs(QString path, Result &result)
 				saveStream << l[i]<<" ";
 			saveStream << '\n';
 		}
+		
 	}
-
-	saveStream << "\n\n";
 
 	if(resB)
 	{
+		if(resmcs) saveStream << "\n\n";
+
+		saveStream << "Time,Failure rate of " << resB->getTopEventName() << '\n';
 		QString topEvenet = resB->getTopEventName();
 		double mstep = resB->getStep();
 		QList<double> proB = resB->getProbabilities();
@@ -164,5 +168,6 @@ int FileManagerSystem::exportAs(QString path, Result &result)
 			ctime+=mstep;
 		}
 	}
+	file.close();
 	return 0;
 }
