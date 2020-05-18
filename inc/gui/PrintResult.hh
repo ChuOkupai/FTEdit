@@ -7,13 +7,14 @@ class PrintResult : public QDialog
 	Q_OBJECT
 
 public:
-	PrintResult(QWidget *parent, Result *result);
+	PrintResult(QWidget *parent, Result *result, QString date);
 
 private slots:
 	void exportResult();
 
 private:
 	Result *result;
+	QString date;
 	QTableWidget *prb;
 	QTableWidget *mcs;
 

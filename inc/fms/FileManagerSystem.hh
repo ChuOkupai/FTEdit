@@ -18,7 +18,7 @@ class FileManagerSystem
 
 		QString getErrorMessage();
 		QString getPath();
-		int exportAs(QString path, Result result);
+		int exportAs(QString path, Result &result);
 		Editor* load(QString path);
 		int save(Editor* editor);
 		int saveAs(QString path, Editor* editor);

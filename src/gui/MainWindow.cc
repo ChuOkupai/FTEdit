@@ -96,6 +96,7 @@ void MainWindow::newFile()
 	tree1->setText(0, " * " + editor->getSelection()->getProperties().getName());
 	trees->addChild(tree1);
 	curTreeRow = 0;
+	setWindowTitle("FTEdit - New Project");
 }
 
 void MainWindow::open()
@@ -110,10 +111,20 @@ void MainWindow::open()
 	auto newEditor = fileManager->load(path);
 	if (newEditor)
 	{
-		delete editor;
+		reset();
+		setWindowTitle("FTEdit - " + path.mid(path.lastIndexOf("/") + 1));
 		editor = newEditor;
 		editor->setAutoRefresh(true);
 		editor->refresh();
+		auto list = editor->getTrees();
+		for (int i = 0; i < list.size(); ++i)
+		{
+			auto t = new QTreeWidgetItem(trees);
+			t->setText(0, (i ? list[i].getProperties().getName() : " * " + list[i].getProperties().getName()));
+			trees->addChild(t);
+		}
+		editor->setSelection(&list.first());
+		updateScene(list.first().getTop());
 		return ;
 	}
 	QMessageBox msg(this);
@@ -135,6 +146,7 @@ void MainWindow::save()
 	if (fileManager->getErrorMessage().isEmpty())
 	{
 		modified = false; // si pas d'erreurs
+		saveAct->setDisabled(true);
 		return ;
 	}
 	QMessageBox msg(this);
@@ -145,31 +157,23 @@ void MainWindow::save()
 
 void MainWindow::saveAs()
 {
-	QString path;
-	while (1)
+	QString path(fileManager->getPath().isEmpty() ?
+	QDir::homePath() + "/project.opsa" : fileManager->getPath());
+	path = QFileDialog::getSaveFileName(this, "Save project as", path, "Open-PSA project (*.opsa)");
+	if (path.isEmpty()) return ;
+	fileManager->saveAs(path, editor);
+	if (fileManager->getErrorMessage().isEmpty())
 	{
-		path = QFileDialog::getSaveFileName(this, "Save project as", QDir::homePath(), "Open-PSA project (*.opsa)");
-		if (path.isEmpty()) return ;
-		if (!path.endsWith(".opsa"))
-			path += ".opsa";
-		fileManager->saveAs(path, editor);
-		if (fileManager->getErrorMessage().isEmpty())
-		{
-			modified = false; // si pas d'erreurs
-			break ;
-		}
-		QMessageBox msg(this);
-		msg.setIcon(QMessageBox::Critical);
-		msg.setStandardButtons(QMessageBox::Retry | QMessageBox::Cancel);
-		msg.setWindowTitle("Error");
-		msg.setText(fileManager->getErrorMessage());
-		int ret = msg.exec();
-		if (ret == QMessageBox::Cancel)
-		{
-			fileManager->setPath("");
-			break ;
-		}
+		modified = false; // si pas d'erreurs
+		setWindowTitle("FTEdit - " + path.mid(path.lastIndexOf("/") + 1));
+		return ;
 	}
+	QMessageBox msg(this);
+	msg.setIcon(QMessageBox::Critical);
+	msg.setWindowTitle("Error");
+	msg.setText(fileManager->getErrorMessage());
+	msg.exec();
+	fileManager->setPath("");
 }
 
 void MainWindow::closeEvent(QCloseEvent* e)
@@ -452,7 +456,7 @@ void MainWindow::explorerItemClicked(QTreeWidgetItem *item, int column)
 	if (item->parent())
 	{
 		if (explorer->indexOfTopLevelItem(item->parent())) // == 1 (Results)
-			PrintResult(this, resultsHistory[results->indexOfChild(item)]).exec();
+			PrintResult(this, resultsHistory[results->indexOfChild(item)], item->text(0)).exec();
 		else // Fault tree
 		{
 			auto child = trees->child(curTreeRow);
@@ -873,6 +877,7 @@ void MainWindow::reset()
 	qDeleteAll(results->takeChildren());
 	errorList->clear();
 	fileManager->setPath("");
+	curTreeRow = 0;
 }
 
 void MainWindow::resizeSplitter(QSplitter *splitter, int widget1Size, int widget2Size)

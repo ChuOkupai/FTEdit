@@ -14,11 +14,12 @@ QString FileManagerSystem::getErrorMessage() { return errorMessage; }
 QString FileManagerSystem::getPath() { return path; }
 
 Editor* FileManagerSystem::load(QString path)
-{ 
+{
+	errorMessage = "";
 	setPath(path);
 	QFile file(path);
 	if(!file.open(QIODevice::ReadOnly)){
-		errorMessage = "Cannot read file" + file.errorString();
+		errorMessage = file.errorString();
 		return nullptr;
 	}
 	
@@ -29,7 +30,7 @@ Editor* FileManagerSystem::load(QString path)
 	catch(int exp)
 	{
 		delete editor;
-		errorMessage = "Failed to Load";
+		errorMessage = file.errorString();
 		qDebug() << errorMessage;
 	}
 	/*
@@ -52,11 +53,12 @@ void gateTreeMapping(Tree* tree, Gate* top, QMap<Tree*, Gate*>* map)
 
 int FileManagerSystem::save(Editor* editor)
 {
+	errorMessage = "";
 	QSaveFile file(path); SaveVisitor svisitor;
 	
 	if(!file.open(QIODevice::WriteOnly))
 	{
-		errorMessage = "Failed to open the file in write mode";
+		errorMessage = file.errorString();
 		qDebug() << errorMessage;
 		return -1;
 	}
@@ -118,8 +120,9 @@ int FileManagerSystem::saveAs(QString path, Editor* editor)
 
 void FileManagerSystem::setPath(QString path) {this->path = path; }
 
-int FileManagerSystem::exportAs(QString path, Result result)
+int FileManagerSystem::exportAs(QString path, Result &result)
 {
+	errorMessage = "";
 	QFile file(path);
 	if(!file.open(QIODevice::WriteOnly))
 	{
