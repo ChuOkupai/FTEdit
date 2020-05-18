@@ -44,6 +44,7 @@ Editor* FileManagerSystem::load(QString path)
 
 void gateTreeMapping(Tree* tree, Gate* top, QMap<Tree*, Gate*>* map)
 {
+	if(!top) return ;
 	Gate *g = nullptr;
 	map->insertMulti(tree, top);
 	QList<Node*>& childs = top->getChildren();
