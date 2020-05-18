@@ -19,7 +19,6 @@ public:
 	Properties&		getProperties();
 	QList<Node*>&	getChildren();
 	void 	balanceNodePos();	
-	QPoint 	top_node_coord(QPoint cpt);
 	Node*	search(QPoint around);
 	void	remove();
 };

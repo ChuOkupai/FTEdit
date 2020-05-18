@@ -63,11 +63,6 @@ Node* Transfert::search(QPoint around)
 	return (n);
 }
 
-QPoint 	Transfert::top_node_coord(QPoint cpt)
-{
-	return cpt;
-}
-
 void Transfert::balanceNodePos()
 {
 	return;

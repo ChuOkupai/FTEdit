@@ -57,11 +57,6 @@ Node* Container::search(QPoint around)
 	
 }
 
-QPoint 	Container::top_node_coord(QPoint cpt)
-{
-	return cpt;
-}
-
 void Container::balanceNodePos()
 {
 	return;
