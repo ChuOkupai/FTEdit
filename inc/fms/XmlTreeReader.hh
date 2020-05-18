@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QDomDocument>
+#include <QFile>
 #include <QMap>
 #include "FTEdit_Editor.hh"
 

@@ -37,6 +37,7 @@ FTEdit
 Makefile.pro.user
 src/.build
 release/*
+src/Makefile
 
 *.DS_Store
 
