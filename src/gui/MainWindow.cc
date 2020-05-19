@@ -4,7 +4,7 @@
 #include "ManageDistributionsDialog.hh"
 #include "ManageEventsDialog.hh"
 
-MainWindow::MainWindow() : editor(nullptr), fileManager(nullptr)
+MainWindow::MainWindow() : editor(nullptr), fileManager(nullptr), modified(false)
 {
 	statusBar();
 	createActions();
