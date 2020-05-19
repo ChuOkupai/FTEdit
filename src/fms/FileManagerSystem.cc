@@ -1,5 +1,4 @@
 #include <QFile>
-#include <QSaveFile>
 #include <QTextStream>
 #include "FileManagerSystem.hh"
 #include "SaveVisitor.hh"
@@ -25,18 +24,14 @@ Editor* FileManagerSystem::load(QString path)
 	
 	Editor* editor = new Editor(false);
 	XmlTreeReader xtr(&file, editor);
-
 	try { xtr.read();}
 	catch(int exp)
 	{
 		delete editor;
 		errorMessage = file.errorString();
 		qDebug() << errorMessage;
+		return nullptr;
 	}
-	/*
-	for(Gate* g : editor->getGates())
-		qDebug() << g->getProperties().getName() << ": " << g->getChildren().size();
-	*/
 	file.close();
 	editor->setAutoRefresh(true);
 	return editor;
@@ -56,7 +51,7 @@ void gateTreeMapping(Tree* tree, Gate* top, QMap<Tree*, Gate*>* map)
 int FileManagerSystem::save(Editor* editor)
 {
 	errorMessage = "";
-	QSaveFile file(path); SaveVisitor svisitor;
+	QFile file(path); SaveVisitor svisitor;
 	
 	if(!file.open(QIODevice::WriteOnly))
 	{
@@ -74,10 +69,11 @@ int FileManagerSystem::save(Editor* editor)
 	//visit
 	for(Distribution *d :  editor->getDistributions())
 		d->accept(svisitor);
-	for(Event e :  editor->getEvents())
+	for(Event &e :  editor->getEvents())
 		e.accept(svisitor);
 	
 	// visit gate
+	treegatemap.clear();
 	for(Tree &tree : editor->getTrees())
 	{
 		gateTreeMapping(&tree , tree.getTop(), &treegatemap);
@@ -106,12 +102,15 @@ int FileManagerSystem::save(Editor* editor)
 
 		QList<Gate*> lgates = treegatemap.values(&tree);
 		for(Gate* g : lgates)
+		{
 			g->accept(svisitor); //visit
+			qDebug() << g->getProperties().getName();
+		}
 		root.appendChild(treeroot);
 	}
 
 	saveStream << domref.toString(4);
-	file.commit();
+	file.close();
 	return 0;
 }
 

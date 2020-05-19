@@ -29,7 +29,6 @@ void XmlTreeReader::read()
 		readEvent(e);
 	for(QDomElement& e : ltree)
 		readTree(e);
-
 	//association des transfert avec les Trees de même nom
 	for(Transfert* transfert : transtreeMap.keys())
 	{
@@ -43,7 +42,6 @@ void XmlTreeReader::read()
 		}
 		if(!transfert->getLink()) throw -1;
 	}
-
 	//add a tree if there is none
 	if(ltree.isEmpty()) e->getTrees() << Tree(e->generateName(PREFIX_TREE));
 }
@@ -68,7 +66,6 @@ void XmlTreeReader::readTree(QDomElement &elem)
 		if(attrname == "keep") keep = attr.attribute("value").trimmed() == "true";
 		if(attrname == "top-event") topevt = attr.attribute("value").trimmed();
 	}
-	
 	
 	e->getTrees() << Tree(name);
 	Tree &t = e->getTrees().last();
@@ -188,27 +185,33 @@ void XmlTreeReader::readGateChilds(Gate *g, QDomNodeList list)
 		}
 		else if(elem.tagName() == "gate")
 		{
-			for(Gate* gg : e->getGates())
+			if(name.isEmpty()) { g->getChildren() << new Transfert; ok = true;}
+			else if(!name.isEmpty())
 			{
-				if(gg->getProperties().getName() == name) 
+				for(Gate* gg : e->getGates())
 				{
+					if(gg->getProperties().getName() == name) 
+					{
+						ok = true;
+						//qDebug() << gg->getProperties().getName();
+						g->getChildren() << gg;
+						break;
+					}
+				}
+				
+				if(ok != true)
+				{
+					//PB: Transfert cherche Tree pas encore chargé
+					//SOLVED: QMap<Transfert*, QString> dans Reader puis recherche parmis les Trees
 					ok = true;
-					//qDebug() << gg->getProperties().getName();
-					g->getChildren() << gg;
+					Transfert* transfert = new Transfert();
+					//qDebug()<<"Transf";
+					g->getChildren() << transfert;
+					transtreeMap.insert(transfert, name);
 					break;
 				}
 			}
-		}
-		else if(elem.tagName() == "transfert")
-		{
-			//PB: Transfert cherche Tree pas encore chargé
-			//SOLVED: QMap<Transfert*, QString> dans Reader puis recherche parmis les Trees
-			ok = true;
-			Transfert* transfert = new Transfert();
-			//qDebug()<<"Transf";
-			g->getChildren() << transfert;
-			transtreeMap.insert(transfert, name);
-			break;
+		
 		}
 		if(ok == false) {throw -1;}
 		ok = false;
@@ -268,7 +271,7 @@ void XmlTreeReader::readEvent(QDomElement &elem)
 
 	QString name = elem.attribute("name").trimmed();
 	if(!e->isUnique(name)) throw -1;
-
+	
 	QDomNodeList attrs = elem.namedItem("attributes").childNodes();
 
 	for(int i=0; i < attrs.size(); i++)
@@ -281,16 +284,21 @@ void XmlTreeReader::readEvent(QDomElement &elem)
 	}
 	
 	QList<Distribution*> ldistribs = e->getDistributions();
-	int idst = searchDistribution(ldistribs, elem.namedItem("parameter").toElement().attribute("name").trimmed());
-
-	if(idst == -1) throw -1;
 
 	QList<Event>& levents = e->getEvents();
 	levents << Event(name);
 	levents.last().getProperties().setKeep(keep);
 	levents.last().getProperties().setDesc(elem.namedItem("label").toElement().text().trimmed());
-	levents.last().setDistribution(ldistribs[idst]);
+
+	QString namedst = elem.namedItem("parameter").toElement().attribute("name").trimmed();
+	int idst;
 	
+	if(!namedst.isEmpty())
+	{
+		idst = searchDistribution(ldistribs, namedst);
+		if(idst == -1) throw -1;
+		levents.last().setDistribution(ldistribs[idst]);
+	}
 	/*
 	qDebug() << "name: "<< levents.last().getProperties().getName();
 	qDebug() << "desc: "<< levents.last().getProperties().getDesc();

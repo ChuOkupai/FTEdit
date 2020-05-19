@@ -57,7 +57,7 @@ void SaveVisitor::writeChildren(QDomElement &node, Gate& gate)
 		}
 		else if(instanceof<Transfert>(c))
 		{
-			tmp = dom.createElement("transfert");
+			tmp = dom.createElement("gate");
 			Transfert* transfert = dynamic_cast<Transfert*>(c);
 			if(transfert != nullptr && transfert->getLink() != nullptr)
 				tmp.setAttribute("name", transfert->getLink()->getProperties().getName());
