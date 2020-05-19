@@ -32,6 +32,7 @@ static void first_pass(Node *n, int i, QVector<int> &levelNextX) //first pass
 	QPoint p;
 	if (n->getParent())
 		p.setY(n->getParent()->getPosition().y() + CARD_Y + CARD_GAP_Y);
+	n->setPosition(p);
 	if (Gate *g = dynamic_cast<Gate*>(n))
 	{
 		for (int j = 0; j < g->getChildren().size(); ++j)
@@ -53,6 +54,7 @@ static void first_pass(Node *n, int i, QVector<int> &levelNextX) //first pass
 void Gate::balanceNodePos()
 {
 	QVector<int> levelNextX(64);
+	levelNextX.fill(0, 64);
 	first_pass(this, 0, levelNextX);
 }
 
