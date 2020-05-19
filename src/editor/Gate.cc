@@ -29,15 +29,25 @@ Node* Gate::search(QPoint around)
 
 static void first_pass(Node *n, int i, QVector<int> &levelNextX) //first pass
 {
-	n->setPosition(QPoint(levelNextX[i],
-	(n->getParent() ? n->getParent()->getPosition().y() + CARD_Y + CARD_GAP_Y : 0)));
-	levelNextX[i] += CARD_X;
-	if (dynamic_cast<Gate*>(n))
+	QPoint p;
+	if (n->getParent())
+		p.setY(n->getParent()->getPosition().y() + CARD_Y + CARD_GAP_Y);
+	if (Gate *g = dynamic_cast<Gate*>(n))
 	{
-		Gate *g = dynamic_cast<Gate*>(n);
 		for (int j = 0; j < g->getChildren().size(); ++j)
 			first_pass(g->getChildren()[j], i + 1, levelNextX);
+		if (g->getChildren().size())
+		{
+			int left = g->getChildren().first()->getPosition().x();
+			int right = levelNextX[i + 1]; // size of children
+			int mid = left + (right - left - CARD_X) / 2;
+			if (mid > levelNextX[i])
+				levelNextX[i] = mid;
+		}
 	}
+	p.setX(levelNextX[i]);
+	n->setPosition(p);
+	levelNextX[i] += CARD_X;
 }
 
 void Gate::balanceNodePos()
