@@ -15,6 +15,7 @@ QString FileManagerSystem::getPath() { return path; }
 Editor* FileManagerSystem::load(QString path)
 {
 	errorMessage = "";
+
 	setPath(path);
 	QFile file(path);
 	if(!file.open(QIODevice::ReadOnly)){
@@ -23,6 +24,7 @@ Editor* FileManagerSystem::load(QString path)
 	}
 	
 	Editor* editor = new Editor(false);
+	
 	XmlTreeReader xtr(&file, editor);
 	try { xtr.read();}
 	catch(int exp)
@@ -32,8 +34,10 @@ Editor* FileManagerSystem::load(QString path)
 		qDebug() << errorMessage;
 		return nullptr;
 	}
+	
 	file.close();
 	editor->setAutoRefresh(true);
+	editor->refresh();
 	return editor;
 }
 
@@ -56,7 +60,6 @@ int FileManagerSystem::save(Editor* editor)
 	if(!file.open(QIODevice::WriteOnly))
 	{
 		errorMessage = file.errorString();
-		qDebug() << errorMessage;
 		return -1;
 	}
 	QTextStream saveStream(&file); QDomDocument& domref = svisitor.getDomFile();

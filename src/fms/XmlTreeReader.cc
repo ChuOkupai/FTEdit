@@ -34,7 +34,7 @@ void XmlTreeReader::read()
 	{
 		for(Tree &t : e->getTrees())
 		{
-			if(t.getProperties().getName() == transtreeMap[transfert]) 
+			if(t.getProperties().getName() == transtreeMap[transfert])
 			{
 				transfert->setLink(&t);
 				break;
@@ -172,13 +172,13 @@ void XmlTreeReader::readGateChilds(Gate *g, QDomNodeList list)
 		
 		if(elem.tagName() == "basic-event")
 		{
-			for(Event evt : e->getEvents())
+			for(Event &evt : e->getEvents())
 			{
-				if(evt.getProperties().getName() == name) 
+				if(evt.getProperties().getName() == name)
 				{
 					ok = true;
-					//qDebug() << evt.getProperties().getName();
-					g->getChildren() << new Container(&evt);
+					Container* cont = new Container(&evt);
+					cont->attach(g);
 					break;
 				}
 			}
@@ -194,7 +194,7 @@ void XmlTreeReader::readGateChilds(Gate *g, QDomNodeList list)
 					{
 						ok = true;
 						//qDebug() << gg->getProperties().getName();
-						g->getChildren() << gg;
+						gg->attach(g);
 						break;
 					}
 				}
@@ -206,7 +206,7 @@ void XmlTreeReader::readGateChilds(Gate *g, QDomNodeList list)
 					ok = true;
 					Transfert* transfert = new Transfert();
 					//qDebug()<<"Transf";
-					g->getChildren() << transfert;
+					transfert->attach(g);
 					transtreeMap.insert(transfert, name);
 					break;
 				}
