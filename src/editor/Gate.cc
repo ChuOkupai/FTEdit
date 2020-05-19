@@ -27,16 +27,6 @@ Node* Gate::search(QPoint around)
 	return (n);
 }
 
-static void right_shift(Node *n, int firstX, int x)
-{
-	QPoint p(n->getPosition());
-	if (Gate *g = dynamic_cast<Gate*>(n))
-		for (int j = 0; j < g->getChildren().size(); ++j)
-			right_shift(g->getChildren()[j], 0, x);
-	p.setX(p.x() + (firstX ? firstX : x));
-	n->setPosition(p);
-}
-
 static void first_pass(Node *n, int i, QVector<int> &maxX)
 {
 	QPoint p;
@@ -45,14 +35,17 @@ static void first_pass(Node *n, int i, QVector<int> &maxX)
 	Gate *g = dynamic_cast<Gate*>(n);
 	if (g && g->getChildren().size())
 	{
-		if (n->getParent() && maxX[i + 1] > maxX[i])
-			maxX[i] = maxX[i + 1];
+		if (n->getParent() && maxX[i - 1] > maxX[i])
+			maxX[i] = maxX[i - 1];
 		p.setX(maxX[i]);
 		n->setPosition(p);
 		int x = 0;
 		for (int j = 0; j < g->getChildren().size(); ++j, x += CARD_X)
 			first_pass(g->getChildren()[j], i + 1, maxX);
-		x = g->getChildren().last()->getPosition().x() + CARD_X - g->getChildren().first()->getPosition().x();
+		x = g->getChildren().last()->getPosition().x() - g->getChildren().first()->getPosition().x();
+		maxX[i] = g->getChildren().first()->getPosition().x() + x / 2;
+		p.setX(maxX[i]);
+		n->setPosition(p);
 		maxX[i] += CARD_X;
 		return ;
 	}
