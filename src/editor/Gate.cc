@@ -27,35 +27,46 @@ Node* Gate::search(QPoint around)
 	return (n);
 }
 
-static void first_pass(Node *n, int i, QVector<int> &levelNextX) //first pass
+static void right_shift(Node *n, int firstX, int x)
+{
+	QPoint p(n->getPosition());
+	if (Gate *g = dynamic_cast<Gate*>(n))
+		for (int j = 0; j < g->getChildren().size(); ++j)
+			right_shift(g->getChildren()[j], 0, x);
+	p.setX(p.x() + (firstX ? firstX : x));
+	n->setPosition(p);
+}
+
+static void first_pass(Node *n, int i, QVector<int> &maxX)
 {
 	QPoint p;
 	if (n->getParent())
 		p.setY(n->getParent()->getPosition().y() + CARD_Y + CARD_GAP_Y);
-	n->setPosition(p);
-	if (Gate *g = dynamic_cast<Gate*>(n))
+	Gate *g = dynamic_cast<Gate*>(n);
+	if (g && g->getChildren().size())
 	{
-		for (int j = 0; j < g->getChildren().size(); ++j)
-			first_pass(g->getChildren()[j], i + 1, levelNextX);
-		if (g->getChildren().size())
-		{
-			int left = g->getChildren().first()->getPosition().x();
-			int right = levelNextX[i + 1]; // size of children
-			int mid = left + (right - left - CARD_X) / 2;
-			if (mid > levelNextX[i])
-				levelNextX[i] = mid;
-		}
+		if (n->getParent() && maxX[i + 1] > maxX[i])
+			maxX[i] = maxX[i + 1];
+		p.setX(maxX[i]);
+		n->setPosition(p);
+		int x = 0;
+		for (int j = 0; j < g->getChildren().size(); ++j, x += CARD_X)
+			first_pass(g->getChildren()[j], i + 1, maxX);
+		x = g->getChildren().last()->getPosition().x() + CARD_X - g->getChildren().first()->getPosition().x();
+		maxX[i] += CARD_X;
+		return ;
 	}
-	p.setX(levelNextX[i]);
+	if (n->getParent() && maxX[i - 1] > maxX[i])
+		maxX[i] = maxX[i - 1];
+	p.setX(maxX[i]);
 	n->setPosition(p);
-	levelNextX[i] += CARD_X;
+	maxX[i] += CARD_X;
 }
 
 void Gate::balanceNodePos()
 {
-	QVector<int> levelNextX(64);
-	levelNextX.fill(0, 64);
-	first_pass(this, 0, levelNextX);
+	QVector<int> maxX(64);
+	first_pass(this, 0, maxX);
 }
 
 
