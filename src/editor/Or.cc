@@ -6,8 +6,6 @@
 Or::Or(QString name,bool keep) : Gate(name,keep)
 {}
 
-Or::Or(Or& cop) : Gate(cop.getProperties().getName(),cop.getProperties().getKeep())
-{}
 
 Or::~Or()
 {}

@@ -1,15 +1,10 @@
 #include "Gate.hh"
 #include "VisitorNode.hh"
 #include "EvalVisitor.hh"
-#include "CopyVisitor.hh"
 #include <QDebug>
 
 VotingOR::VotingOR(QString name,bool keep) : Gate(name,keep), k(0) , subTree(nullptr)
 {}
-
-VotingOR::VotingOR(VotingOR& cop) : Gate(cop.getProperties().getName(),cop.getProperties().getKeep()) ,k(cop.getK()) , subTree(cop.getSubTree())
-{}
-
 
 VotingOR::~VotingOR()
 {}

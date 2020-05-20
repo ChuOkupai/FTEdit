@@ -6,10 +6,6 @@
 Xor::Xor(QString name,bool keep) : Gate(name,keep)
 {}
 
-Xor::Xor(Xor& cop) : Gate(cop.getProperties().getName(),cop.getProperties().getKeep())
-{}
-
-
 Xor::~Xor()
 {}
 
