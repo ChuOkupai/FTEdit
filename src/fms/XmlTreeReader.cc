@@ -202,7 +202,7 @@ void XmlTreeReader::readGateChilds(Gate *g, QDomNodeList list)
 				if(ok != true)
 				{
 					//PB: Transfert cherche Tree pas encore chargé
-					//SOLVED: QMap<Transfert*, QString> dans Reader puis recherche parmis les Trees
+					//SOLVED: QMap<Transfert*, QString> dans Reader puis recherche parmis les Trees avec la QString
 					ok = true;
 					Transfert* transfert = new Transfert();
 					//qDebug()<<"Transf";
@@ -211,8 +211,9 @@ void XmlTreeReader::readGateChilds(Gate *g, QDomNodeList list)
 					break;
 				}
 			}
-		
 		}
+		else if(elem.tagName() == "constant") ok = true;
+		
 		if(ok == false) {throw -1;}
 		ok = false;
 		
@@ -222,7 +223,7 @@ void XmlTreeReader::readGateChilds(Gate *g, QDomNodeList list)
 Gate* XmlTreeReader::readGateParams(QDomElement &elem, QList<QDomNodeList>& lelems)
 {
 	Gate* g = nullptr;
-	bool keep = false, cond = false;
+	bool keep = false;
 	QString type;
 	
 	QString name = elem.attribute("name").trimmed();
@@ -246,8 +247,9 @@ Gate* XmlTreeReader::readGateParams(QDomElement &elem, QList<QDomNodeList>& lele
 		QString type = subelem.at(i).nodeName();
 		if(type == "and")
 		{
-			if(!subelem.at(i).namedItem("constant").isNull())
-				{g = new Inhibit(name); ((Inhibit*)g)->setCondition(cond);}
+			QDomNode constnode = subelem.at(i).namedItem("constant");
+			if(!constnode.isNull())
+				{g = new Inhibit(name); ((Inhibit*)g)->setCondition(constnode.toElement().attribute("value").trimmed() == "true");}
 			else g = new And(name);
 		}
 		else if(type == "or") g = new Or(name);
