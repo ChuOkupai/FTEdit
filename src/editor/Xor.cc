@@ -9,7 +9,6 @@ Xor::Xor(QString name,bool keep) : Gate(name,keep)
 Xor::~Xor()
 {}
 
-
 bool Xor::check(QList<QString>& errors)
 {
 	if (children.size() != 2)
@@ -25,7 +24,6 @@ void Xor::accept(VisitorNode& visitor)
 {
 	visitor.visit(*this);
 }
-
 
 double Xor::accept(EvalVisitor& eval)
 {

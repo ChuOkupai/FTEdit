@@ -2,7 +2,6 @@
 #include "VisitorNode.hh"
 #include "EvalVisitor.hh"
 
-
 Inhibit::Inhibit(QString name,bool keep) : Gate(name,keep)
 {}
 
@@ -18,7 +17,6 @@ void Inhibit::setCondition(bool condition)
 {
     this->condition = condition;
 }
-
 
 bool Inhibit::check (QList<QString>& errors)
 {

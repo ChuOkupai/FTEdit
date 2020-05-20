@@ -12,6 +12,7 @@ Tree* Transfert::getLink() const
 {
 	return link;
 }
+
 void Transfert::setLink(Tree* link)
 {
 	if (this->link)
@@ -35,7 +36,7 @@ bool Transfert::check(QList<QString>& errors)
 			if(detectCycle(link->getTop()))
 			{
 				errors << "Transfert: Fault tree linked result in a loop.";
-				return(false);//no need to check link because the loop was already checked?	
+				return(false);//no need to check link because the loop was already checked.	
 			}
 			Gate* g = link->getTop();
 			g->check(errors);

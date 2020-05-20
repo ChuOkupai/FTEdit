@@ -62,7 +62,6 @@ void Gate::balanceNodePos()
 	first_pass(this, 0, maxX);
 }
 
-
 void Gate::remove()
 {
 	if(getProperties().getKeep()) // Gate from Editor

@@ -5,8 +5,7 @@
 
 class VisitorNode
 {
-    public:
-    
+public:    
     virtual void visit(And& andgate) = 0;
     virtual void visit(Or& orgate) = 0;
     virtual void visit(Xor& xorgate) = 0;

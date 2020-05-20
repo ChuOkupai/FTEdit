@@ -1,8 +1,6 @@
-#include <QDebug>
 #include "Properties.hh"
 
-Properties::Properties(QString name, bool keep) :
-name(name), refCount(0), keep(keep)
+Properties::Properties(QString name, bool keep) : name(name), refCount(0), keep(keep)
 {}
 
 Properties::~Properties()

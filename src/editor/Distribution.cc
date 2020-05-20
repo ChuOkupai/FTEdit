@@ -1,8 +1,7 @@
 #include <QtGlobal>
 #include "Distribution.hh"
 
-Distribution::Distribution(QString name) :
-prop(name,false), value(0)
+Distribution::Distribution(QString name) : prop(name,false), value(0)
 {}
 
 Distribution::~Distribution()

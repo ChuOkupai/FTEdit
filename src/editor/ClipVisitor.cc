@@ -22,13 +22,11 @@ void ClipVisitor::visitChildren(Gate& gate,Gate* child)
     }
 }
 
-
 void ClipVisitor::visit(And& andgate)
 {
     auto gate = new And("",false);
     visitChildren(andgate,gate);
 }
-
 
 void ClipVisitor::visit(Or& orgate)
 {
@@ -57,18 +55,18 @@ void ClipVisitor::visit(Xor& xorgate)
 void ClipVisitor::visit(Transfert& transfertgate)
 {
     (void)transfertgate;
-    auto trans = new Transfert;
+    auto transf = new Transfert;
     if(!copied)
-        copied = trans;    
-    trans->attach(parent);
+        copied = transf;    
+    transf->attach(parent);
     
 }
 
 void ClipVisitor::visit(Container& container)
 {
     (void)container;
-    auto con = new Container(nullptr);
+    auto cont = new Container(nullptr);
     if(!copied)
-        copied = con;    
-    con->attach(parent);
+        copied = cont;    
+    cont->attach(parent);
 }

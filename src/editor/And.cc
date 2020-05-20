@@ -8,8 +8,6 @@ And::And(QString name,bool keep) : Gate(name,keep)
 And::~And()
 {}
 
-
-
 bool And::check(QList<QString>& errors)
 {
 	if (children.size() < 2)
@@ -20,10 +18,12 @@ bool And::check(QList<QString>& errors)
 		children.at(i)->check(errors);
 	return (errors.size() == 0);
 }
+
 void And::accept(VisitorNode& visitor)
 {
 	visitor.visit(*this);
 }
+
 double And::accept(EvalVisitor& eval)
 {
 	return eval.visit(*this);

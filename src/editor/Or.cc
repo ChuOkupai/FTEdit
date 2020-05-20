@@ -6,10 +6,8 @@
 Or::Or(QString name,bool keep) : Gate(name,keep)
 {}
 
-
 Or::~Or()
 {}
-
 
 bool Or::check(QList<QString>& errors)
 {

@@ -17,11 +17,9 @@ public:
 	QString	getDesc() const;
 	int		getRefCount() const;
 	bool	getKeep() const;
-
 	void	setName(QString name);
 	void	setDesc(QString desc);
 	void	setKeep(bool keep);
-
 	void	decrementRefCount();
 	void	incrementRefCount();
 	bool	canBeRemoved();

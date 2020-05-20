@@ -43,7 +43,6 @@ bool Container::check(QList<QString> &errors)
 	return (true);
 }
 
-
 Node* Container::search(QPoint around)
 {
 	if (around.x() >= position.x() && around.x() < position.x() + (CARD_X)

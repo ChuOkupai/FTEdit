@@ -58,10 +58,10 @@ void PasteVisitor::visit(Xor& xorgate)
 void PasteVisitor::visit(Transfert& transfertgate)
 {
     (void)transfertgate;
-    auto trans = new Transfert;
+    auto transf = new Transfert;
     if(!pasted)
-        pasted = trans;    
-    trans->attach(parent);
+        pasted = transf;    
+    transf->attach(parent);
     
 }
 
@@ -69,9 +69,9 @@ void PasteVisitor::visit(Container& container)
 {
     (void)container;
     e.getEvents() << Event(e.generateName(PREFIX_EVENT));
-    auto con = new Container(&e.getEvents().last());
+    auto cont = new Container(&e.getEvents().last());
     
     if(!pasted)
-        pasted = con; 
-    con->attach(parent);
+        pasted = cont; 
+    cont->attach(parent);
 }

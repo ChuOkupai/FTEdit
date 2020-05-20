@@ -1,6 +1,5 @@
 #pragma once
 #include "FTEdit_Editor.hh"
-#include <QDebug>
 
 class CutVisitor : public VisitorNode
 {
@@ -22,5 +21,4 @@ public :
     void visit(Transfert& transfertgate);
     void visit(Container& container);
     void setIndex(int i, int j);//donner le visitor les index de la porte courante
-
 };

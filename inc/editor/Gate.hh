@@ -11,7 +11,6 @@ class Gate : public Node
 protected:
 	Properties prop;
 	QList<Node*> children;
-
 public:
 	Gate(QString name,bool keep = true);
 	virtual ~Gate();
@@ -29,7 +28,6 @@ public:
 	And(QString name,bool keep = true);
 	~And();
 
-
 	bool check(QList<QString>& errors);
 	void accept(VisitorNode& visitor);
 	double accept(EvalVisitor& eval);
@@ -39,19 +37,15 @@ class Inhibit : public Gate
 {
 	protected:
 	bool condition;
-
 	public:
 	Inhibit(QString name,bool keep = true);
 	~Inhibit();
 
 	bool getCondition() const;
-	void setCondition(bool condition);
-	
+	void setCondition(bool condition);	
 	bool check(QList<QString>& errors);
 	void accept(VisitorNode& visitor);
 	double accept(EvalVisitor& eval);
-
-
 }; 
 
 class Or : public Gate
@@ -59,7 +53,6 @@ class Or : public Gate
 public:
 	Or(QString name,bool keep = true);
 	~Or();
-
 
 	bool check(QList<QString>& errors);
 	void accept(VisitorNode& visitor);
@@ -76,7 +69,6 @@ class VotingOR : public Gate
 	VotingOR(QString name,bool keep = true);
 	~VotingOR();
 
-
 	void updateSubTree();
 	Node* generateComb(int i,int k,int n);
 	int getK() const;
@@ -86,7 +78,6 @@ class VotingOR : public Gate
 	void remove() override;
 	void accept(VisitorNode& visitor) override;
 	double accept(EvalVisitor& eval) override;
-
 };
 
 class Xor : public Gate
@@ -95,10 +86,7 @@ public:
 	Xor(QString name,bool keep = true);
 	~Xor();
 
-
 	bool check(QList<QString>& errors);
-
 	void accept(VisitorNode& visitor);
     double accept(EvalVisitor& eval);
-
 };

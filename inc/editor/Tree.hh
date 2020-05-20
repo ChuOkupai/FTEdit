@@ -11,11 +11,9 @@ protected:
 
 public:
 	Tree(QString name);
-	Tree(const Tree&);
 	~Tree();
 
 	Properties	&getProperties();
 	Gate		*getTop() const;
-
 	void	setTop(Gate *top);
 };

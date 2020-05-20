@@ -3,8 +3,7 @@
 #include "Distribution.hh"
 #include "VisitorDistribution.hh"
 
-Exponential::Exponential(QString name) :
-Distribution(name)
+Exponential::Exponential(QString name) : Distribution(name)
 {}
 
 Exponential::~Exponential()

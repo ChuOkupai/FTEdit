@@ -4,8 +4,7 @@
 #include "ClipVisitor.hh"
 #include "PasteVisitor.hh"
 
-Editor::Editor(bool autoRefresh) :
-clipboard(nullptr), selection(nullptr), autoRefresh(autoRefresh)
+Editor::Editor(bool autoRefresh) : clipboard(nullptr), selection(nullptr), autoRefresh(autoRefresh)
 {}
 
 Editor::~Editor()
@@ -24,7 +23,6 @@ Editor::~Editor()
 	
 	if(clipboard)
 		delete clipboard;
-	
 }
 
 QList<Tree> &Editor::getTrees()
@@ -85,11 +83,11 @@ void Editor::paste(Gate *parent)
 {
 	if(clipboard)
 	{
-	PasteVisitor tmp(*this);
-	clipboard->accept(tmp);
-	tmp.getPasted()->attach(parent);
-	if (!selection->getTop())
-		selection->setTop((Gate*)tmp.getPasted());
+		PasteVisitor tmp(*this);
+		clipboard->accept(tmp);
+		tmp.getPasted()->attach(parent);
+		if (!selection->getTop())
+			selection->setTop((Gate*)tmp.getPasted());
 	}
 }
 
@@ -183,7 +181,6 @@ void Editor::refresh()
 
 void Editor::resetClipboard()
 {
-	// détruire la copie de l'arbre dans clipboard
 	if(clipboard)
 		clipboard->remove();
 	clipboard = nullptr;

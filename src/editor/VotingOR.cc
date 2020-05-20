@@ -1,14 +1,12 @@
 #include "Gate.hh"
 #include "VisitorNode.hh"
 #include "EvalVisitor.hh"
-#include <QDebug>
 
 VotingOR::VotingOR(QString name,bool keep) : Gate(name,keep), k(0) , subTree(nullptr)
 {}
 
 VotingOR::~VotingOR()
 {}
-
 
 void VotingOR::updateSubTree()
 {
@@ -69,7 +67,6 @@ Gate* VotingOR::getSubTree()
     return subTree;
 }
 
-
 bool VotingOR::check(QList<QString>& errors)
 {
 	if (subTree)
@@ -105,7 +102,6 @@ void VotingOR::remove()
 	else
 		getProperties().setKeep(false);
 }
-
 
 void VotingOR::accept(VisitorNode& visitor)
 {

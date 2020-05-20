@@ -1,12 +1,9 @@
 #include "Gate.hh"
 #include "Tree.hh"
 
-Tree::Tree(QString name) :
-prop(name, true), top(nullptr)
+Tree::Tree(QString name) : prop(name, true), top(nullptr)
 {}
 
-Tree::Tree(const Tree& cop) : prop(cop.prop) , top(cop.getTop())
-{}
 Tree::~Tree()
 {}
 

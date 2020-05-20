@@ -11,5 +11,5 @@ ResultBoolean::ResultBoolean(Gate* top,double missionTime,double step) : Evaluat
 		this->probabilities << eval.getProba(top, 0);
 }
 
-ResultBoolean::~ResultBoolean(){
-}
+ResultBoolean::~ResultBoolean()
+{}
