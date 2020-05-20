@@ -31,6 +31,7 @@ private slots:
 	void cut();
 	void copy();
 	void paste();
+	void clearClipboard();
 		// Add
 		void addAnd();
 		void addInhibit();
@@ -47,6 +48,7 @@ private slots:
 	void removeItem();
 	void detach();
 	void join();
+	void newTransfert();
 	// View
 	void zoomIn();
 	void zoomOut();
@@ -89,6 +91,7 @@ private:
 	QAction *cutAct;
 	QAction *copyAct;
 	QAction *pasteAct;
+	QAction *clearClipboardAct;
 	QAction *addAndAct;
 	QAction *addInhibitAct;
 	QAction *addOrAct;
@@ -105,6 +108,7 @@ private:
 		QAction *removeItemAct;
 		QAction *detachItemAct;
 		QAction *joinItemAct;
+		QAction *newTransfertAct;
 	QAction *zoomInAct;
 	QAction *zoomOutAct;
 	QAction *zoomResetAct;

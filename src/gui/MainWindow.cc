@@ -207,6 +207,12 @@ void MainWindow::paste()
 	modified = true;
 }
 
+void MainWindow::clearClipboard()
+{
+	editor->resetClipboard();
+	setEnabledButton();
+}
+
 void MainWindow::addAnd()
 {
 	addGate(new And(editor->generateName(PREFIX_GATE)));
@@ -438,6 +444,21 @@ void MainWindow::join()
 	updateScene(curItem->node());
 }
 
+void MainWindow::newTransfert()
+{
+	Tree *selection = editor->getSelection();
+	Gate *parent = curItem->node()->getParent();
+	editor->detach((Gate*)curItem->node());
+	auto t = new QTreeWidgetItem(trees);
+	t->setText(0, editor->getSelection()->getProperties().getName());
+	trees->addChild(t);
+	editor->setSelection(selection);
+	Transfert *transfert = new Transfert;
+	transfert->attach(parent);
+	transfert->setLink(&editor->getTrees().last());
+	updateScene(nullptr);
+}
+
 void MainWindow::changeItem()
 {
 	QList<QGraphicsItem*> list = scene->selectedItems();
@@ -581,10 +602,16 @@ void MainWindow::createActions()
 
 	pasteAct = new QAction("&Paste", this);
 	pasteAct->setShortcuts(QKeySequence::Paste);
-	pasteAct->setStatusTip("Paste the clipboard's contents into the current node");
+	pasteAct->setStatusTip("Paste the clipboard's content into the current node");
 	pasteAct->setToolTip(pasteAct->statusTip());
 	pasteAct->setIcon(QIcon(":icons/paste.png"));
 	connect(pasteAct, &QAction::triggered, this, &MainWindow::paste);
+
+	clearClipboardAct = new QAction("Clear the clipboard", this);
+	clearClipboardAct->setStatusTip("Clear the clipboard's content");
+	clearClipboardAct->setToolTip(pasteAct->statusTip());
+	clearClipboardAct->setIcon(QIcon(":icons/remove.png"));
+	connect(clearClipboardAct, &QAction::triggered, this, &MainWindow::clearClipboard);
 
 	addAndAct = new QAction("And", this);
 	addAndAct->setStatusTip("Add a new and gate into the current tree");
@@ -725,6 +752,11 @@ void MainWindow::createActions()
 	joinItemAct->setIcon(QIcon(":icons/add.png"));
 	connect(joinItemAct, &QAction::triggered, this, &MainWindow::join);
 
+	newTransfertAct = new QAction("New transfert", this);
+	newTransfertAct->setStatusTip("Make a new transfert in starting from the selected node");
+	newTransfertAct->setIcon(QIcon(":objects/transfert.png"));
+	connect(newTransfertAct, &QAction::triggered, this, &MainWindow::newTransfert);
+
 	editTreePropertiesAct = new QAction("Properties", this);
 	editTreePropertiesAct->setStatusTip("Edit the properties of the fault tree");
 	editTreePropertiesAct->setIcon(QIcon(":icons/edit.png"));
@@ -759,6 +791,7 @@ void MainWindow::createMenus()
 	m->addAction(cutAct);
 	m->addAction(copyAct);
 	m->addAction(pasteAct);
+	m->addAction(clearClipboardAct);
 	m->addSeparator();
 	gatesMenu = m->addMenu("Add Gate...");
 	gatesMenu->setIcon(QIcon(":icons/add.png"));
@@ -779,6 +812,7 @@ void MainWindow::createMenus()
 	m->addAction(removeItemAct);
 	m->addAction(detachItemAct);
 	m->addAction(joinItemAct);
+	m->addAction(newTransfertAct);
 
 	m = menuBar()->addMenu("&View");
 	m->addAction(zoomInAct);
@@ -810,6 +844,7 @@ void MainWindow::createMenus()
 	itemsMenu->addAction(removeItemAct);
 	itemsMenu->addAction(detachItemAct);
 	itemsMenu->addAction(joinItemAct);
+	itemsMenu->addAction(newTransfertAct);
 }
 
 void MainWindow::createToolBar()
@@ -905,6 +940,7 @@ void MainWindow::setEnabledButton()
 	cutAct->setDisabled(curItem == nullptr);
 	copyAct->setDisabled(curItem == nullptr);
 	pasteAct->setEnabled(editor->getClipboard() && (isNotChild || dynamic_cast<Gate*>(editor->getClipboard())));
+	clearClipboardAct->setDisabled(editor->getClipboard() == nullptr);
 	moveItemFirstAct->setEnabled(pos > 0);
 	moveItemLeftAct->setEnabled(pos > 0);
 	moveItemRightAct->setEnabled(pos < size);
@@ -913,6 +949,7 @@ void MainWindow::setEnabledButton()
 	removeItemAct->setDisabled(curItem == nullptr);
 	detachItemAct->setEnabled(isNotChild);
 	joinItemAct->setEnabled(isNotChild && editor->getTrees().size() > 1);
+	newTransfertAct->setEnabled(isNotChild && curItem->node()->getParent());
 	addAndAct->setDisabled(isChild);
 	addInhibitAct->setDisabled(isChild);
 	addOrAct->setDisabled(isChild);

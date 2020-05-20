@@ -73,7 +73,7 @@ QDialog(parent), result(result), date(date)
 	setWindowIcon(QIcon(":icons/manage.png"));
 	resize(640, 480);
 	auto layout = new QVBoxLayout(this);
-	layout->setMargin(0);
+	layout->setMargin(1);
 	WidgetLinker linker(this, layout);
 	auto *tabs = linker.addTabWidget();
 	linker.set(tabs);
@@ -104,6 +104,7 @@ QDialog(parent), result(result), date(date)
 	if (result->getResultMCS())
 	{
 		linker.set(new QVBoxLayout());
+		linker.addLabel("TopEvent propability risk: " + QString::number(result->getResultMCS()->getProbabilities().last()));
 		mcs = linker.addTableWidget();
 		tabs->addTab(mcs, QString("Minimal cuts set"));
 		mcs->setColumnCount(3);
