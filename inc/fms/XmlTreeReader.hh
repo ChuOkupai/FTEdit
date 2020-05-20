@@ -16,11 +16,6 @@ class XmlTreeReader
 		Gate* readGateParams(QDomElement &elem, QList<QDomNodeList>& lelems);
 		void readGateChilds(Gate *g, QDomNodeList list);
 
-		/*
-		QString getName();
-		QString getLabel();
-		*/
-		
 	public:
 		XmlTreeReader(QFile* file, Editor* e);
 		~XmlTreeReader();

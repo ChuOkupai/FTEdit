@@ -2,7 +2,6 @@
 #include <QTextStream>
 #include "FileManagerSystem.hh"
 #include "SaveVisitor.hh"
-#include <QDebug>
 
 FileManagerSystem::FileManagerSystem() {}
 
@@ -31,7 +30,6 @@ Editor* FileManagerSystem::load(QString path)
 	{
 		delete editor;
 		errorMessage = file.errorString();
-		qDebug() << errorMessage;
 		return nullptr;
 	}
 	
@@ -105,10 +103,7 @@ int FileManagerSystem::save(Editor* editor)
 
 		QList<Gate*> lgates = treegatemap.values(&tree);
 		for(Gate* g : lgates)
-		{
 			g->accept(svisitor); //visit
-			qDebug() << g->getProperties().getName();
-		}
 		root.appendChild(treeroot);
 	}
 

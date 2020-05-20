@@ -1,4 +1,3 @@
-#include <QDebug>
 #include "XmlTreeReader.hh"
 
 XmlTreeReader::XmlTreeReader(QFile *f, Editor* e) : e(e) ,nodelistcursor(0) { dom.setContent(f);}
@@ -86,32 +85,13 @@ void XmlTreeReader::readTree(QDomElement &elem)
 		e->getGates() <<  g; // ajout de la porte à l'éditeur
 		elmgate = elmgate.nextSiblingElement("define-gate");
 	}
-/*
-	for(int j=0; j<lgates.size();j++)
-	{
-		QDomNodeList nl = lgates[j];
-		qDebug() << e->getGates()[j]->getProperties().getName()<< "----------";
-		for(int i=0; i<lgates.size(); i++)
-		{
-			qDebug() << nl.at(i).toElement().attribute("name");
-		}
-	}
-*/
 	//visit pour les lier à leur fils
 	
 	for(int i=0; i < lgates.size(); i++)
 	{
 		readGateChilds(e->getGates()[nodelistcursor+i], lgates.at(i));
 	}
-	
 	nodelistcursor += nbgates;
-	/*
-	qDebug() << "name: "<< t.getProperties().getName();
-	qDebug() << "desc: "<< t.getProperties().getDesc();
-	qDebug() << "keep: "<< t.getProperties().getKeep();
-	if(t.getTop())
-		qDebug() << "Top: " << t.getTop()->getProperties().getName();
-	*/
 }
 
 void XmlTreeReader::readDistrib(QDomElement &elem)
@@ -150,14 +130,6 @@ void XmlTreeReader::readDistrib(QDomElement &elem)
 		(dynamic_cast<Weibull*>(d))->setShape(valelem.nextSiblingElement("float").attribute("value").toDouble());
 	
 	e->getDistributions() << d;
-	/*
-	qDebug() << "name: "<< d->getProperties().getName();
-	qDebug() << "desc: "<< d->getProperties().getDesc();
-	qDebug() << "keep: "<< d->getProperties().getKeep();
-	qDebug() << "val: "<< d->getValue();
-	if(Weibull* w = dynamic_cast<Weibull*>(d))
-		qDebug() << "val2: "<< w->getShape();
-	*/
 }
 
 void XmlTreeReader::readGateChilds(Gate *g, QDomNodeList list)
@@ -193,7 +165,6 @@ void XmlTreeReader::readGateChilds(Gate *g, QDomNodeList list)
 					if(gg->getProperties().getName() == name) 
 					{
 						ok = true;
-						//qDebug() << gg->getProperties().getName();
 						gg->attach(g);
 						break;
 					}
@@ -205,7 +176,6 @@ void XmlTreeReader::readGateChilds(Gate *g, QDomNodeList list)
 					//SOLVED: QMap<Transfert*, QString> dans Reader puis recherche parmis les Trees
 					ok = true;
 					Transfert* transfert = new Transfert();
-					//qDebug()<<"Transf";
 					transfert->attach(g);
 					transtreeMap.insert(transfert, name);
 					break;
@@ -299,13 +269,6 @@ void XmlTreeReader::readEvent(QDomElement &elem)
 		if(idst == -1) throw -1;
 		levents.last().setDistribution(ldistribs[idst]);
 	}
-	/*
-	qDebug() << "name: "<< levents.last().getProperties().getName();
-	qDebug() << "desc: "<< levents.last().getProperties().getDesc();
-	qDebug() << "keep: "<< levents.last().getProperties().getKeep();
-	if(levents.last().getDistribution() != nullptr)
-		qDebug() << "distrib: "<< levents.last().getDistribution()->getProperties().getName();
-	*/
 }
 
 int XmlTreeReader::searchDistribution(QList<Distribution*>& distribs, QString name)
