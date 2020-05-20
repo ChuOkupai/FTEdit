@@ -223,7 +223,6 @@ Gate* XmlTreeReader::readGateParams(QDomElement &elem, QList<QDomNodeList>& lele
 {
 	Gate* g = nullptr;
 	bool keep = false, cond = false;
-	unsigned k = 0;
 	QString type;
 	
 	QString name = elem.attribute("name").trimmed();
@@ -253,7 +252,7 @@ Gate* XmlTreeReader::readGateParams(QDomElement &elem, QList<QDomNodeList>& lele
 		}
 		else if(type == "or") g = new Or(name);
 		else if(type == "xor") g = new Xor(name);
-		else if(type == "atleast"){ g = new VotingOR(name); ((VotingOR*)g)->setK(k);}
+		else if(type == "atleast"){ g = new VotingOR(name); ((VotingOR*)g)->setK(subelem.at(i).toElement().attribute("min").toDouble());}
 		
 		if(g) {lelems << subelem.at(i).childNodes(); break;}
 	}
