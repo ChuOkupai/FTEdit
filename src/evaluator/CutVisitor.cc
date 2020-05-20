@@ -13,7 +13,6 @@ void CutVisitor::setIndex(int i, int j){
 
 
 void CutVisitor::visit(And& andgate){/*si c'est une Porte AND*/
-    visitGate(andgate);//Debug
 
     QList<Node*>& childrens=andgate.getChildren();/*recuperer les fils de cette porte*/
     cutset[i][j] = childrens.at(0);
@@ -23,7 +22,6 @@ void CutVisitor::visit(And& andgate){/*si c'est une Porte AND*/
 }
 
 void CutVisitor::visit(Or& orgate){
-    visitGate(orgate);
 
     QList<Node*> *lstcopy; /*un pointer pointe les nouvelle liste vide*/
     QList<Node*>& childrens=orgate.getChildren();
@@ -45,8 +43,6 @@ void CutVisitor::visit(Or& orgate){
 void CutVisitor::visit(Xor& xorgate){
     QList<Node*> lstcopy; // pour mettre la copie de la liste.
 
-    visitGate(xorgate);
-
     cutset[i][j] = xorgate.getChildren().at(0);/*remplacer cette porte de son premier fils*/
     for(int n=0; n<cutset[i].size();n++){/*copier une nouvelle liste avec le meme contenu*/
         lstcopy.append(cutset[i][n]);
@@ -58,14 +54,11 @@ void CutVisitor::visit(Xor& xorgate){
 }
 
 void CutVisitor::visit(VotingOR& vorgate){
-        visitGate(vorgate);
         Gate* vor = vorgate.getSubTree();
         cutset[i][j] = vor;
     }
 
 void CutVisitor::visit(Inhibit& inhibgate){
-    visitGate(inhibgate);
-
     Event* cond = new Event("conditon " + inhibgate.getProperties().getName());
     Constant* proba = new Constant("proba " + inhibgate.getProperties().getName());
     proba->setValue(inhibgate.getCondition()==true);
@@ -86,6 +79,6 @@ void CutVisitor::visit(Transfert& transfertgate)
 
 void CutVisitor::visit(Container& container)
     {
-        qDebug() << "C'est un event de base: " << container.getEvent()->getProperties().getName();
+        container.getEvent()->getProperties().getName();
     }
 
