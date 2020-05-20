@@ -20,5 +20,6 @@ On Linux and MacOS, use the following commands:
 qmake Makefile.pro
 make
 ```
+The program will be located in the release folder.
 
 For the Windows operating system, please use precompiled binaries in the release section.
