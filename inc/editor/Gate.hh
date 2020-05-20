@@ -13,13 +13,12 @@ protected:
 	QList<Node*> children;
 
 public:
-	Gate(QString name);
+	Gate(QString name,bool keep = true);
 	virtual ~Gate();
 
 	Properties&		getProperties();
 	QList<Node*>&	getChildren();
 	void 	balanceNodePos();	
-	QPoint 	top_node_coord(QPoint cpt);
 	Node*	search(QPoint around);
 	void	remove();
 };
@@ -27,8 +26,7 @@ public:
 class And : public Gate
 {
 public:
-	And(QString name);
-	And( And&);
+	And(QString name,bool keep = true);
 	~And();
 
 
@@ -43,8 +41,7 @@ class Inhibit : public Gate
 	bool condition;
 
 	public:
-	Inhibit(QString name);
-	Inhibit( Inhibit&);
+	Inhibit(QString name,bool keep = true);
 	~Inhibit();
 
 	bool getCondition() const;
@@ -60,8 +57,7 @@ class Inhibit : public Gate
 class Or : public Gate
 {
 public:
-	Or(QString name);
-	Or( Or&);
+	Or(QString name,bool keep = true);
 	~Or();
 
 
@@ -71,39 +67,38 @@ public:
 
 };
 
-class VotingOR : public Gate // TODO
+class VotingOR : public Gate
 {
 	protected:
 	int k;
 	Gate* subTree;
 	public:
-	VotingOR(QString name);
-	VotingOR( VotingOR&);
+	VotingOR(QString name,bool keep = true);
 	~VotingOR();
 
 
 	void updateSubTree();
-	Gate* generateComb(int i,int k,int n);
+	Node* generateComb(int i,int k,int n);
 	int getK() const;
 	void setK(int k);
-	Gate* getSubTree() const;
-	bool check(QList<QString>& errors);
-	void accept(VisitorNode& visitor);
-	double accept(EvalVisitor& eval);
+	Gate* getSubTree();
+	bool check(QList<QString>& errors) override;
+	void remove() override;
+	void accept(VisitorNode& visitor) override;
+	double accept(EvalVisitor& eval) override;
 
 };
 
 class Xor : public Gate
 {
 public:
-	Xor(QString name);
-	Xor( Xor&);
+	Xor(QString name,bool keep = true);
 	~Xor();
 
 
 	bool check(QList<QString>& errors);
 
 	void accept(VisitorNode& visitor);
-    double accept(EvalVisitor& eval); /*xor gate undefined in EvalVisitor*/
+    double accept(EvalVisitor& eval);
 
 };

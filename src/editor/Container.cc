@@ -6,11 +6,9 @@
 Container::Container(Event* event) :
 Node::Node(), event(event)
 {
-	event->getProperties().incrementRefCount();
+	if(this->event)
+		this->event->getProperties().incrementRefCount();
 }
-
-Container::Container(const Container& cop) : Node() , event(cop.getEvent())
-{}
 
 Container::~Container()
 {
@@ -48,17 +46,12 @@ bool Container::check(QList<QString> &errors)
 
 Node* Container::search(QPoint around)
 {
-	if (around.x() >= position.x() && around.x() < position.x() + (CARD_X +CARD_GAP_X)//added GAP_X temporarily. BalanceNodePos has problems...again.
+	if (around.x() >= position.x() && around.x() < position.x() + (CARD_X)
 	&& around.y() <= position.y() && around.y() > position.y() - (CARD_Y + CARD_GAP_Y))
 		return (this);
 	Node* n = nullptr;
 	return (n);
 	
-}
-
-QPoint 	Container::top_node_coord(QPoint cpt)
-{
-	return cpt;
 }
 
 void Container::balanceNodePos()

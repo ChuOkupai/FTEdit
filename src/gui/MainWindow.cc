@@ -4,7 +4,7 @@
 #include "ManageDistributionsDialog.hh"
 #include "ManageEventsDialog.hh"
 
-MainWindow::MainWindow() : editor(nullptr), modified(false)
+MainWindow::MainWindow() : editor(nullptr), fileManager(nullptr), modified(false)
 {
 	statusBar();
 	createActions();
@@ -29,13 +29,16 @@ MainWindow::MainWindow() : editor(nullptr), modified(false)
 	explorerLayout->setContentsMargins(0, 0, 0, 0);
 	explorer = new QTreeWidget(horizontalLayout);
 	explorer->headerItem()->setText(0, "Project Explorer");
+	explorer->setContextMenuPolicy(Qt::CustomContextMenu);
 	explorerLayout->addWidget(explorer);
-	connect(explorer, SIGNAL(itemClicked(QTreeWidgetItem *, int)), this, SLOT(explorerItemClicked(QTreeWidgetItem *, int)));
 
 	trees = new QTreeWidgetItem(explorer);
 	trees->setText(0, "Fault tree");
+	trees->setExpanded(true);
+	explorer->addTopLevelItem(trees);
 	results = new QTreeWidgetItem(explorer);
 	results->setText(0, "Result");
+	explorer->addTopLevelItem(results);
 
 	hSplitter->addWidget(horizontalLayout);
 	vSplitter = new QSplitter(hSplitter);
@@ -70,9 +73,14 @@ MainWindow::MainWindow() : editor(nullptr), modified(false)
 	toggleExplorer();
 	errorList->resize(errorList->width(), 1);
 	toggleErrorList();
+	fileManager = new FileManagerSystem;
 	this->newFile();
 
 	connect(scene, SIGNAL(selectionChanged()), this, SLOT(changeItem()));
+	connect(explorer, SIGNAL(itemClicked(QTreeWidgetItem *, int)),
+	this, SLOT(explorerItemClicked(QTreeWidgetItem *, int)));
+	connect(explorer, SIGNAL(customContextMenuRequested(const QPoint &)),
+	this, SLOT(explorerShowContextMenu(const QPoint &)));
 }
 
 void MainWindow::newFile()
@@ -85,46 +93,96 @@ void MainWindow::newFile()
 	editor->detach(); // Creates empty tree
 	setEnabledButton();
 	QTreeWidgetItem *tree1 = new QTreeWidgetItem(trees);
-	tree1->setText(0, editor->getSelection()->getProperties().getName());
+	tree1->setText(0, " * " + editor->getSelection()->getProperties().getName());
+	trees->addChild(tree1);
+	curTreeRow = 0;
+	setWindowTitle("FTEdit - New Project");
 }
 
 void MainWindow::open()
 {
+	bool oldModified = modified;
 	if (!maybeSave())
 		return ;
 	QString path = QFileDialog::getOpenFileName(this, "Open project", QDir::homePath(),
 	"Open-PSA project (*.opsa);;All Files (*)");
 	if (path.isEmpty())
 		return ;
-	// chargement du projet
-	reset(); // a enlever si implémenté
+	auto newEditor = fileManager->load(path);
+	if (newEditor)
+	{
+		reset();
+		setWindowTitle("FTEdit - " + path.mid(path.lastIndexOf("/") + 1));
+		editor = newEditor;
+		editor->setAutoRefresh(true);
+		editor->refresh();
+		auto list = editor->getTrees();
+		for (int i = 0; i < list.size(); ++i)
+		{
+			auto t = new QTreeWidgetItem(trees);
+			t->setText(0, (i ? list[i].getProperties().getName() : " * " + list[i].getProperties().getName()));
+			trees->addChild(t);
+		}
+		editor->setSelection(&list.first());
+		updateScene(list.first().getTop());
+		return ;
+	}
+	QMessageBox msg(this);
+	msg.setIcon(QMessageBox::Critical);
+	msg.setWindowTitle("Error");
+	msg.setText(fileManager->getErrorMessage());
+	msg.exec();
+	modified = oldModified;
 }
 
 void MainWindow::save()
 {
-	// save file
-	modified = false; // si pas d'erreurs
+	if (fileManager->getPath().isEmpty())
+	{
+		saveAs();
+		return ;
+	}
+	fileManager->save(editor);
+	if (fileManager->getErrorMessage().isEmpty())
+	{
+		modified = false; // si pas d'erreurs
+		saveAct->setDisabled(true);
+		return ;
+	}
+	QMessageBox msg(this);
+	msg.setIcon(QMessageBox::Critical);
+	msg.setWindowTitle("Error");
+	msg.setText(fileManager->getErrorMessage());
 }
 
 void MainWindow::saveAs()
 {
-	QString path = QFileDialog::getSaveFileName(this, "Save project as", QDir::homePath(),
-	"Open-PSA project (*.opsa);;All Files (*)");
-	if (path.isEmpty())
+	QString path(fileManager->getPath().isEmpty() ?
+	QDir::homePath() + "/project.opsa" : fileManager->getPath());
+	path = QFileDialog::getSaveFileName(this, "Save project as", path, "Open-PSA project (*.opsa)");
+	if (path.isEmpty()) return ;
+	fileManager->saveAs(path, editor);
+	if (fileManager->getErrorMessage().isEmpty())
+	{
+		modified = false; // si pas d'erreurs
+		setWindowTitle("FTEdit - " + path.mid(path.lastIndexOf("/") + 1));
 		return ;
-	// save file
-	modified = false; // si pas d'erreurs
+	}
+	QMessageBox msg(this);
+	msg.setIcon(QMessageBox::Critical);
+	msg.setWindowTitle("Error");
+	msg.setText(fileManager->getErrorMessage());
+	msg.exec();
+	fileManager->setPath("");
 }
 
 void MainWindow::closeEvent(QCloseEvent* e)
 {
-	if (!maybeSave())
+	if (!maybeSave() || modified)
 	{
 		e->ignore();
 		return ;
 	}
-	if (modified)
-		save(); // appeler saveAs tant que path vide
 	QMainWindow::closeEvent(e);
 }
 
@@ -144,8 +202,8 @@ void MainWindow::copy()
 
 void MainWindow::paste()
 {
-	editor->paste((Gate*)curItem->node());
-	updateScene(curItem->node());
+	editor->paste(curItem ? (Gate*)curItem->node() : nullptr);
+	updateScene(curItem ? curItem->node() : editor->getSelection()->getTop());
 	modified = true;
 }
 
@@ -257,7 +315,8 @@ void MainWindow::showEvents()
 
 void MainWindow::evaluate()
 {
-	ChooseResultDialog(this, (Gate*)curItem->node(), resultsHistory).exec();
+	if (ChooseResultDialog(this, (Gate*)curItem->node(), resultsHistory).exec() == QDialog::Rejected)
+		return ; // cancel
 	Result *result = resultsHistory.last();
 	if (result->getErrors().size()) // invalid tree
 	{
@@ -285,8 +344,8 @@ void MainWindow::evaluate()
 		return ;
 	}
 	auto *resultItem = new QTreeWidgetItem(results);
+	results->addChild(resultItem);
 	resultItem->setText(0, QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss"));
-	PrintResult(this, result).exec();
 }
 
 void MainWindow::about()
@@ -348,14 +407,34 @@ void MainWindow::removeItem()
 void MainWindow::detach()
 {
 	editor->detach((Gate*)curItem->node());
-	updateScene(curItem->node());
+	auto t = new QTreeWidgetItem(trees);
+	t->setText(0, editor->getSelection()->getProperties().getName());
+	trees->addChild(t);
+	explorerItemClicked(t, 0);
 }
 
 void MainWindow::join()
 {
 	int index;
-	ChooseTreeDialog(this, *editor, index).exec();
-	editor->join(&editor->getTrees()[index], (Gate*)curItem->node());
+	if (ChooseTreeDialog(this, *editor, index).exec() == QDialog::Rejected)
+		return ; // cancel
+	Tree *tree = &editor->getTrees()[index];
+	if (tree->getProperties().getRefCount())
+	{
+		QMessageBox msg(this);
+		msg.setIcon(QMessageBox::Critical);
+		msg.setWindowTitle("Error");
+		msg.setText("Could not merge a fault tree already linked to a transfer in gate."
+		"\n\nPlease remove the link in the transfer in gate first before merging the tree");
+		msg.exec();
+		return ;
+	}
+	if (index < curTreeRow)
+		--curTreeRow;
+	editor->join(tree, (Gate*)curItem->node());
+	auto child = trees->child(index);
+	trees->removeChild(child);
+	delete child;
 	updateScene(curItem->node());
 }
 
@@ -373,27 +452,80 @@ void MainWindow::changeItem()
 
 void MainWindow::explorerItemClicked(QTreeWidgetItem *item, int column)
 {
-	qDebug() << "clicked";
-	(void)item;
 	(void)column;
-	//	verif si parent appartient aux trees
-    //		=> changer l'arbre séléctionné dans l'éditeur
-    //updateScene(editor->getSelection()->getTop()); // pour mettre à jour l'affichage
-    //verif si parent appartient à l'attribut results
-    //		=> Afficher les résultats (utiliser l'attribut resultsHistory dans la classe)
-    //Result *result;
-    Gate *top = editor->getSelection()->getTop();
-    QList<Tree> tr = editor->getTrees();
-    for(int i = 0;i<tr.size(); ++i)
-    {
-        if(top == tr[i].getTop()){
-            updateScene(editor->getSelection()->getTop());
-        }else{
-            //PrintResult(this,result).exec();
-        }
-    }
+	if (item->parent())
+	{
+		if (explorer->indexOfTopLevelItem(item->parent())) // == 1 (Results)
+			PrintResult(this, resultsHistory[results->indexOfChild(item)], item->text(0)).exec();
+		else // Fault tree
+		{
+			auto child = trees->child(curTreeRow);
+			if (child == item) return ;
+			child->setText(0, child->text(0).mid(3));
+			curTreeRow = trees->indexOfChild(item);
+			item->setText(0, " * " + item->text(0));
+			editor->setSelection(&editor->getTrees()[curTreeRow]);
+			updateScene(editor->getSelection()->getTop());
+		}
+	}
+}
 
+void MainWindow::explorerShowContextMenu(const QPoint &pos)
+{
+	auto item = explorer->itemAt(pos);
+	if (!item || !item->parent()) return ;
+	QMenu menu;
+	if (explorer->topLevelItem(0) == item->parent())
+	{
+		menu.addAction(editTreePropertiesAct);
+		menu.addAction(removeTreeAct);
+		selectedRow = trees->indexOfChild(item);
+		removeTreeAct->setDisabled(selectedRow == curTreeRow ||
+		editor->getTrees()[selectedRow].getProperties().getRefCount());
+	}
+	else
+	{
+		selectedRow = results->indexOfChild(item);
+		menu.addAction(removeResultAct);
+	}
+	menu.exec(QCursor::pos());
+}
 
+void MainWindow::editTreeProperties()
+{
+	auto tree = &editor->getTrees()[selectedRow];
+	PropertiesDialog(this, *editor, &tree->getProperties()).exec();
+	auto treeItem = trees->child(selectedRow);
+	if (curTreeRow == selectedRow)
+		treeItem->setText(0, " * " + tree->getProperties().getName());
+	else
+		treeItem->setText(0, tree->getProperties().getName());
+}
+
+void MainWindow::removeTree()
+{
+	auto tree = &editor->getTrees()[selectedRow];
+	if (tree->getTop())
+	{
+		tree->getTop()->remove();
+		tree->setTop(nullptr);
+	}
+	editor->getTrees().removeAt(selectedRow);
+	editor->refresh();
+	if (selectedRow < curTreeRow)
+		--curTreeRow;
+	auto child = trees->child(selectedRow);
+	trees->removeChild(child);
+	delete child;
+}
+
+void MainWindow::removeResult()
+{
+	delete resultsHistory[selectedRow];
+	resultsHistory.removeAt(selectedRow);
+	auto child = results->child(selectedRow);
+	results->removeChild(child);
+	delete child;
 }
 
 void MainWindow::createActions()
@@ -592,6 +724,21 @@ void MainWindow::createActions()
 	joinItemAct->setStatusTip("Merge the content of a fault tree as a child of this node");
 	joinItemAct->setIcon(QIcon(":icons/add.png"));
 	connect(joinItemAct, &QAction::triggered, this, &MainWindow::join);
+
+	editTreePropertiesAct = new QAction("Properties", this);
+	editTreePropertiesAct->setStatusTip("Edit the properties of the fault tree");
+	editTreePropertiesAct->setIcon(QIcon(":icons/edit.png"));
+	connect(editTreePropertiesAct, &QAction::triggered, this, &MainWindow::editTreeProperties);
+
+	removeTreeAct = new QAction("Delete", this);
+	removeTreeAct->setStatusTip("Delete the fault tree and its content");
+	removeTreeAct->setIcon(QIcon(":icons/remove.png"));
+	connect(removeTreeAct, &QAction::triggered, this, &MainWindow::removeTree);
+
+	removeResultAct = new QAction("Delete", this);
+	removeResultAct->setStatusTip("Delete fault tree analysis results");
+	removeResultAct->setIcon(QIcon(":icons/remove.png"));
+	connect(removeResultAct, &QAction::triggered, this, &MainWindow::removeResult);
 }
 
 void MainWindow::createMenus()
@@ -710,7 +857,11 @@ bool MainWindow::maybeSave()
 	if (ret == QMessageBox::Cancel)
 		return (false);
 	else if (ret == QMessageBox::Save)
+	{
 		save();
+		return (!fileManager->getPath().isEmpty() && fileManager->getErrorMessage().isEmpty());
+	}
+	modified = false;
 	return (true);
 }
 
@@ -724,6 +875,9 @@ void MainWindow::reset()
 	qDeleteAll(resultsHistory); // Discard all results
 	qDeleteAll(trees->takeChildren());
 	qDeleteAll(results->takeChildren());
+	errorList->clear();
+	fileManager->setPath("");
+	curTreeRow = 0;
 }
 
 void MainWindow::resizeSplitter(QSplitter *splitter, int widget1Size, int widget2Size)
@@ -747,10 +901,10 @@ void MainWindow::setEnabledButton()
 		pos = l.indexOf(curItem->node());
 		size = l.size() - 1;
 	}
-	saveAct->setEnabled(modified);
+	saveAct->setEnabled(!fileManager->getPath().isEmpty() && modified);
 	cutAct->setDisabled(curItem == nullptr);
 	copyAct->setDisabled(curItem == nullptr);
-	pasteAct->setEnabled(editor->getClipboard() && isNotChild);
+	pasteAct->setEnabled(editor->getClipboard() && (isNotChild || dynamic_cast<Gate*>(editor->getClipboard())));
 	moveItemFirstAct->setEnabled(pos > 0);
 	moveItemLeftAct->setEnabled(pos > 0);
 	moveItemRightAct->setEnabled(pos < size);
@@ -785,7 +939,6 @@ void MainWindow::addGate(Gate *g)
 
 void MainWindow::updateScene(Node *selection)
 {
-	scene->setSceneRect(0, 0, 0, 0);
 	scene->clear();
 	Node *top = editor->getSelection()->getTop();
 	if (top)
@@ -799,6 +952,7 @@ void MainWindow::updateScene(Node *selection)
 		curItem = nullptr;
 		setEnabledButton();
 	}
+	scene->setSceneRect(scene->itemsBoundingRect());
 	view->update();
 }
 

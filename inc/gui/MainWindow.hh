@@ -64,14 +64,22 @@ private slots:
 
 	// Change item selection
 	void changeItem();
-	// Check clicked item in explorer
+	// Check new selected item
 	void explorerItemClicked(QTreeWidgetItem *item, int column);
+	// Show context menu
+	void explorerShowContextMenu(const QPoint &pos);
+	void editTreeProperties();
+	void removeTree();
+	void removeResult();
 
 private:
-	Editor			*editor;
-	bool			modified;
-	NodeItem		*curItem;
-	QList<Result*>	resultsHistory;
+	Editor				*editor;
+	FileManagerSystem	*fileManager;
+	bool				modified;
+	NodeItem			*curItem;
+	QList<Result*>		resultsHistory;
+	int					curTreeRow;
+	int					selectedRow;
 
 	QAction *newAct;
 	QAction *openAct;
@@ -108,6 +116,10 @@ private:
 	QAction *evaluateAct;
 	QAction *aboutAct;
 	QAction *aboutQtAct;
+
+	QAction *editTreePropertiesAct;
+	QAction *removeTreeAct;
+	QAction *removeResultAct;
 
 	QMenu			*childItemsMenu; // for childs (Container + Transfert)
 	QMenu			*itemsMenu; // for gates

@@ -39,7 +39,6 @@ public:
 	virtual bool	check(QList<QString>& output) = 0;
 	virtual void	remove() = 0;
 	virtual void 	balanceNodePos() = 0;
-	virtual QPoint 	top_node_coord(QPoint cpt) = 0;
 	virtual void 	accept(VisitorNode& visitor) = 0;
 	virtual double 	accept(EvalVisitor& eval) = 0;
 };

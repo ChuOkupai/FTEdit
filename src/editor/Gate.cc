@@ -1,7 +1,6 @@
 #include "Gate.hh"
-#include <cmath>
 
-Gate::Gate(QString name) :Node(),prop(name, false)
+Gate::Gate(QString name,bool keep) :Node(),prop(name, keep)
 {}
 
 Gate::~Gate()
@@ -19,7 +18,7 @@ QList<Node*>& Gate::getChildren()
 
 Node* Gate::search(QPoint around)
 { 
-	if (around.x() >= position.x() && around.x() < position.x() + (CARD_X /*+ CARD_GAP_X*/) 
+	if (around.x() >= position.x() && around.x() < position.x() + (CARD_X) 
 	&& around.y() <= position.y() && around.y() > position.y() - (CARD_Y + CARD_GAP_Y))
 		return (this);
 	Node *n = nullptr;
@@ -28,125 +27,56 @@ Node* Gate::search(QPoint around)
 	return (n);
 }
 
-QPoint Gate::top_node_coord(QPoint cpt)
+static void first_pass(Node *n, int i, QVector<int> &maxX)
 {
-	QPoint max;
-	QPoint tmp;
-	if(getChildren().size()>0)
+	QPoint p;
+	if (n->getParent())
+		p.setY(n->getParent()->getPosition().y() + CARD_Y + CARD_GAP_Y);
+	Gate *g = dynamic_cast<Gate*>(n);
+	if (g && g->getChildren().size())
 	{
-		if(!parent || parent->getChildren().indexOf(this) == 0)
-		{
-			for(int i = 0; i<(getChildren().size()/2);i++)
-			{	
-				cpt.setX(cpt.x()/*+CARD_GAP_X*/+CARD_X);
-			}
-		}
-			//cpt.setY(cpt.y()+CARD_GAP_Y+CARD_Y);
-		
-		max = cpt;
-		for(int i = 0; i<(getChildren().size());i++)
-		{
-			tmp = this->getChildren()[i]->top_node_coord(cpt); 
-			if(tmp.x() > max.x())
-			{
-				max.setX(tmp.x());
-			}
-			//if(tmp.y() > max.y())
-			//{
-			//	max.setY(tmp.y());
-			//}
-		}
-		return max;
+		if (n->getParent() && maxX[i - 1] > maxX[i])
+			maxX[i] = maxX[i - 1];
+		p.setX(maxX[i]);
+		n->setPosition(p);
+		int x = 0;
+		for (int j = 0; j < g->getChildren().size(); ++j, x += CARD_X)
+			first_pass(g->getChildren()[j], i + 1, maxX);
+		x = g->getChildren().last()->getPosition().x() - g->getChildren().first()->getPosition().x();
+		maxX[i] = g->getChildren().first()->getPosition().x() + x / 2;
+		p.setX(maxX[i]);
+		n->setPosition(p);
+		maxX[i] += CARD_X;
+		return ;
 	}
-	else
-	{
-		return cpt;
-	}
+	if (n->getParent() && maxX[i - 1] > maxX[i])
+		maxX[i] = maxX[i - 1];
+	p.setX(maxX[i]);
+	n->setPosition(p);
+	maxX[i] += CARD_X;
 }
 
-
-void Gate::balanceNodePos()//works sorta
+void Gate::balanceNodePos()
 {
-	int size = getChildren().size();
-	int halfsize = size/2;
-	int odd = size%2;
-	int tmp_2 = 0;
-	int t = 0;
-	QPoint tmp;
-	QPoint top_pos;
-	top_pos.setY(0/*CARD_Y + CARD_GAP_Y*/);
-
-	if(!parent)
-	{
-		this->setPosition(this->top_node_coord(top_pos));
-	}
-	
-	for(int i =0; i<size ; i++)
-	{
-		if(odd)
-		{	
-			tmp.ry() = this->getPosition().y() +/*-*/ (CARD_Y +CARD_GAP_Y);
-
-			t = i-halfsize;
-			tmp.rx() = this->getPosition().x() + ((t)*CARD_X)/*+ ((t)*CARD_GAP_X)*/;
-
-			children.at(i)->setPosition(tmp);
-			children.at(i)->balanceNodePos();
-		}
-		else
-		{	
-			tmp.ry() = this->getPosition().y() +/*-*/ (CARD_Y +CARD_GAP_Y);
-			t = abs(halfsize-i);
-				
-			if(i<halfsize)
-			{
-				tmp.rx() = this->getPosition().x()- /*(*/(t*CARD_X) /*+ ((t-1)*CARD_GAP_X))*/;
-			}
-			else
-			{
-				t++;
-				tmp.rx() = this->getPosition().x()+(t*CARD_X) /*+ ((t-1)*CARD_GAP_X)*/;
-			}
-
-			children.at(i)->setPosition(tmp);
-			children.at(i)->balanceNodePos();	
-		}
-		if(parent)
-		{
-			tmp_2 = parent->getChildren().indexOf(this);
-			for(int k =0 ; k<tmp_2;k++)
-			{
-				if(parent->getChildren()[k]->search(tmp))
-				{	
-					if(tmp_2 < ((parent->getChildren().size())/2))
-					{
-						
-						for(int j = 0;j< tmp_2;j++)
-						{
-							tmp.setX(parent->getChildren().at(j)->getPosition().x() - CARD_X);
-							tmp.setY(parent->getChildren().at(j)->getPosition().y());
-							parent->getChildren().at(j)->setPosition(tmp);
-							parent->getChildren().at(j)->balanceNodePos();
-						}
-					}
-					else
-					{
-						tmp.setX(this->getPosition().x() + CARD_X);
-						tmp.setY(this->getPosition().y());
-						this->setPosition(tmp);
-						this->balanceNodePos();				
-					}			
-				}	
-			}
-		}
-	}
+	QVector<int> maxX(64);
+	first_pass(this, 0, maxX);
 }
+
 
 void Gate::remove()
 {
-	if(parent)
-		this->detach();
-	while (children.size())
-		children[0]->remove();
-	getProperties().setKeep(false);
+	if(getProperties().getKeep()) // Gate from Editor
+	{
+		if(parent)
+			this->detach();
+		while (children.size())
+			children[0]->remove();
+		getProperties().setKeep(false);
+		return ;
+	}
+	// Else Clipboard / VotingOR subtree
+	for (int i = 0; i < children.size(); ++i)
+		if (children[i]->getParent() == this)
+			children[i]->remove();
+	delete this;
 }

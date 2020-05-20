@@ -81,6 +81,8 @@ PropertiesDialog(parent, editor, &gate.getProperties()), gate(gate)
 	k = linker.addSpinBox();
 	k->setRange(0, gate.getChildren().size()); // k range between 0 and n children
 	k->setValue(gate.getK());
+	if (gate.getK() > gate.getChildren().size())
+		gate.setK(gate.getChildren().size());
 	linker.addOKButton();
 
 	connect(k, SIGNAL(valueChanged(int)), this, SLOT(updateK(int)));
@@ -202,7 +204,8 @@ void EditContainerDialog::editDistribution()
 
 void EditContainerDialog::addDistribution()
 {
-	ChooseDistributionDialog(this, editor).exec();
+	if (ChooseDistributionDialog(this, editor).exec() == QDialog::Rejected)
+		return ; // cancel
 	Distribution *dist = editor.getDistributions().last();
 	distributions->addItem(dist->getProperties().getName());
 	distributions->setCurrentIndex(distributions->count() - 1);

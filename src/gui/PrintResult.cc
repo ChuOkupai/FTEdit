@@ -1,9 +1,21 @@
+#include "FTEdit_FMS.hh"
 #include "PrintResult.hh"
 #include "WidgetLinker.hh"
 
 void PrintResult::exportResult()
 {
-
+	QString path(QDir::homePath() + "/fault-tree-analysis-" + date + ".csv");
+	path = QFileDialog::getSaveFileName(this, "Export analysis", path, "Comma-separated values (*.csv)");
+	if (path.isEmpty()) return ;
+	FileManagerSystem fms;
+	fms.exportAs(path, *result);
+	if (fms.getErrorMessage().isEmpty())
+		return ;
+	QMessageBox msg(this);
+	msg.setIcon(QMessageBox::Critical);
+	msg.setWindowTitle("Error");
+	msg.setText(fms.getErrorMessage());
+	msg.exec();
 }
 
 void PrintResult::initBoolean(ResultBoolean *res)
@@ -53,11 +65,11 @@ void PrintResult::initMCS(ResultMCS *res)
 	}
 }
 
-PrintResult::PrintResult(QWidget *parent, Result *result) :
-QDialog(parent), result(result)
+PrintResult::PrintResult(QWidget *parent, Result *result, QString date) :
+QDialog(parent), result(result), date(date)
 {
 	QStringList header;
-	setWindowTitle("Events list");
+	setWindowTitle("Analysis results - " + date);
 	setWindowIcon(QIcon(":icons/manage.png"));
 	resize(640, 480);
 	auto layout = new QVBoxLayout(this);

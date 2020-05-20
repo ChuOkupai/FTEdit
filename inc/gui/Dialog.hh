@@ -11,7 +11,7 @@ class ChooseDistributionDialog : public QDialog
 
 private slots:
 	// Add a new distribution to the Editor's distributions list.
-	void closeEvent(QCloseEvent *event);
+	void confirm();
 
 private:
 	Editor &editor;
@@ -71,7 +71,7 @@ private:
 	DoubleSpinBox *step;
 
 private slots:
-	void closeEvent(QCloseEvent *event);
+	void confirm();
 
 	void checkChanged(int state);
 

@@ -11,11 +11,11 @@ protected:
 
 public:
 	Properties(QString name, bool keep = false);
-	Properties(const Properties&);
 	~Properties();
 
 	QString	getName() const;
 	QString	getDesc() const;
+	int		getRefCount() const;
 	bool	getKeep() const;
 
 	void	setName(QString name);

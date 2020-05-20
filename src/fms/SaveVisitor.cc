@@ -11,6 +11,8 @@ SaveVisitor::SaveVisitor() {}
 
 SaveVisitor::~SaveVisitor() {}
 
+void SaveVisitor::setTreeElem(QDomElement elem) { treeElem = elem; }
+
 QDomDocument& SaveVisitor::getDomFile() { return dom; }
 
 void SaveVisitor::writeProperties(QDomElement &elem, QDomElement &propelem, Properties& prop)
@@ -55,8 +57,10 @@ void SaveVisitor::writeChildren(QDomElement &node, Gate& gate)
 		}
 		else if(instanceof<Transfert>(c))
 		{
-			tmp = dom.createElement("transfert");
-			tmp.setAttribute("name", (dynamic_cast<Transfert*>(c))->getLink()->getTop()->getProperties().getName());
+			tmp = dom.createElement("gate");
+			Transfert* transfert = dynamic_cast<Transfert*>(c);
+			if(transfert != nullptr && transfert->getLink() != nullptr)
+				tmp.setAttribute("name", transfert->getLink()->getProperties().getName());
 		}
 		node.appendChild(tmp);
 	}
@@ -72,7 +76,7 @@ void SaveVisitor::writeGate(Gate& gate, QString type)
 	QDomElement node = dom.createElement(type);
 	rootgate.appendChild(node);
 	writeChildren(node, gate);
-	dom.documentElement().appendChild(rootgate);
+	treeElem.appendChild(rootgate);
 }
 
 void SaveVisitor::visit( And &andgate ) { writeGate(andgate, "and"); }
@@ -92,7 +96,7 @@ void SaveVisitor::visit( VotingOR &vorgate )
 	node.setAttribute("min", vorgate.getK());
 	rootgate.appendChild(node);
 	writeChildren(node, vorgate);
-	dom.documentElement().appendChild(rootgate);
+	treeElem.appendChild(rootgate);
 }
 
 void SaveVisitor::visit( Inhibit &inhibgate )
@@ -109,7 +113,7 @@ void SaveVisitor::visit( Inhibit &inhibgate )
 	node.appendChild(tmp);
 	writeChildren(node, inhibgate);
 	rootgate.appendChild(node);
-	dom.documentElement().appendChild(rootgate);
+	treeElem.appendChild(rootgate);
 }
 
 void SaveVisitor::visit( Constant &constdistrib )

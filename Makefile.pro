@@ -3,16 +3,25 @@ CONFIG += object_parallel_to_source
 QMAKE_CXXFLAGS += -Wall -Wextra -Werror
 TARGET = FTEdit
 QT += widgets xml
-win32:RC_ICONS += ./src/assets/icons/ftedit.ico
 
-DESTDIR = bin
-MOC_DIR = src/.moc
-OBJECTS_DIR = .obj
+win32 {
+	CONFIG += windeployqt
+	RC_ICONS += ./src/assets/icons/ftedit.ico
+}
+
+macx {
+	CONFIG += app_bundle
+	ICON = ./src/assets/icons/ftedit.icns
+}
+
+DESTDIR = release
+MOC_DIR = .build/.moc
+OBJECTS_DIR = .build/.obj
 
 DEFINES += QT_DEPRECATED_WARNINGS
 RESOURCES += src/assets/icons.qrc \
 src/assets/objects.qrc
-RCC_DIR = src/.qrc
+RCC_DIR = .build/.qrc
 
 INCLUDEPATH += \
 $$PWD/inc \
@@ -35,7 +44,8 @@ inc/editor/Transfert.hh \
 inc/editor/Tree.hh \
 inc/editor/VisitorNode.hh \
 inc/editor/VisitorDistribution.hh \
-inc/editor/CopyVisitor.hh \
+inc/editor/ClipVisitor.hh \
+inc/editor/PasteVisitor.hh \
 inc/evaluator/FTEdit_Evaluator.hh \
 inc/evaluator/EvalVisitor.hh\
 inc/evaluator/CutVisitor.hh\
@@ -76,7 +86,8 @@ src/editor/Tree.cc \
 src/editor/VotingOR.cc \
 src/editor/Weibull.cc \
 src/editor/Xor.cc \
-src/editor/CopyVisitor.cc \
+src/editor/ClipVisitor.cc \
+src/editor/PasteVisitor.cc \
 src/evaluator/EvalVisitor.cc \
 src/evaluator/CutVisitor.cc \
 src/evaluator/Evaluator.cc \

@@ -1,5 +1,10 @@
 #include "CutVisitor.hh"
 
+static void visitGate(Gate &gate)
+{
+    qDebug() << gate.getProperties().getName() << "Nombre d'enfants: "<<gate.getChildren().size();
+}
+
 CutVisitor::CutVisitor(QList<QList<Node*>>& cutset, QList<Container*>& containers) :
     cutset(cutset), containers(containers){}//：后括号初始化赋值，ex:a(10),对于对象、引用、常量的赋值必须在引入函数前就进行初始化，之后不能再改变
 
