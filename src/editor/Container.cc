@@ -10,9 +10,6 @@ Node::Node(), event(event)
 		this->event->getProperties().incrementRefCount();
 }
 
-Container::Container(const Container& cop) : Node() , event(cop.getEvent())
-{}
-
 Container::~Container()
 {
 	if(this->event)

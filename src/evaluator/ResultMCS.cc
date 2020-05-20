@@ -24,12 +24,6 @@ ResultMCS::ResultMCS(Gate* top,double missionTime,double step) : Evaluator(top,m
         }
     }
 
-    for(int i=0; i<mcsNames.size(); i++){//montrer les resultat
-        for(int j=0; j<mcsNames[i].size();j++){
-            qDebug()<<"("<<i<<", "<<j<<"): "<<mcsNames[i][j];
-        }
-    }
-
 
     /*quantitative*//*probabilities[0] = proba de top*/
 
@@ -101,17 +95,6 @@ ResultMCS::ResultMCS(Gate* top,double missionTime,double step) : Evaluator(top,m
 
     }
     probabilities << p;/*probabilities.last() = proba de top*/
-
-
-    /*tester*/
-    QList<double> probas = probabilities;
-
-    for(int i=0; i < probas.size();i++){
-        qDebug()<< probas[i];
-    }
-
-
-
 
 
 

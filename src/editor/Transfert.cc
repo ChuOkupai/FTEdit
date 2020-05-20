@@ -5,11 +5,6 @@
 Transfert::Transfert() : Node() , link(nullptr)
 {}
 
-Transfert::Transfert(const Transfert& cop) : Node()
-{
-	setLink(cop.getLink());
-}
-
 Transfert::~Transfert()
 {}
 

@@ -11,7 +11,6 @@ class Transfert : public Node
     Tree* link;
     public:
     Transfert();
-    Transfert(const Transfert&);
     ~Transfert();
 
     Tree* getLink() const;

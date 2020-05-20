@@ -11,7 +11,6 @@ private:
 
 public:
 	Container(Event *event);
-	Container(const Container&);
 
 	~Container();
 	

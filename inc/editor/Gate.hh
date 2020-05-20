@@ -27,7 +27,6 @@ class And : public Gate
 {
 public:
 	And(QString name,bool keep = true);
-	And( And&);
 	~And();
 
 
@@ -43,7 +42,6 @@ class Inhibit : public Gate
 
 	public:
 	Inhibit(QString name,bool keep = true);
-	Inhibit( Inhibit&);
 	~Inhibit();
 
 	bool getCondition() const;
@@ -60,7 +58,6 @@ class Or : public Gate
 {
 public:
 	Or(QString name,bool keep = true);
-	Or( Or&);
 	~Or();
 
 
@@ -77,7 +74,6 @@ class VotingOR : public Gate
 	Gate* subTree;
 	public:
 	VotingOR(QString name,bool keep = true);
-	VotingOR( VotingOR&);
 	~VotingOR();
 
 
@@ -97,7 +93,6 @@ class Xor : public Gate
 {
 public:
 	Xor(QString name,bool keep = true);
-	Xor( Xor&);
 	~Xor();
 
 
