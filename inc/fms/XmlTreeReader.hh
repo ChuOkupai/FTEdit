@@ -8,7 +8,7 @@
 class XmlTreeReader
 {
 	private:
-		QDomDocument dom;
+		QDomDocument &dom;
 		Editor* e;
 		unsigned nodelistcursor;
 		QMap<Transfert*, QString> transtreeMap;
@@ -17,7 +17,7 @@ class XmlTreeReader
 		void readGateChilds(Gate *g, QDomNodeList list);
 
 	public:
-		XmlTreeReader(QFile* file, Editor* e);
+		XmlTreeReader(Editor* e, QDomDocument &d);
 		~XmlTreeReader();
 		void read();
 		void readTree(QDomElement &elem);

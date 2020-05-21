@@ -1,6 +1,6 @@
 #include "XmlTreeReader.hh"
 
-XmlTreeReader::XmlTreeReader(QFile *f, Editor* e) : e(e) ,nodelistcursor(0) { dom.setContent(f);}
+XmlTreeReader::XmlTreeReader(Editor* e, QDomDocument &d) :  dom(d), e(e) , nodelistcursor(0) {}
 
 XmlTreeReader::~XmlTreeReader() {}
 

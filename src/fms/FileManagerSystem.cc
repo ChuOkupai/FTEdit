@@ -22,18 +22,28 @@ Editor* FileManagerSystem::load(QString path)
 		return nullptr;
 	}
 	
-	Editor* editor = new Editor(false);
+	QDomDocument dom;
+	QString tmperr;
+	bool parsed = dom.setContent(&file, &tmperr);
+	file.close();
 	
-	XmlTreeReader xtr(&file, editor);
-	try { xtr.read();}
+	if(!parsed)
+	{
+		errorMessage = tmperr;
+		return nullptr;
+	}
+
+	Editor* editor = new Editor(false);
+	XmlTreeReader xtr(editor, dom);
+	
+	try { xtr.read(); }
 	catch(int exp)
 	{
 		delete editor;
-		errorMessage = file.errorString();
+		errorMessage = "error occurred while parsing element";
 		return nullptr;
 	}
-	
-	file.close();
+
 	editor->setAutoRefresh(true);
 	editor->refresh();
 	return editor;
