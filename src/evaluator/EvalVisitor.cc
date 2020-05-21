@@ -25,7 +25,7 @@ double EvalVisitor::visit(Or&  orVisitor){
 	{
 		result += orVisitor.getChildren().at(i)->accept(*this);
 	}
-	return result;
+	return qBound(0.0, result, 1.0);
 }
 
 double EvalVisitor::visit(Xor&  xorVisitor){

@@ -44,11 +44,11 @@ void PrintResult::initMCS(ResultMCS *res)
 	QList<double> l = res->getProbabilities();
 	QList<QList<QString>> l2 = res->getMCS();
 	QString set;
-    mcs->setRowCount(l2.size());
+	mcs->setRowCount(l2.size());
 	for (int i = 0; i < l2.size(); ++i)
 	{
 		// Probability
-		auto item = new QTableWidgetItem(QString::number(l[i]));
+		auto *item = new QTableWidgetItem(QString::number(l[i]));
 		mcs->setItem(i, 0, item);
 
 		// Quantity
@@ -86,11 +86,16 @@ QDialog(parent), result(result), date(date)
 	connect(exportAct, &QAction::triggered, this, &PrintResult::exportResult);
 	m->addAction(exportAct);
 	layout->setMenuBar(menu);
+	QVBoxLayout *l;
+	QWidget *w;
 	if (result->getResultBoolean())
 	{
-		linker.set(new QVBoxLayout());
-		prb = linker.addTableWidget();
-		tabs->addTab(prb, QString("Probabilities"));
+		l = new QVBoxLayout;
+		l->setMargin(1);
+		w = new QWidget;
+		w->setLayout(l);
+
+		prb = new QTableWidget(this);
 		prb->setColumnCount(2);
 		header << "Time" << "Failure rate of " + result->getResultBoolean()->getTopEventName();
 		prb->setHorizontalHeaderLabels(header);
@@ -100,14 +105,22 @@ QDialog(parent), result(result), date(date)
 		prb->verticalHeader()->setVisible(false);
 		prb->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 		prb->horizontalHeader()->setStretchLastSection(true);
+		l->addWidget(prb);
+		tabs->addTab(w, QString("Probabilities"));
 		initBoolean(result->getResultBoolean());
 	}
 	if (result->getResultMCS())
 	{
-		linker.set(new QVBoxLayout());
-		linker.addLabel("TopEvent propability risk: " + QString::number(result->getResultMCS()->getProbabilities().last()));
-		mcs = linker.addTableWidget();
-		tabs->addTab(mcs, QString("Minimal cuts set"));
+		l = new QVBoxLayout;
+		l->setMargin(1);
+		w = new QWidget;
+		w->setLayout(l);
+
+		auto label = new QLabel;
+		label->setText("TopEvent propability risk: " + QString::number(result->getResultMCS()->getProbabilities().last()));
+		l->addWidget(label);
+
+		mcs = new QTableWidget;
 		mcs->setColumnCount(3);
 		header << "Probability" << "Quantity" << "Events";
 		mcs->setHorizontalHeaderLabels(header);
@@ -115,6 +128,8 @@ QDialog(parent), result(result), date(date)
 		mcs->setEditTriggers(QAbstractItemView::NoEditTriggers);
 		mcs->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 		mcs->horizontalHeader()->setStretchLastSection(true);
+		l->addWidget(mcs);
+		tabs->addTab(w, QString("Minimal cuts set"));
 		initMCS(result->getResultMCS());
 	}
 
