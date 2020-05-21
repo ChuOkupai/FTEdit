@@ -157,7 +157,7 @@ void XmlTreeReader::readGateChilds(Gate *g, QDomNodeList list)
 		}
 		else if(elem.tagName() == "gate")
 		{
-			if(name.isEmpty()) { g->getChildren() << new Transfert; ok = true;}
+			if(name.isEmpty()) { (new Transfert)->attach(g) ; ok = true;}
 			else if(!name.isEmpty())
 			{
 				for(Gate* gg : e->getGates())
