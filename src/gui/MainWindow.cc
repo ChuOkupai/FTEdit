@@ -21,7 +21,7 @@ MainWindow::MainWindow() : editor(nullptr), fileManager(nullptr), modified(false
 	setCentralWidget(centralwidget);
 	centralwidget->setStyleSheet("selection-background-color: #4684e3;");
 	auto gridLayout = new QGridLayout(centralwidget);
-	gridLayout->setMargin(0);
+	gridLayout->setMargin(1);
 	hSplitter = new QSplitter(centralwidget);
 	hSplitter->setOrientation(Qt::Horizontal);
 	auto horizontalLayout = new QWidget(hSplitter);
@@ -269,7 +269,7 @@ void MainWindow::zoomOut()
 
 void MainWindow::zoomReset()
 {
-	view->setZoom(1);
+	view->setZoom(0.75);
 }
 
 void MainWindow::showToolBar()
@@ -417,11 +417,8 @@ void MainWindow::removeItem()
 
 void MainWindow::detach()
 {
-	editor->detach((Gate*)curItem->node());
-	auto t = new QTreeWidgetItem(trees);
-	t->setText(0, editor->getSelection()->getProperties().getName());
-	trees->addChild(t);
-	explorerItemClicked(t, 0);
+	addTree();
+	explorerItemClicked(trees->child(trees->childCount() - 1), 0);
 }
 
 void MainWindow::join()
@@ -501,9 +498,19 @@ void MainWindow::explorerItemClicked(QTreeWidgetItem *item, int column)
 void MainWindow::explorerShowContextMenu(const QPoint &pos)
 {
 	auto item = explorer->itemAt(pos);
-	if (!item || !item->parent()) return ;
+	if (!item) return ;
 	QMenu menu;
-	if (explorer->topLevelItem(0) == item->parent())
+	if (!item->parent())
+	{
+		if (explorer->topLevelItem(0) == item)
+			menu.addAction(addTreeAct);
+		else
+		{
+			removeAllResultsAct->setEnabled(resultsHistory.size());
+			menu.addAction(removeAllResultsAct);
+		}
+	}
+	else if (explorer->topLevelItem(0) == item->parent())
 	{
 		menu.addAction(editTreePropertiesAct);
 		menu.addAction(removeTreeAct);
@@ -530,6 +537,14 @@ void MainWindow::editTreeProperties()
 		treeItem->setText(0, tree->getProperties().getName());
 }
 
+void MainWindow::addTree()
+{
+	editor->detach((Gate*)curItem->node());
+	auto t = new QTreeWidgetItem(trees);
+	t->setText(0, editor->getSelection()->getProperties().getName());
+	trees->addChild(t);
+}
+
 void MainWindow::removeTree()
 {
 	auto tree = &editor->getTrees()[selectedRow];
@@ -549,11 +564,19 @@ void MainWindow::removeTree()
 
 void MainWindow::removeResult()
 {
-	delete resultsHistory[selectedRow];
+	auto result = resultsHistory[selectedRow];
 	resultsHistory.removeAt(selectedRow);
+	delete result;
 	auto child = results->child(selectedRow);
 	results->removeChild(child);
 	delete child;
+}
+
+void MainWindow::removeAllResults()
+{
+	selectedRow = 0;
+	while (resultsHistory.size())
+		removeResult();
 }
 
 void MainWindow::createActions()
@@ -561,118 +584,105 @@ void MainWindow::createActions()
 	newAct = new QAction("&New project", this);
 	newAct->setShortcuts(QKeySequence::New);
 	newAct->setStatusTip("Create a new project");
-	newAct->setToolTip(newAct->statusTip());
 	newAct->setIcon(QIcon(":icons/new.png"));
 	connect(newAct, &QAction::triggered, this, &MainWindow::newFile);
 
 	openAct = new QAction("&Open...", this);
 	openAct->setShortcuts(QKeySequence::Open);
 	openAct->setStatusTip("Open an existing project");
-	openAct->setToolTip(openAct->statusTip());
 	openAct->setIcon(QIcon(":icons/open.png"));
 	connect(openAct, &QAction::triggered, this, &MainWindow::open);
 
 	saveAct = new QAction("&Save", this);
 	saveAct->setShortcuts(QKeySequence::Save);
 	saveAct->setStatusTip("Save the project to disk");
-	saveAct->setToolTip(saveAct->statusTip());
 	saveAct->setIcon(QIcon(":icons/save.png"));
 	connect(saveAct, &QAction::triggered, this, &MainWindow::save);
 
 	saveAsAct = new QAction("Save As...", this);
 	saveAsAct->setShortcuts(QKeySequence::SaveAs);
 	saveAsAct->setStatusTip("Save the project to disk with a different name");
-	saveAsAct->setToolTip(saveAsAct->statusTip());
 	saveAsAct->setIcon(QIcon(":icons/saveAs.png"));
 	connect(saveAsAct, &QAction::triggered, this, &MainWindow::saveAs);
 
 	exitAct = new QAction("E&xit", this);
 	exitAct->setShortcuts(QKeySequence::Quit);
 	exitAct->setStatusTip("Exit the application");
-	exitAct->setToolTip(exitAct->statusTip());
 	exitAct->setIcon(QIcon(":icons/exit.png"));
 	connect(exitAct, &QAction::triggered, this, &QWidget::close);
 
-	cutAct = new QAction("Cu&t", this);
+	cutAct = new QAction("Cut", this);
 	cutAct->setShortcuts(QKeySequence::Cut);
 	cutAct->setStatusTip("Cut the current selected node to the clipboard");
-	cutAct->setToolTip(cutAct->statusTip());
 	cutAct->setIcon(QIcon(":icons/cut.png"));
 	connect(cutAct, &QAction::triggered, this, &MainWindow::cut);
 
 	copyAct = new QAction("&Copy", this);
 	copyAct->setShortcuts(QKeySequence::Copy);
 	copyAct->setStatusTip("Copy the current selected node to the clipboard");
-	copyAct->setToolTip(copyAct->statusTip());
 	copyAct->setIcon(QIcon(":icons/copy.png"));
 	connect(copyAct, &QAction::triggered, this, &MainWindow::copy);
 
-	pasteAct = new QAction("&Paste", this);
+	pasteAct = new QAction("Paste", this);
 	pasteAct->setShortcuts(QKeySequence::Paste);
 	pasteAct->setStatusTip("Paste the clipboard's content into the current node");
-	pasteAct->setToolTip(pasteAct->statusTip());
 	pasteAct->setIcon(QIcon(":icons/paste.png"));
 	connect(pasteAct, &QAction::triggered, this, &MainWindow::paste);
 
 	clearClipboardAct = new QAction("Clear the clipboard", this);
 	clearClipboardAct->setStatusTip("Clear the clipboard's content");
-	clearClipboardAct->setToolTip(pasteAct->statusTip());
 	clearClipboardAct->setIcon(QIcon(":icons/remove.png"));
 	connect(clearClipboardAct, &QAction::triggered, this, &MainWindow::clearClipboard);
 
 	addAndAct = new QAction("And", this);
 	addAndAct->setStatusTip("Add a new and gate into the current tree");
-	addAndAct->setToolTip(addAndAct->statusTip());
 	addAndAct->setIcon(QIcon(":objects/and.png"));
 	connect(addAndAct, &QAction::triggered, this, &MainWindow::addAnd);
 
 	addInhibitAct = new QAction("Inhibit", this);
 	addInhibitAct->setStatusTip("Add a new inhibit gate into the current tree");
-	addInhibitAct->setToolTip(addInhibitAct->statusTip());
 	addInhibitAct->setIcon(QIcon(":objects/inhibit.png"));
 	connect(addInhibitAct, &QAction::triggered, this, &MainWindow::addInhibit);
 
 	addOrAct = new QAction("Or", this);
 	addOrAct->setStatusTip("Add a new or gate into the current tree");
-	addOrAct->setToolTip(addOrAct->statusTip());
 	addOrAct->setIcon(QIcon(":objects/or.png"));
 	connect(addOrAct, &QAction::triggered, this, &MainWindow::addOr);
 
 	addKNAct = new QAction("Voting or", this);
 	addKNAct->setStatusTip("Add a new voting or gate into the current tree");
-	addKNAct->setToolTip(addKNAct->statusTip());
 	addKNAct->setIcon(QIcon(":objects/kn.png"));
 	connect(addKNAct, &QAction::triggered, this, &MainWindow::addKN);
 
 	addXorAct = new QAction("Xor", this);
 	addXorAct->setStatusTip("Add a new xor gate into the current tree");
-	addXorAct->setToolTip(addXorAct->statusTip());
 	addXorAct->setIcon(QIcon(":objects/xor.png"));
 	connect(addXorAct, &QAction::triggered, this, &MainWindow::addXor);
 
 	addTransfertAct = new QAction("Add transfert in", this);
 	addTransfertAct->setStatusTip("Add a new transfert in into the current tree");
-	addTransfertAct->setToolTip(addTransfertAct->statusTip());
 	addTransfertAct->setIcon(QIcon(":objects/transfert.png"));
 	connect(addTransfertAct, &QAction::triggered, this, &MainWindow::addTransfert);
 
 	addEventAct = new QAction("Add basic event", this);
 	addEventAct->setStatusTip("Add a new basic event into the current tree");
-	addEventAct->setToolTip(addEventAct->statusTip());
 	addEventAct->setIcon(QIcon(":objects/basicEvent.png"));
 	connect(addEventAct, &QAction::triggered, this, &MainWindow::addEvent);
 
-	zoomInAct = new QAction("Zoom In", this); zoomInAct->setShortcuts(QKeySequence::ZoomIn);
+	zoomInAct = new QAction("Zoom In", this);
+	zoomInAct->setShortcuts(QKeySequence::ZoomIn);
 	zoomInAct->setStatusTip("Zoom In");
 	zoomInAct->setIcon(QIcon(":icons/zoomIn.png"));
 	connect(zoomInAct, &QAction::triggered, this, &MainWindow::zoomIn);
 
-	zoomOutAct = new QAction("Zoom Out", this); zoomOutAct->setShortcuts(QKeySequence::ZoomOut);
+	zoomOutAct = new QAction("Zoom Out", this);
+	zoomOutAct->setShortcuts(QKeySequence::ZoomOut);
 	zoomOutAct->setStatusTip("Zoom Out");
 	zoomOutAct->setIcon(QIcon(":icons/zoomOut.png"));
 	connect(zoomOutAct, &QAction::triggered, this, &MainWindow::zoomOut);
 
 	zoomResetAct = new QAction("Reset Zoom", this);
+	zoomResetAct->setShortcut(Qt::CTRL | Qt::Key_Equal);
 	zoomResetAct->setStatusTip("Reset Zoom");
 	zoomResetAct->setIcon(QIcon(":icons/zoomReset.png"));
 	connect(zoomResetAct, &QAction::triggered, this, &MainWindow::zoomReset);
@@ -694,18 +704,20 @@ void MainWindow::createActions()
 	connect(toggleErrorListAct, &QAction::triggered, this, &MainWindow::toggleErrorList);
 
 	distributionsAct = new QAction("Manage distributions...", this);
+	distributionsAct->setShortcut(QKeySequence("Shift+D"));
 	distributionsAct->setStatusTip("Show the list of all distributions");
 	distributionsAct->setIcon(QIcon(":icons/manage.png"));
 	connect(distributionsAct, &QAction::triggered, this, &MainWindow::showDistributions);
 
 	eventsAct = new QAction("Manage events...", this);
+	eventsAct->setShortcut(QKeySequence("Shift+E"));
 	eventsAct->setStatusTip("Show the list of all events");
 	eventsAct->setIcon(QIcon(":icons/manage.png"));
 	connect(eventsAct, &QAction::triggered, this, &MainWindow::showEvents);
 
 	evaluateAct = new QAction("Evaluate...", this);
+	evaluateAct->setShortcut(QKeySequence("Ctrl+E"));
 	evaluateAct->setStatusTip("Perform a fault tree analysis");
-	evaluateAct->setToolTip(evaluateAct->statusTip());
 	evaluateAct->setIcon(QIcon(":icons/evaluate.png"));
 	connect(evaluateAct, &QAction::triggered, this, &MainWindow::evaluate);
 
@@ -720,31 +732,37 @@ void MainWindow::createActions()
 	connect(aboutQtAct, &QAction::triggered, qApp, &QApplication::aboutQt);
 
 	moveItemFirstAct = new QAction("Move First", this);
+	moveItemFirstAct->setShortcuts(QKeySequence::SelectPreviousWord);
 	moveItemFirstAct->setStatusTip("Move the node to the leftmost position");
 	moveItemFirstAct->setIcon(QIcon(":icons/moveFirst.png"));
 	connect(moveItemFirstAct, &QAction::triggered, this, &MainWindow::moveItemFirst);
 
 	moveItemLeftAct = new QAction("Move Left", this);
+	moveItemLeftAct->setShortcuts(QKeySequence::MoveToPreviousWord);
 	moveItemLeftAct->setStatusTip("Move the node to the left");
 	moveItemLeftAct->setIcon(QIcon(":icons/moveLeft.png"));
 	connect(moveItemLeftAct, &QAction::triggered, this, &MainWindow::moveItemLeft);
 
 	moveItemRightAct = new QAction("Move Right", this);
+	moveItemRightAct->setShortcuts(QKeySequence::MoveToNextWord);
 	moveItemRightAct->setStatusTip("Move the node to the right");
 	moveItemRightAct->setIcon(QIcon(":icons/moveRight.png"));
 	connect(moveItemRightAct, &QAction::triggered, this, &MainWindow::moveItemRight);
 
 	moveItemLastAct = new QAction("Move Last", this);
+	moveItemLastAct->setShortcuts(QKeySequence::SelectNextWord);
 	moveItemLastAct->setStatusTip("Move the node to the rightmost position");
 	moveItemLastAct->setIcon(QIcon(":icons/moveLast.png"));
 	connect(moveItemLastAct, &QAction::triggered, this, &MainWindow::moveItemLast);
 
-	editItemAct = new QAction("Properties", this);
+	editItemAct = new QAction("&Properties", this);
+	editItemAct->setShortcuts(QKeySequence::Print);
 	editItemAct->setStatusTip("Edit the node properties");
 	editItemAct->setIcon(QIcon(":icons/edit.png"));
 	connect(editItemAct, &QAction::triggered, this, &MainWindow::editItem);
 
 	removeItemAct = new QAction("Remove", this);
+	removeItemAct->setShortcuts(QKeySequence::Delete);
 	removeItemAct->setStatusTip("Remove all nodes starting from here");
 	removeItemAct->setIcon(QIcon(":icons/remove.png"));
 	connect(removeItemAct, &QAction::triggered, this, &MainWindow::removeItem);
@@ -769,6 +787,11 @@ void MainWindow::createActions()
 	editTreePropertiesAct->setIcon(QIcon(":icons/edit.png"));
 	connect(editTreePropertiesAct, &QAction::triggered, this, &MainWindow::editTreeProperties);
 
+	addTreeAct = new QAction("New fault tree", this);
+	addTreeAct->setStatusTip("Add a new empty fault tree");
+	addTreeAct->setIcon(QIcon(":icons/add.png"));
+	connect(addTreeAct, &QAction::triggered, this, &MainWindow::addTree);
+
 	removeTreeAct = new QAction("Delete", this);
 	removeTreeAct->setStatusTip("Delete the fault tree and its content");
 	removeTreeAct->setIcon(QIcon(":icons/remove.png"));
@@ -778,6 +801,11 @@ void MainWindow::createActions()
 	removeResultAct->setStatusTip("Delete fault tree analysis results");
 	removeResultAct->setIcon(QIcon(":icons/remove.png"));
 	connect(removeResultAct, &QAction::triggered, this, &MainWindow::removeResult);
+
+	removeAllResultsAct = new QAction("Clear All", this);
+	removeAllResultsAct->setStatusTip("Delete all fault tree analyzes");
+	removeAllResultsAct->setIcon(QIcon(":icons/remove.png"));
+	connect(removeAllResultsAct, &QAction::triggered, this, &MainWindow::removeAllResults);
 }
 
 void MainWindow::createMenus()
@@ -914,10 +942,11 @@ void MainWindow::reset()
 	editor = nullptr;
 	modified = false;
 	curItem = nullptr;
-	qDeleteAll(resultsHistory); // Discard all results
-	qDeleteAll(trees->takeChildren());
-	qDeleteAll(results->takeChildren());
+	while (trees->childCount())
+		delete trees->child(0);
+	removeAllResults();
 	errorList->clear();
+	zoomReset();
 	curTreeRow = 0;
 }
 

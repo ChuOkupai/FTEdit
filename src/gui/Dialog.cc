@@ -54,9 +54,9 @@ void PropertiesDialog::closeEvent(QCloseEvent *event)
 	isValid ? event->accept() : event->ignore();
 }
 
-void PropertiesDialog::checkName()
+void PropertiesDialog::checkName(const QString &text)
 {
-	QString s = nameWidget->text().trimmed();
+	QString s = text.trimmed();
 	if (!s.compare(prop->getName()) || (s.size() > 0 && editor.isUnique(s)))
 	{
 		isValid = true;
@@ -70,7 +70,6 @@ void PropertiesDialog::checkName()
 		nameWidget->setToolTip(s.size() ? "This name already exists" : "This name is invalid");
 		nameWidget->setStyleSheet("border: 1px solid red;background-color: #ff8a8a;");
 	}
-	nameWidget->setText(s);
 	emit nameChanged(s); // Signal
 }
 
@@ -89,7 +88,7 @@ void PropertiesDialog::init()
 	nameWidget = linker.addLineEdit(prop->getName());
 	linker.addLabel("Description:");
 	descWidget = linker.addTextEdit(prop->getDesc());
-	connect(nameWidget, SIGNAL(editingFinished()), this, SLOT(checkName()));
+	connect(nameWidget, SIGNAL(textEdited(const QString &)), this, SLOT(checkName(const QString &)));
 	connect(descWidget, SIGNAL(textChanged()), this, SLOT(editDesc()));
 }
 

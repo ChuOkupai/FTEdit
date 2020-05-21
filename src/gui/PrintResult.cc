@@ -80,6 +80,7 @@ QDialog(parent), result(result), date(date)
 	auto menu = new QMenuBar(this);
 	auto m = menu->addMenu("&File");
 	auto exportAct = new QAction("Export...", this);
+	exportAct->setShortcut(QKeySequence("Ctrl+E"));
 	exportAct->setStatusTip("Export data to a file in CSV format");
 	exportAct->setIcon(QIcon(":icons/saveAs.png"));
 	connect(exportAct, &QAction::triggered, this, &PrintResult::exportResult);

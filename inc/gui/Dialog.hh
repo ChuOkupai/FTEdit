@@ -36,7 +36,7 @@ private slots:
 	// Quit when name is valid
 	void closeEvent(QCloseEvent *event);
 	// Checks if new name is unique
-	void checkName();
+	void checkName(const QString &text);
 	// Save the new description in Properties
 	void editDesc();
 

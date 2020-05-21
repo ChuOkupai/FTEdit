@@ -71,8 +71,10 @@ private slots:
 	// Show context menu
 	void explorerShowContextMenu(const QPoint &pos);
 	void editTreeProperties();
+	void addTree();
 	void removeTree();
 	void removeResult();
+	void removeAllResults();
 
 private:
 	Editor				*editor;
@@ -122,8 +124,10 @@ private:
 	QAction *aboutQtAct;
 
 	QAction *editTreePropertiesAct;
+	QAction *addTreeAct;
 	QAction *removeTreeAct;
 	QAction *removeResultAct;
+	QAction *removeAllResultsAct;
 
 	QMenu			*childItemsMenu; // for childs (Container + Transfert)
 	QMenu			*itemsMenu; // for gates
