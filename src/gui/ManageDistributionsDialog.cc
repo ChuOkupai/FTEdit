@@ -6,17 +6,17 @@ VisitorDistributionName::VisitorDistributionName()
 
 void VisitorDistributionName::visit(Constant &distribution)
 {
-	distType = QString{ "Constant(%1)" }.arg(distribution.getValue(), 1, 'e', 2, '0');
+	distType = QString{ "Constant    (%1)" }.arg(distribution.getValue(), 1, 'e', 2, '0');
 }
 
 void VisitorDistributionName::visit(Exponential &distribution)
 {
-	distType = QString{ "Exponential(%1)" }.arg(distribution.getLambda(), 1, 'e', 2, '0');
+	distType = QString{ "Exponential (%1)" }.arg(distribution.getLambda(), 1, 'e', 2, '0');
 }
 
 void VisitorDistributionName::visit(Weibull &distribution)
 {
-	distType = QString{ "Weibull(%1, %2)" }.arg(distribution.getScale(), 1, 'e', 2, '0')
+	distType = QString{ "Weibull     (%1, %2)" }.arg(distribution.getScale(), 1, 'e', 2, '0')
 	.arg(distribution.getShape(), 1, 'e', 2, '0');
 }
 
@@ -66,7 +66,7 @@ ManageDistributionsDialog::ManageDistributionsDialog(QWidget *parent, QList<Dist
 		Distribution *e = list[i];
 
 		// Name
-		auto *item = new QTableWidgetItem(e->getProperties().getName());
+		auto item = new QTableWidgetItem(e->getProperties().getName());
 		table->setItem(i, 0, item);
 
 		// Description

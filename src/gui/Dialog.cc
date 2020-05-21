@@ -185,7 +185,7 @@ QDialog(parent), editor(editor), treeIndex(treeIndex)
 	QList<Tree> &l = editor.getTrees();
 	QString current = editor.getSelection()->getProperties().getName();
 	int i = 0;
-	for (auto tree : l)
+	for (auto &tree : l)
 	{
 		trees->addItem(tree.getProperties().getName());
 		if (!tree.getProperties().getName().compare(current))

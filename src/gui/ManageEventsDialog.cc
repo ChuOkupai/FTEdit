@@ -45,7 +45,7 @@ ManageEventsDialog::ManageEventsDialog(QWidget *parent, QList<Event> &list)
 		Event &e = list[i];
 
 		// Name
-		auto *item = new QTableWidgetItem(e.getProperties().getName());
+		auto item = new QTableWidgetItem(e.getProperties().getName());
 		table->setItem(i, 0, item);
 
 		// Description

@@ -18,28 +18,28 @@ WidgetLinker::~WidgetLinker() {}
 
 QCheckBox *WidgetLinker::addCheckBox(const QString &content)
 {
-	auto *checkBox = new QCheckBox(content, parent);
+	auto checkBox = new QCheckBox(content, parent);
 	layout->addWidget(checkBox);
 	return (checkBox);
 }
 
 QComboBox *WidgetLinker::addComboBox()
 {
-	auto *comboBox = new QComboBox(parent);
+	auto comboBox = new QComboBox(parent);
 	layout->addWidget(comboBox);
 	return (comboBox);
 }
 
 DoubleSpinBox *WidgetLinker::addDoubleSpinBox()
 {
-	auto *spinBox = new DoubleSpinBox(parent);
+	auto spinBox = new DoubleSpinBox(parent);
 	layout->addWidget(spinBox);
 	return (spinBox);
 }
 
 QLabel *WidgetLinker::addLabel(const QString &content)
 {
-	auto *label = new QLabel(parent);
+	auto label = new QLabel(parent);
 	label->setText(content);
 	layout->addWidget(label);
 	return (label);
@@ -53,7 +53,7 @@ QLayoutItem *WidgetLinker::addLayoutItem(QLayoutItem *item)
 
 QLineEdit *WidgetLinker::addLineEdit(const QString &content)
 {
-	auto *lineEdit = new QLineEdit(parent);
+	auto lineEdit = new QLineEdit(parent);
 	lineEdit->setText(content);
 	layout->addWidget(lineEdit);
 	return (lineEdit);
@@ -65,7 +65,7 @@ QPushButton *WidgetLinker::addOKButton(bool link)
 	auto hLayout = new QHBoxLayout();
 	layout->addLayout(hLayout);
 	hLayout->addItem(new QSpacerItem(20, 0, QSizePolicy::Expanding, QSizePolicy::Maximum));
-	auto *button = new QPushButton(parent);
+	auto button = new QPushButton(parent);
 	button->setText("OK");
 	hLayout->addWidget(button);
 	button->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
@@ -76,7 +76,7 @@ QPushButton *WidgetLinker::addOKButton(bool link)
 
 QPushButton *WidgetLinker::addPushButton(const QString &content)
 {
-	auto *button = new QPushButton(parent);
+	auto button = new QPushButton(parent);
 	button->setText(content);
 	layout->addWidget(button);
 	return (button);
@@ -84,7 +84,7 @@ QPushButton *WidgetLinker::addPushButton(const QString &content)
 
 QRadioButton *WidgetLinker::addRadioButton(const QString &content)
 {
-	auto *button = new QRadioButton(parent);
+	auto button = new QRadioButton(parent);
 	button->setText(content);
 	layout->addWidget(button);
 	return (button);
@@ -92,28 +92,28 @@ QRadioButton *WidgetLinker::addRadioButton(const QString &content)
 
 QSpinBox *WidgetLinker::addSpinBox()
 {
-	auto *spinBox = new QSpinBox(parent);
+	auto spinBox = new QSpinBox(parent);
 	layout->addWidget(spinBox);
 	return (spinBox);
 }
 
 QTabWidget *WidgetLinker::addTabWidget()
 {
-	auto *widget = new QTabWidget(parent);
+	auto widget = new QTabWidget(parent);
 	layout->addWidget(widget);
 	return (widget);
 }
 
 QTableWidget *WidgetLinker::addTableWidget()
 {
-	auto *widget = new QTableWidget(parent);
+	auto widget = new QTableWidget(parent);
 	layout->addWidget(widget);
 	return (widget);
 }
 
 QTextEdit *WidgetLinker::addTextEdit(const QString &content)
 {
-	auto *textEdit = new QTextEdit(parent);
+	auto textEdit = new QTextEdit(parent);
 	textEdit->setText(content);
 	layout->addWidget(textEdit);
 	return (textEdit);

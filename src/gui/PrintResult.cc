@@ -27,7 +27,7 @@ void PrintResult::initBoolean(ResultBoolean *res)
 	for (double p : l)
 	{
 		// Time
-		auto *item = new QTableWidgetItem(QString::number(t));
+		auto item = new QTableWidgetItem(QString::number(t));
 		prb->setItem(i, 0, item);
 
 		// Failure rate
@@ -48,7 +48,7 @@ void PrintResult::initMCS(ResultMCS *res)
 	for (int i = 0; i < l2.size(); ++i)
 	{
 		// Probability
-		auto *item = new QTableWidgetItem(QString::number(l[i]));
+		auto item = new QTableWidgetItem(QString::number(l[i]));
 		mcs->setItem(i, 0, item);
 
 		// Quantity
@@ -75,11 +75,11 @@ QDialog(parent), result(result), date(date)
 	auto layout = new QVBoxLayout(this);
 	layout->setMargin(1);
 	WidgetLinker linker(this, layout);
-	auto *tabs = linker.addTabWidget();
+	auto tabs = linker.addTabWidget();
 	linker.set(tabs);
-	auto *menu = new QMenuBar(this);
-	auto *m = menu->addMenu("&File");
-	auto *exportAct = new QAction("Export...", this);
+	auto menu = new QMenuBar(this);
+	auto m = menu->addMenu("&File");
+	auto exportAct = new QAction("Export...", this);
 	exportAct->setStatusTip("Export data to a file in CSV format");
 	exportAct->setIcon(QIcon(":icons/saveAs.png"));
 	connect(exportAct, &QAction::triggered, this, &PrintResult::exportResult);

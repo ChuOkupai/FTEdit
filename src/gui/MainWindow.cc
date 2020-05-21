@@ -114,9 +114,7 @@ void MainWindow::open()
 		reset();
 		setWindowTitle("FTEdit - " + path.mid(path.lastIndexOf("/") + 1));
 		editor = newEditor;
-		editor->setAutoRefresh(true);
-		editor->refresh();
-		auto list = editor->getTrees();
+		auto &list = editor->getTrees();
 		for (int i = 0; i < list.size(); ++i)
 		{
 			auto t = new QTreeWidgetItem(trees);
@@ -349,7 +347,7 @@ void MainWindow::evaluate()
 		msg.exec();
 		return ;
 	}
-	auto *resultItem = new QTreeWidgetItem(results);
+	auto resultItem = new QTreeWidgetItem(results);
 	results->addChild(resultItem);
 	resultItem->setText(0, QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss"));
 }
