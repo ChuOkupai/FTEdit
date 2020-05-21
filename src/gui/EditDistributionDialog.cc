@@ -35,7 +35,8 @@ PropertiesDialog(parent, editor, &dist.getProperties()), editor(editor), dist(di
 	value = linker.addDoubleSpinBox();
 	value->setRange(0.0, 1.0); // Probability range between 0.0 and 1.0
 	value->setDecimals(16); // Precision
-	value->setSingleStep(0); // Disable step
+	value->setSingleStep(0.01);
+	value->setStepType(QAbstractSpinBox::AdaptiveDecimalStepType);
 	value->setValue(dist.getValue());
 	value->setButtonSymbols(QAbstractSpinBox::NoButtons); // Disable adjust button
 	linker.addOKButton();
@@ -57,7 +58,8 @@ PropertiesDialog(parent, editor, &dist.getProperties()), editor(editor), dist(di
 	lambda = linker.addDoubleSpinBox();
 	lambda->setRange(0.0, 1.0);
 	lambda->setDecimals(16);
-	lambda->setSingleStep(0);
+	lambda->setSingleStep(0.01);
+	lambda->setStepType(QAbstractSpinBox::AdaptiveDecimalStepType);
 	lambda->setValue(dist.getValue());
 	lambda->setButtonSymbols(QAbstractSpinBox::NoButtons);
 	linker.addOKButton();
@@ -81,16 +83,18 @@ PropertiesDialog(parent, editor, &dist.getProperties()), editor(editor), dist(di
 	scale = linker.addDoubleSpinBox();
 	scale->setRange(0.0, 1.0);
 	scale->setDecimals(16);
-	scale->setSingleStep(0);
-	scale->setValue(dist.getValue());
+	scale->setSingleStep(0.01);
+	scale->setStepType(QAbstractSpinBox::AdaptiveDecimalStepType);
+	scale->setValue(dist.getScale());
 	scale->setButtonSymbols(QAbstractSpinBox::NoButtons);
 
 	linker.addLabel("Shape:");
 	shape = linker.addDoubleSpinBox();
 	shape->setRange(0.0, 1.0);
 	shape->setDecimals(16);
-	shape->setSingleStep(0);
-	shape->setValue(dist.getValue());
+	shape->setSingleStep(0.01);
+	shape->setStepType(QAbstractSpinBox::AdaptiveDecimalStepType);
+	shape->setValue(dist.getShape());
 	shape->setButtonSymbols(QAbstractSpinBox::NoButtons);
 
 	linker.addOKButton();

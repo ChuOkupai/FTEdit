@@ -154,8 +154,10 @@ int FileManagerSystem::exportAs(QString path, Result &result)
 		for(int i=0; i < m; i++)
 		{
 			saveStream << proMcs[i] <<','<<cs[i].size()<<',';
-			for(QList<QString> l : cs)
-				saveStream << l[i]<<" ";
+			QList<QString> &l2 = cs[i];
+			saveStream << l2.first().remove(',');
+			for(int j = 1; j < l2.size(); ++j)
+				saveStream << "\",\" " << l2[j].remove(',');
 			saveStream << '\n';
 		}
 		
