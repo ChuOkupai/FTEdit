@@ -14,8 +14,8 @@ QString FileManagerSystem::getPath() { return path; }
 Editor* FileManagerSystem::load(QString path)
 {
 	errorMessage = "";
+	this->path = "";
 
-	setPath(path);
 	QFile file(path);
 	if(!file.open(QIODevice::ReadOnly)){
 		errorMessage = file.errorString();
@@ -43,7 +43,8 @@ Editor* FileManagerSystem::load(QString path)
 		errorMessage = "This file is invalid";
 		return nullptr;
 	}
-
+	
+	setPath(path);
 	editor->setAutoRefresh(true);
 	editor->refresh();
 	return editor;
@@ -124,7 +125,7 @@ int FileManagerSystem::save(Editor* editor)
 
 int FileManagerSystem::saveAs(QString path, Editor* editor)
 {
-	setPath(path); save(editor); return 0;
+	setPath(path); return save(editor);
 }
 
 void FileManagerSystem::setPath(QString path) {this->path = path; }

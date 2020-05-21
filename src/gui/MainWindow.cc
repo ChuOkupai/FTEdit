@@ -89,6 +89,7 @@ void MainWindow::newFile()
 		return ;
 	scene->clear();
 	reset();
+	fileManager->setPath("");
 	editor = new Editor();
 	editor->detach(); // Creates empty tree
 	setEnabledButton();
@@ -909,7 +910,6 @@ void MainWindow::reset()
 	qDeleteAll(trees->takeChildren());
 	qDeleteAll(results->takeChildren());
 	errorList->clear();
-	fileManager->setPath("");
 	curTreeRow = 0;
 }
 
