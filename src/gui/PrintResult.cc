@@ -59,7 +59,7 @@ void PrintResult::initMCS(ResultMCS *res)
 		// Events
 		set = l3.first();
 		for (int j = 1; j < l3.size(); ++j)
-			set += ", " + l3[j];
+			set += " / " + l3[j];
 		item = new QTableWidgetItem(set);
 		mcs->setItem(i, 2, item);
 		set.clear();
