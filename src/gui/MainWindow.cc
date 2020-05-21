@@ -366,6 +366,7 @@ void MainWindow::about()
 
 void MainWindow::moveItemFirst()
 {
+	modified = true;
 	QList<Node*> &l = curItem->node()->getParent()->getChildren();
 	l.move(l.indexOf(curItem->node()), 0);
 	updateScene(curItem->node());
@@ -373,6 +374,7 @@ void MainWindow::moveItemFirst()
 
 void MainWindow::moveItemLeft()
 {
+	modified = true;
 	QList<Node*> &l = curItem->node()->getParent()->getChildren();
 	int pos = l.indexOf(curItem->node());
 	l.move(pos, pos - 1);
@@ -381,6 +383,7 @@ void MainWindow::moveItemLeft()
 
 void MainWindow::moveItemRight()
 {
+	modified = true;
 	QList<Node*> &l = curItem->node()->getParent()->getChildren();
 	int pos = l.indexOf(curItem->node());
 	l.move(pos, pos + 1);
@@ -389,6 +392,7 @@ void MainWindow::moveItemRight()
 
 void MainWindow::moveItemLast()
 {
+	modified = true;
 	QList<Node*> &l = curItem->node()->getParent()->getChildren();
 	l.move(l.indexOf(curItem->node()), l.size() - 1);
 	updateScene(curItem->node());
@@ -396,6 +400,7 @@ void MainWindow::moveItemLast()
 
 void MainWindow::editItem()
 {
+	modified = true;
 	EditVisitor visitor(this, *editor, curItem);
 	curItem->node()->accept(visitor);
 	scene->update();
@@ -403,6 +408,7 @@ void MainWindow::editItem()
 
 void MainWindow::removeItem()
 {
+	modified = true;
 	Node *parent = curItem->node()->getParent();
 	editor->remove(curItem->node());
 	editor->refresh();
@@ -434,6 +440,7 @@ void MainWindow::join()
 		msg.exec();
 		return ;
 	}
+	modified = true;
 	if (index < curTreeRow)
 		--curTreeRow;
 	editor->join(tree, (Gate*)curItem->node());
@@ -445,6 +452,7 @@ void MainWindow::join()
 
 void MainWindow::newTransfert()
 {
+	modified = true;
 	Tree *selection = editor->getSelection();
 	Gate *parent = curItem->node()->getParent();
 	editor->detach((Gate*)curItem->node());
