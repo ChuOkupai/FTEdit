@@ -19,7 +19,7 @@ MainWindow::MainWindow() : editor(nullptr), fileManager(nullptr), modified(false
 
 	auto centralwidget = new QWidget(this);
 	setCentralWidget(centralwidget);
-	centralwidget->setStyleSheet("selection-background-color: #4684e3;");
+	centralwidget->setStyleSheet("selection-background-color: #548ce3;selection-color: white;");
 	auto gridLayout = new QGridLayout(centralwidget);
 	gridLayout->setMargin(1);
 	hSplitter = new QSplitter(centralwidget);
@@ -62,7 +62,7 @@ MainWindow::MainWindow() : editor(nullptr), fileManager(nullptr), modified(false
 	auto gridLayout2 = new QGridLayout(groupBox);
 	gridLayout2->setContentsMargins(2, 2, 2, 2);
 	errorList = new ListWidget(groupBox);
-	errorList->setStyleSheet("selection-background-color: #de0b0b;");
+	errorList->setStyleSheet("selection-background-color: #de0b0b;selection-color: white;");
 	errorList->setSelectionMode(QAbstractItemView::SingleSelection);
 	gridLayout2->addWidget(errorList, 0, 0, 1, 1);
 
@@ -696,7 +696,7 @@ void MainWindow::createActions()
 	connect(zoomOutAct, &QAction::triggered, this, &MainWindow::zoomOut);
 
 	zoomResetAct = new QAction("Reset Zoom", this);
-	zoomResetAct->setShortcut(Qt::CTRL | Qt::Key_Equal);
+	zoomResetAct->setShortcut(Qt::Key_Control | Qt::Key_Equal);
 	zoomResetAct->setStatusTip("Reset Zoom");
 	zoomResetAct->setIcon(QIcon(":icons/zoomReset.png"));
 	connect(zoomResetAct, &QAction::triggered, this, &MainWindow::zoomReset);
@@ -718,19 +718,19 @@ void MainWindow::createActions()
 	connect(toggleErrorListAct, &QAction::triggered, this, &MainWindow::toggleErrorList);
 
 	distributionsAct = new QAction("Manage distributions...", this);
-	distributionsAct->setShortcut(QKeySequence("Shift+D"));
+	distributionsAct->setShortcut(QKeySequence("Ctrl+D"));
 	distributionsAct->setStatusTip("Show the list of all distributions");
 	distributionsAct->setIcon(QIcon(":icons/manage.png"));
 	connect(distributionsAct, &QAction::triggered, this, &MainWindow::showDistributions);
 
 	eventsAct = new QAction("Manage events...", this);
-	eventsAct->setShortcut(QKeySequence("Shift+E"));
+	eventsAct->setShortcut(QKeySequence("Ctrl+E"));
 	eventsAct->setStatusTip("Show the list of all events");
 	eventsAct->setIcon(QIcon(":icons/manage.png"));
 	connect(eventsAct, &QAction::triggered, this, &MainWindow::showEvents);
 
 	evaluateAct = new QAction("Evaluate...", this);
-	evaluateAct->setShortcut(QKeySequence("Ctrl+E"));
+	evaluateAct->setShortcut(QKeySequence("Ctrl+Shift+E"));
 	evaluateAct->setStatusTip("Perform a fault tree analysis");
 	evaluateAct->setIcon(QIcon(":icons/evaluate.png"));
 	connect(evaluateAct, &QAction::triggered, this, &MainWindow::evaluate);
