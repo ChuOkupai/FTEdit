@@ -309,6 +309,7 @@ void MainWindow::showDistributions()
 	modified = true;
 	ManageDistributionsDialog(this, editor->getDistributions()).exec();
 	editor->refresh(); // Remove unused Distributions
+	setEnabledButton();
 }
 
 void MainWindow::showEvents()
@@ -316,6 +317,7 @@ void MainWindow::showEvents()
 	modified = true;
 	ManageEventsDialog(this, editor->getEvents()).exec();
 	editor->refresh(); // Remove unused Events
+	setEnabledButton();
 }
 
 void MainWindow::evaluate()
@@ -404,6 +406,7 @@ void MainWindow::editItem()
 	EditVisitor visitor(this, *editor, curItem);
 	curItem->node()->accept(visitor);
 	scene->update();
+	setEnabledButton();
 }
 
 void MainWindow::removeItem()
@@ -417,11 +420,13 @@ void MainWindow::removeItem()
 
 void MainWindow::detach()
 {
+	modified = true;
 	editor->detach((Gate*)curItem->node());
 	auto t = new QTreeWidgetItem(trees);
 	t->setText(0, editor->getSelection()->getProperties().getName());
 	trees->addChild(t);
 	explorerItemClicked(trees->child(trees->childCount() - 1), 0);
+	setEnabledButton();
 }
 
 void MainWindow::join()
@@ -463,7 +468,7 @@ void MainWindow::newTransfert()
 	Transfert *transfert = new Transfert;
 	transfert->attach(parent);
 	transfert->setLink(&editor->getTrees().last());
-	updateScene(nullptr);
+	updateScene(transfert);
 }
 
 void MainWindow::changeItem()
@@ -531,6 +536,7 @@ void MainWindow::explorerShowContextMenu(const QPoint &pos)
 
 void MainWindow::editTreeProperties()
 {
+	modified = true;
 	auto tree = &editor->getTrees()[selectedRow];
 	PropertiesDialog(this, *editor, &tree->getProperties()).exec();
 	auto treeItem = trees->child(selectedRow);
@@ -538,18 +544,22 @@ void MainWindow::editTreeProperties()
 		treeItem->setText(0, " * " + tree->getProperties().getName());
 	else
 		treeItem->setText(0, tree->getProperties().getName());
+	setEnabledButton();
 }
 
 void MainWindow::addTree()
 {
+	modified = true;
 	editor->detach();
 	auto t = new QTreeWidgetItem(trees);
 	t->setText(0, editor->getTrees().last().getProperties().getName());
 	trees->addChild(t);
+	setEnabledButton();
 }
 
 void MainWindow::removeTree()
 {
+	modified = true;
 	auto tree = &editor->getTrees()[selectedRow];
 	if (tree->getTop())
 	{
@@ -563,6 +573,7 @@ void MainWindow::removeTree()
 	auto child = trees->child(selectedRow);
 	trees->removeChild(child);
 	delete child;
+	setEnabledButton();
 }
 
 void MainWindow::removeResult()
@@ -1023,12 +1034,10 @@ void MainWindow::updateScene(Node *selection)
 		top->accept(visitor);
 	}
 	else // Reset to empty tree
-	{
 		curItem = nullptr;
-		setEnabledButton();
-	}
 	scene->setSceneRect(scene->itemsBoundingRect());
 	view->update();
+	setEnabledButton();
 }
 
 QMenu *MainWindow::itemsContextMenu()
