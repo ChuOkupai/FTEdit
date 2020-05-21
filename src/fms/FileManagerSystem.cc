@@ -29,7 +29,7 @@ Editor* FileManagerSystem::load(QString path)
 	
 	if(!parsed)
 	{
-		errorMessage = tmperr;
+		errorMessage = "This file is invalid";
 		return nullptr;
 	}
 
@@ -40,7 +40,7 @@ Editor* FileManagerSystem::load(QString path)
 	catch(int exp)
 	{
 		delete editor;
-		errorMessage = "error occurred while parsing element";
+		errorMessage = "This file is invalid";
 		return nullptr;
 	}
 
