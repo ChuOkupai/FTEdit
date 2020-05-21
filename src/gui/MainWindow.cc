@@ -350,7 +350,7 @@ void MainWindow::evaluate()
 	}
 	auto *resultItem = new QTreeWidgetItem(results);
 	results->addChild(resultItem);
-	resultItem->setText(0, QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss"));
+	resultItem->setText(0, QDateTime::currentDateTime().toString("yyyy-MM-dd HH'h'mm'm'ss's'"));
 }
 
 void MainWindow::about()
@@ -417,7 +417,10 @@ void MainWindow::removeItem()
 
 void MainWindow::detach()
 {
-	addTree();
+	editor->detach((Gate*)curItem->node());
+	auto t = new QTreeWidgetItem(trees);
+	t->setText(0, editor->getSelection()->getProperties().getName());
+	trees->addChild(t);
 	explorerItemClicked(trees->child(trees->childCount() - 1), 0);
 }
 
@@ -539,9 +542,9 @@ void MainWindow::editTreeProperties()
 
 void MainWindow::addTree()
 {
-	editor->detach((Gate*)curItem->node());
+	editor->detach();
 	auto t = new QTreeWidgetItem(trees);
-	t->setText(0, editor->getSelection()->getProperties().getName());
+	t->setText(0, editor->getTrees().last().getProperties().getName());
 	trees->addChild(t);
 }
 
