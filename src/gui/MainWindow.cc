@@ -95,7 +95,6 @@ void MainWindow::newFile()
 	QTreeWidgetItem *tree1 = new QTreeWidgetItem(trees);
 	tree1->setText(0, " * " + editor->getSelection()->getProperties().getName());
 	trees->addChild(tree1);
-	curTreeRow = 0;
 	setWindowTitle("FTEdit - New Project");
 }
 
@@ -111,6 +110,7 @@ void MainWindow::open()
 	auto newEditor = fileManager->load(path);
 	if (newEditor)
 	{
+		scene->clear();
 		reset();
 		setWindowTitle("FTEdit - " + path.mid(path.lastIndexOf("/") + 1));
 		editor = newEditor;
@@ -347,7 +347,7 @@ void MainWindow::evaluate()
 		msg.exec();
 		return ;
 	}
-	auto resultItem = new QTreeWidgetItem(results);
+	auto *resultItem = new QTreeWidgetItem(results);
 	results->addChild(resultItem);
 	resultItem->setText(0, QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss"));
 }
