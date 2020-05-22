@@ -2,7 +2,10 @@
 
 DoubleSpinBox::DoubleSpinBox(QWidget *parent) :
 QDoubleSpinBox(parent)
-{}
+{
+	setDecimals(16);
+	setSingleStep(0.1);
+}
 
 QString DoubleSpinBox::textFromValue(double val) const
 {

@@ -153,14 +153,12 @@ ChooseResultDialog::ChooseResultDialog(QWidget *parent, Gate *top, QList<Result*
 	missionTime->setToolTip("Maximum operating time");
 	missionTime->setSuffix(" s");
 	missionTime->setRange(0, std::numeric_limits<double>::max());
-	missionTime->setDecimals(16);
 	missionTime->setEnabled(false);
 	linker.addLabel("Step :");
 	step = linker.addDoubleSpinBox();
 	step->setToolTip("Time between each calculation");
 	step->setSuffix(" s");
 	step->setRange(0, std::numeric_limits<double>::max());
-	step->setDecimals(16);
 	step->setEnabled(false);
 	auto *button2 = linker.addOKButton(false);
 	button2->setText("Continue");
