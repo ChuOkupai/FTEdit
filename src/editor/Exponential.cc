@@ -21,7 +21,7 @@ double Exponential::getProbability(double time)
 
 void Exponential::setLambda(double lambda)
 {
-	value = qBound(0.0, lambda, 1.0);
+	value = qBound(0.000000001,lambda,1000000000000.0);
 }
 
 void Exponential::accept(VisitorDistribution& visitor)
