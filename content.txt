@@ -1,0 +1,16 @@
+Header
+	- Bouton aide
+	- Bouton téléchargement
+Section générale (icon.svg)
+	- Description rapide de l'application (éditeur d'arbres de défaillances open-source)
+Section Fichiers (file.svg)
+	- Format compatible Open-PSA
+Section Edition (edit.svg)
+	- Plusieurs type de portes et de lois de distribution disponibles
+Section Evaluation (evaluate.svg)
+	- Calcul des coupes minimales et des probabilités associées aux évènements
+	- Export des analyses au format CSV
+Section Aide (info.svg)
+	- Lien vers le wiki
+	- Lien vers les releases
+	- Lien vers les issues pour signaler un bug
