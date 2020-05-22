@@ -26,12 +26,12 @@ double Weibull::getProbability(double time)
 
 void Weibull::setScale(double scale)
 {
-	value = scale;
+	value = qBound(0.00000001,scale,1000000000.0);
 }
 
 void Weibull::setShape(double shape)
 {
-	this->shape = shape;
+	this->shape = qBound(0.000000001,shape,100000000.0);
 }
 
 void Weibull::accept(VisitorDistribution& visitor)
