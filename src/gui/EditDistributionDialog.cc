@@ -58,10 +58,8 @@ PropertiesDialog(parent, editor, &dist.getProperties()), editor(editor), dist(di
 	linker.addOKButton();
 
 	connect(lambda, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
-	[=](double d){ this->dist.setValue(d); });
+	[=](double d){ this->dist.setLambda(d); });
 }
-
-// TODO
 
 // EditWeibullDialog
 
@@ -74,11 +72,11 @@ PropertiesDialog(parent, editor, &dist.getProperties()), editor(editor), dist(di
 	linker.addLayoutItem(new QSpacerItem(0, 20, QSizePolicy::Minimum, QSizePolicy::Maximum));
 	linker.addLabel("Scale:");
 	scale = linker.addDoubleSpinBox();
+	scale->setRange(0.0, std::numeric_limits<double>::max());
 	scale->setValue(dist.getScale());
-	scale->setRange(0.00000001, std::numeric_limits<double>::max());
 	linker.addLabel("Shape:");
 	shape = linker.addDoubleSpinBox();
-	scale->setRange(0.00000001, std::numeric_limits<double>::max());
+	shape->setRange(0.0, std::numeric_limits<double>::max());
 	shape->setValue(dist.getShape());
 
 	linker.addOKButton();
@@ -88,6 +86,3 @@ PropertiesDialog(parent, editor, &dist.getProperties()), editor(editor), dist(di
 	connect(shape, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
 	[=](double d){ this->dist.setShape(d); });
 }
-
-
-// TODO

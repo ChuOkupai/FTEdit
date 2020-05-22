@@ -1,4 +1,5 @@
 #include <cmath>
+#include <limits>
 #include <QtGlobal>
 #include "Distribution.hh"
 #include "VisitorDistribution.hh"
@@ -26,12 +27,12 @@ double Weibull::getProbability(double time)
 
 void Weibull::setScale(double scale)
 {
-	value = qBound(0.00000001,scale,1000000000.0);
+	value = qBound(0.0,scale,std::numeric_limits<double>::max());
 }
 
 void Weibull::setShape(double shape)
 {
-	this->shape = qBound(0.000000001,shape,100000000.0);
+	this->shape = qBound(0.0,shape,std::numeric_limits<double>::max());
 }
 
 void Weibull::accept(VisitorDistribution& visitor)
