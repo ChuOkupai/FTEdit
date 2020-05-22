@@ -128,7 +128,7 @@ void SaveVisitor::visit( Constant &constdistrib )
 	distr.appendChild(propelem);
 
 	QDomElement val = dom.createElement("float");
-	val.setAttribute("value", QString::number(constdistrib.getValue(),'g',6));
+	val.setAttribute("value", QString::number(constdistrib.getValue(),'g',16));
 	distr.appendChild(val);
 	dom.documentElement().appendChild(distr);
 }
@@ -146,7 +146,7 @@ void SaveVisitor::visit( Exponential &expdistrib )
 	distr.appendChild(propelem);
 
 	QDomElement val = dom.createElement("float");
-	val.setAttribute("value", QString::number(expdistrib.getLambda(),'g',6));
+	val.setAttribute("value", QString::number(expdistrib.getLambda(),'g',16));
 	distr.appendChild(val);
 	dom.documentElement().appendChild(distr);
 }
@@ -162,10 +162,10 @@ void SaveVisitor::visit( Weibull &weibulldistrib )
 
 	QDomElement val;
 	val = dom.createElement("float");
-	val.setAttribute("value", QString::number(weibulldistrib.getScale(),'g',6));
+	val.setAttribute("value", QString::number(weibulldistrib.getScale(),'g',16));
 	distr.appendChild(val);
 	val = dom.createElement("float");
-	val.setAttribute("value", QString::number(weibulldistrib.getShape(),'g',6));
+	val.setAttribute("value", QString::number(weibulldistrib.getShape(),'g',16));
 	distr.appendChild(val);
 	dom.documentElement().appendChild(distr);
 }
