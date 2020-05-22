@@ -1,4 +1,5 @@
 #include <cmath>
+#include <limits>
 #include <QtGlobal>
 #include "Distribution.hh"
 #include "VisitorDistribution.hh"
@@ -21,7 +22,7 @@ double Exponential::getProbability(double time)
 
 void Exponential::setLambda(double lambda)
 {
-	value = qBound(0.000000001,lambda,1000000000000.0);
+	value = qBound(0.000000001,lambda,std::numeric_limits<double>::max());
 }
 
 void Exponential::accept(VisitorDistribution& visitor)

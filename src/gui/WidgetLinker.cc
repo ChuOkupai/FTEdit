@@ -10,7 +10,7 @@ QDoubleSpinBox(parent)
 QString DoubleSpinBox::textFromValue(double val) const
 {
 	QLocale locale;
-	return (locale.toString(val));
+	return (locale.toString(val, 'g', 16));
 }
 
 WidgetLinker::WidgetLinker(QWidget *parent, QBoxLayout *layout) :
