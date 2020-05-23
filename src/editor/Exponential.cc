@@ -1,10 +1,10 @@
 #include <cmath>
+#include <limits>
 #include <QtGlobal>
 #include "Distribution.hh"
 #include "VisitorDistribution.hh"
 
-Exponential::Exponential(QString name) :
-Distribution(name)
+Exponential::Exponential(QString name) : Distribution(name)
 {}
 
 Exponential::~Exponential()
@@ -22,7 +22,7 @@ double Exponential::getProbability(double time)
 
 void Exponential::setLambda(double lambda)
 {
-	value = qBound(0.0, lambda, 1.0);
+	value = qBound(0.0,lambda,std::numeric_limits<double>::max());
 }
 
 void Exponential::accept(VisitorDistribution& visitor)

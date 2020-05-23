@@ -1,68 +1,50 @@
 #include "Gate.hh"
 #include "VisitorNode.hh"
 #include "EvalVisitor.hh"
-#include "CopyVisitor.hh"
 
-VotingOR::VotingOR(QString name) : Gate(name), k(1) , subTree(nullptr)
+VotingOR::VotingOR(QString name,bool keep) : Gate(name,keep), k(0) , subTree(nullptr)
 {}
-
-VotingOR::VotingOR(VotingOR& cop) : Gate(cop.getProperties().getName()) ,k(cop.getK()) , subTree(cop.getSubTree())
-{}
-
 
 VotingOR::~VotingOR()
 {}
 
-
 void VotingOR::updateSubTree()
 {
-	subTree = generateComb(0,k,children.size());	
+	if (subTree)
+		subTree->remove();
+	if (k > 0 && k <= children.size())
+		subTree = (Gate*)generateComb(0,k,children.size());
+	else
+		subTree = nullptr;
 }
 
-Gate* VotingOR::generateComb(int i,int k,int n)
+Node* VotingOR::generateComb(int i,int k,int n)
 {
 	Gate *t;
 	Gate *t2;
-	CopyVisitor v;
-	int j = 0;
 
 	if(n == 1)
+		return children[i];
+	if(k == 1 || k == n)
 	{
-		return nullptr;
-	}
-
-	if(k==1 || (k==n))
-	{
-		if(k == 1)
-		{
-			t = new Or("");
-		}
+		if (k == 1)
+			t = new Or("", false);
 		else
-		{
-			t = new And("");
-		}
-		for(j=0;j<n;j++)
-		{
-			this->children.at(i+j)->accept(v);
-			v.getCopied()->attach(t);
-			v.setCopied(nullptr);
-		}
+			t = new And("", false);
+		for(int j = 0; j < n; ++j)
+			t->getChildren() << children[i + j];
 		return t;
 	}
-
-	t = new Or("");
-	for(j=0; j< n-k;j++)
+	t = new Or("", false);
+	for(int j = 0; j < n - k; ++j)
 	{
-		t2 = new And("");
+		t2 = new And("",false);
 		t2->attach(t);
-		this->children.at(i+j)->accept(v);
-		v.getCopied()->attach(t2);
-		v.setCopied(nullptr);
-		this->generateComb(i+j+1,k-1,n-j-1)->attach(t2);
+		t2->getChildren() << children[i + j];
+		generateComb(i + j + 1, k - 1, n - j - 1)->attach(t2);
 	}
-	this->generateComb(i+n-k,k,k)->attach(t);
+	generateComb(i + n - k, k, k)->attach(t);
 	return t;
-	
 }
 
 
@@ -73,22 +55,32 @@ int VotingOR::getK()const
 
 void VotingOR::setK(int k)
 {
+	this->k = 0;
+	updateSubTree();
     this->k = k;
 }
 
-Gate* VotingOR::getSubTree()const
+Gate* VotingOR::getSubTree()
 {
+	if (!subTree)
+		updateSubTree();
     return subTree;
 }
 
-
 bool VotingOR::check(QList<QString>& errors)
 {
-	if (children.size() < k)
+	if (subTree)
+	{
+		subTree->remove();
+		subTree = nullptr;
+	}
+	if (!k)
+		errors << prop.getName() + ": k value must have a strictly positive value.";
+	else if (children.size() < k)
 	{
 		errors << prop.getName() + ": k value must be less or equal children value.";
 	}
-	if(children.size() < 2)
+	else if(children.size() < 2)
 	{
 		errors << prop.getName() + ": must have a least 2 children.";
 	}
@@ -97,6 +89,19 @@ bool VotingOR::check(QList<QString>& errors)
 	return (errors.size() == 0);
 }
 
+void VotingOR::remove()
+{
+	if(parent)
+		this->detach();
+	if(subTree)
+		subTree->remove();
+	while (children.size())
+		children[0]->remove();
+	if(getProperties().getKeep() == false)
+		delete this;
+	else
+		getProperties().setKeep(false);
+}
 
 void VotingOR::accept(VisitorNode& visitor)
 {

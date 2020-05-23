@@ -11,7 +11,7 @@ class ChooseDistributionDialog : public QDialog
 
 private slots:
 	// Add a new distribution to the Editor's distributions list.
-	void closeEvent(QCloseEvent *event);
+	void confirm();
 
 private:
 	Editor &editor;
@@ -36,7 +36,7 @@ private slots:
 	// Quit when name is valid
 	void closeEvent(QCloseEvent *event);
 	// Checks if new name is unique
-	void checkName();
+	void checkName(const QString &text);
 	// Save the new description in Properties
 	void editDesc();
 
@@ -71,7 +71,7 @@ private:
 	DoubleSpinBox *step;
 
 private slots:
-	void closeEvent(QCloseEvent *event);
+	void confirm();
 
 	void checkChanged(int state);
 

@@ -1,10 +1,10 @@
 #include <QtGlobal>
 #include <limits>
 #include "Editor.hh"
-#include "CopyVisitor.hh"
+#include "ClipVisitor.hh"
+#include "PasteVisitor.hh"
 
-Editor::Editor(bool autoRefresh) :
-clipboard(nullptr), selection(nullptr), autoRefresh(autoRefresh)
+Editor::Editor(bool autoRefresh) : clipboard(nullptr), selection(nullptr), autoRefresh(autoRefresh)
 {}
 
 Editor::~Editor()
@@ -23,7 +23,6 @@ Editor::~Editor()
 	
 	if(clipboard)
 		delete clipboard;
-	
 }
 
 QList<Tree> &Editor::getTrees()
@@ -69,78 +68,27 @@ void Editor::setAutoRefresh(bool value)
 void Editor::copy(Node *top)
 {
 	resetClipboard();
-	CopyVisitor tmp;
+	ClipVisitor tmp;
 	top->accept(tmp);
 	clipboard = tmp.getCopied();
 }
 
 void Editor::cut(Node *top)
 {
-	
-	resetClipboard();
-	CopyVisitor tmp;
-	top->accept(tmp);
-	clipboard = tmp.getCopied();
-	top->remove();
-}
-
-void Editor::remove_duplicate_names(Node* top)
-{
-	if(dynamic_cast<Gate*>(top))
-	{
-		Gate* tmp = dynamic_cast<Gate*>(top);
-			if(!isUnique(tmp->getProperties().getName()))
-			{
-				tmp->getProperties().setName(generateName(PREFIX_GATE));
-				getGates()<<tmp;
-			}
-			for(int i =0; i<tmp->getChildren().size();i++)
-			{
-				remove_duplicate_names(tmp->getChildren()[i]);
-			}
-
-	}
-	if(dynamic_cast<Transfert*>(top))
-	{
-		Transfert* tmp = dynamic_cast<Transfert*>(top);
-			if(!isUnique(tmp->getLink()->getProperties().getName()))
-			{
-				tmp->getLink()->getProperties().setName(generateName(PREFIX_TREE));
-			}
-		remove_duplicate_names(tmp->getLink()->getTop());
-	}
-	if(dynamic_cast<Container*>(top))
-	{
-		Container* tmp = dynamic_cast<Container*>(top);
-
-			if(!isUnique(tmp->getEvent()->getProperties().getName()))
-			{
-				tmp->getEvent()->getProperties().incrementRefCount();
-			}
-			else
-			{
-				getEvents()<<*(tmp->getEvent());	
-			}
-			if(tmp->getEvent()->getDistribution())
-			{
-				if(!isUnique(tmp->getEvent()->getDistribution()->getProperties().getName()))
-				{
-					tmp->getEvent()->getDistribution()->getProperties().incrementRefCount();
-				}
-				else
-				{
-					getDistributions()<<tmp->getEvent()->getDistribution();
-				}
-			}
-	}
+	copy(top);
+	remove(top);
 }
 
 void Editor::paste(Gate *parent)
 {
-	CopyVisitor tmp;
-	clipboard->accept(tmp);
-	remove_duplicate_names(tmp.getCopied());
-	tmp.getCopied()->attach(parent);	
+	if(clipboard)
+	{
+		PasteVisitor tmp(*this);
+		clipboard->accept(tmp);
+		tmp.getPasted()->attach(parent);
+		if (!selection->getTop())
+			selection->setTop((Gate*)tmp.getPasted());
+	}
 }
 
 void Editor::move(Node *child, Gate *parent)
@@ -233,7 +181,7 @@ void Editor::refresh()
 
 void Editor::resetClipboard()
 {
-	// détruire la copie de l'arbre dans clipboard
 	if(clipboard)
 		clipboard->remove();
+	clipboard = nullptr;
 }

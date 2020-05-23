@@ -2,16 +2,11 @@
 #include "VisitorNode.hh"
 #include "EvalVisitor.hh"
 
-And::And(QString name) : Gate(name)
-{}
-
-And::And(And& cop) : Gate (cop.getProperties().getName())
+And::And(QString name,bool keep) : Gate(name,keep)
 {}
 
 And::~And()
 {}
-
-
 
 bool And::check(QList<QString>& errors)
 {
@@ -23,10 +18,12 @@ bool And::check(QList<QString>& errors)
 		children.at(i)->check(errors);
 	return (errors.size() == 0);
 }
+
 void And::accept(VisitorNode& visitor)
 {
 	visitor.visit(*this);
 }
+
 double And::accept(EvalVisitor& eval)
 {
 	return eval.visit(*this);

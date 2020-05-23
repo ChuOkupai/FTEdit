@@ -8,13 +8,14 @@ class SaveVisitor : public VisitorDistribution, public VisitorNode
 {
 	private :
 		QDomDocument dom;
+		QDomElement treeElem;
 		void writeTypeDistrib(QDomElement &node, QString type);
-		void writeProperties(QDomElement &elem, QDomElement &propelem, Properties& prop);
 		void writeChildren(QDomElement &node, Gate& gate);
 		void writeGate(Gate& gate, QString type);
 	public :
 		SaveVisitor();
 		~SaveVisitor();
+		void setTreeElem(QDomElement elem);
 		QDomDocument& getDomFile();
 		void visit( And &andgate );
 		void visit( Or &orgate );
@@ -27,4 +28,5 @@ class SaveVisitor : public VisitorDistribution, public VisitorNode
 		void visit( Weibull &weibulldistrib );
 		void visit( Container &container );
 		void visit( Event &event );
+		void writeProperties(QDomElement &elem, QDomElement &propelem, Properties& prop);
 };

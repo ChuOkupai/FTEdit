@@ -1,3 +1,4 @@
+#include <limits>
 #include "EditDistributionDialog.hh"
 #include "WidgetLinker.hh"
 
@@ -33,11 +34,8 @@ PropertiesDialog(parent, editor, &dist.getProperties()), editor(editor), dist(di
 	linker.addLayoutItem(new QSpacerItem(0, 20, QSizePolicy::Minimum, QSizePolicy::Maximum));
 	linker.addLabel("Unavailability:");
 	value = linker.addDoubleSpinBox();
-	value->setRange(0.0, 1.0); // Probability range between 0.0 and 1.0
-	value->setDecimals(16); // Precision
-	value->setSingleStep(0); // Disable step
+	value->setRange(0.0, 1.0);
 	value->setValue(dist.getValue());
-	value->setButtonSymbols(QAbstractSpinBox::NoButtons); // Disable adjust button
 	linker.addOKButton();
 
 	connect(value, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
@@ -55,18 +53,13 @@ PropertiesDialog(parent, editor, &dist.getProperties()), editor(editor), dist(di
 	linker.addLayoutItem(new QSpacerItem(0, 20, QSizePolicy::Minimum, QSizePolicy::Maximum));
 	linker.addLabel("Lambda:");
 	lambda = linker.addDoubleSpinBox();
-	lambda->setRange(0.0, 1.0);
-	lambda->setDecimals(16);
-	lambda->setSingleStep(0);
+	lambda->setRange(0.0, std::numeric_limits<double>::max());
 	lambda->setValue(dist.getValue());
-	lambda->setButtonSymbols(QAbstractSpinBox::NoButtons);
 	linker.addOKButton();
 
 	connect(lambda, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
-	[=](double d){ this->dist.setValue(d); });
+	[=](double d){ this->dist.setLambda(d); });
 }
-
-// TODO
 
 // EditWeibullDialog
 
@@ -79,19 +72,12 @@ PropertiesDialog(parent, editor, &dist.getProperties()), editor(editor), dist(di
 	linker.addLayoutItem(new QSpacerItem(0, 20, QSizePolicy::Minimum, QSizePolicy::Maximum));
 	linker.addLabel("Scale:");
 	scale = linker.addDoubleSpinBox();
-	scale->setRange(0.0, 1.0);
-	scale->setDecimals(16);
-	scale->setSingleStep(0);
-	scale->setValue(dist.getValue());
-	scale->setButtonSymbols(QAbstractSpinBox::NoButtons);
-
+	scale->setRange(0.0, std::numeric_limits<double>::max());
+	scale->setValue(dist.getScale());
 	linker.addLabel("Shape:");
 	shape = linker.addDoubleSpinBox();
-	shape->setRange(0.0, 1.0);
-	shape->setDecimals(16);
-	shape->setSingleStep(0);
-	shape->setValue(dist.getValue());
-	shape->setButtonSymbols(QAbstractSpinBox::NoButtons);
+	shape->setRange(0.0, std::numeric_limits<double>::max());
+	shape->setValue(dist.getShape());
 
 	linker.addOKButton();
 
@@ -100,6 +86,3 @@ PropertiesDialog(parent, editor, &dist.getProperties()), editor(editor), dist(di
 	connect(shape, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
 	[=](double d){ this->dist.setShape(d); });
 }
-
-
-// TODO

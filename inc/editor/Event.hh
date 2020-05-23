@@ -16,14 +16,9 @@ public:
 	~Event();
 	
 	Properties& getProperties();
-
 	void setDistribution(Distribution *distribution);
-	
 	Distribution* getDistribution();
-
 	void accept(SaveVisitor& v);
-
 	bool operator==(const Event&)const;
 	bool operator <(const Event&)const;
-	
 };

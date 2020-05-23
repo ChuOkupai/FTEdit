@@ -2,7 +2,6 @@
 
 ResultBoolean::ResultBoolean(Gate* top,double missionTime,double step) : Evaluator(top,missionTime,step)
 {
-	this->topEventName = top->getProperties().getName();
 	EvalVisitor eval;
 
 	if (this->missionTime)
@@ -12,9 +11,5 @@ ResultBoolean::ResultBoolean(Gate* top,double missionTime,double step) : Evaluat
 		this->probabilities << eval.getProba(top, 0);
 }
 
-ResultBoolean::~ResultBoolean(){
-}
-
-QString ResultBoolean::getTopEventName(){
-	return topEventName;
-}
+ResultBoolean::~ResultBoolean()
+{}

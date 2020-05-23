@@ -5,16 +5,15 @@
 
 class Result
 {
-	private :
+private :
 		QStringList errors;
 		ResultMCS *resultMCS;
 		ResultBoolean *resultBoolean;
 
-	public:
+public:
 		Result(Gate* top, bool useMCS,bool useBoolean,double missionTime,double step);
 		~Result();
 		QStringList& getErrors();
 		ResultMCS* getResultMCS();
 		ResultBoolean *getResultBoolean();
-	
 };

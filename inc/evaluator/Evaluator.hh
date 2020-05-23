@@ -15,4 +15,5 @@ public :
 	double getMissionTime();
 	double getStep();
 	QList<double> getProbabilities();
+    QString getTopEventName();
 };

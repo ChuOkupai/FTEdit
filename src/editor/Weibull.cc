@@ -1,10 +1,10 @@
 #include <cmath>
+#include <limits>
 #include <QtGlobal>
 #include "Distribution.hh"
 #include "VisitorDistribution.hh"
 
-Weibull::Weibull(QString name) :
-Distribution(name)
+Weibull::Weibull(QString name) : Distribution(name), shape(0)
 {}
 
 Weibull::~Weibull()
@@ -27,12 +27,12 @@ double Weibull::getProbability(double time)
 
 void Weibull::setScale(double scale)
 {
-	value = scale;
+	value = qBound(0.0,scale,std::numeric_limits<double>::max());
 }
 
 void Weibull::setShape(double shape)
 {
-	this->shape = shape;
+	this->shape = qBound(0.0,shape,std::numeric_limits<double>::max());
 }
 
 void Weibull::accept(VisitorDistribution& visitor)

@@ -11,17 +11,15 @@ protected:
 
 public:
 	Properties(QString name, bool keep = false);
-	Properties(const Properties&);
 	~Properties();
 
 	QString	getName() const;
 	QString	getDesc() const;
+	int		getRefCount() const;
 	bool	getKeep() const;
-
 	void	setName(QString name);
 	void	setDesc(QString desc);
 	void	setKeep(bool keep);
-
 	void	decrementRefCount();
 	void	incrementRefCount();
 	bool	canBeRemoved();

@@ -1,12 +1,8 @@
-#include <QDebug>
 #include "Properties.hh"
 
-Properties::Properties(QString name, bool keep) :
-name(name), refCount(0), keep(keep)
+Properties::Properties(QString name, bool keep) : name(name), refCount(0), keep(keep)
 {}
 
-Properties::Properties(const Properties& cop) : name(cop.getName()) , refCount(cop.refCount) , keep(cop.getKeep())
-{}
 Properties::~Properties()
 {}
 
@@ -18,6 +14,11 @@ QString Properties::getName() const
 QString Properties::getDesc() const
 {
 	return (desc);
+}
+
+int Properties::getRefCount() const
+{
+	return (refCount);
 }
 
 bool Properties::getKeep() const

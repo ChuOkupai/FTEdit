@@ -1,7 +1,7 @@
 #include <limits>
 #include "Dialog.hh"
 
-void ChooseDistributionDialog::closeEvent(QCloseEvent *event)
+void ChooseDistributionDialog::confirm()
 {
 	QString name = editor.generateName("Model");
 	Distribution *dist;
@@ -12,7 +12,7 @@ void ChooseDistributionDialog::closeEvent(QCloseEvent *event)
 	else
 		dist = new Weibull(name);
 	editor.getDistributions() << dist; // Append new distribution to list
-	event->accept();
+	accept();
 }
 
 ChooseDistributionDialog::ChooseDistributionDialog(QWidget *parent, Editor &editor)
@@ -37,7 +37,8 @@ ChooseDistributionDialog::ChooseDistributionDialog(QWidget *parent, Editor &edit
 	linker.set(hLayout);
 	linker.addLayoutItem(new QSpacerItem(60, 0, QSizePolicy::Maximum, QSizePolicy::Minimum));
 	linker.set(layout);
-	linker.addOKButton();
+
+	connect(linker.addOKButton(false), SIGNAL(released()), this, SLOT(confirm()));
 }
 
 PropertiesDialog::PropertiesDialog(QWidget *parent, Editor &editor, Properties *prop, bool initialized) :
@@ -53,9 +54,9 @@ void PropertiesDialog::closeEvent(QCloseEvent *event)
 	isValid ? event->accept() : event->ignore();
 }
 
-void PropertiesDialog::checkName()
+void PropertiesDialog::checkName(const QString &text)
 {
-	QString s = nameWidget->text().trimmed();
+	QString s = text.trimmed();
 	if (!s.compare(prop->getName()) || (s.size() > 0 && editor.isUnique(s)))
 	{
 		isValid = true;
@@ -69,7 +70,6 @@ void PropertiesDialog::checkName()
 		nameWidget->setToolTip(s.size() ? "This name already exists" : "This name is invalid");
 		nameWidget->setStyleSheet("border: 1px solid red;background-color: #ff8a8a;");
 	}
-	nameWidget->setText(s);
 	emit nameChanged(s); // Signal
 }
 
@@ -88,7 +88,7 @@ void PropertiesDialog::init()
 	nameWidget = linker.addLineEdit(prop->getName());
 	linker.addLabel("Description:");
 	descWidget = linker.addTextEdit(prop->getDesc());
-	connect(nameWidget, SIGNAL(editingFinished()), this, SLOT(checkName()));
+	connect(nameWidget, SIGNAL(textEdited(const QString &)), this, SLOT(checkName(const QString &)));
 	connect(descWidget, SIGNAL(textChanged()), this, SLOT(editDesc()));
 }
 
@@ -108,7 +108,7 @@ bool PropertiesDialog::valid()
 	return (isValid);
 }
 
-void ChooseResultDialog::closeEvent(QCloseEvent *event)
+void ChooseResultDialog::confirm()
 {
 	if (useBoolean->isChecked() && missionTime->value() > 0.0 && step->value() == 0.0)
 	{
@@ -117,12 +117,11 @@ void ChooseResultDialog::closeEvent(QCloseEvent *event)
 		msg.setWindowTitle("Error");
 		msg.setText("The step must be positive.");
 		msg.exec();
-		event->ignore();
 		return ;
 	}
 	results << new Result(top, useMCS->isChecked(), useBoolean->isChecked(),
 	missionTime->value(), step->value()); // Add new analysis to the list
-	event->accept();
+	accept();
 }
 
 void ChooseResultDialog::checkChanged(int state)
@@ -154,20 +153,20 @@ ChooseResultDialog::ChooseResultDialog(QWidget *parent, Gate *top, QList<Result*
 	missionTime->setToolTip("Maximum operating time");
 	missionTime->setSuffix(" s");
 	missionTime->setRange(0, std::numeric_limits<double>::max());
-	missionTime->setDecimals(16);
 	missionTime->setEnabled(false);
 	linker.addLabel("Step :");
 	step = linker.addDoubleSpinBox();
 	step->setToolTip("Time between each calculation");
 	step->setSuffix(" s");
 	step->setRange(0, std::numeric_limits<double>::max());
-	step->setDecimals(16);
 	step->setEnabled(false);
-	linker.addOKButton()->setText("Continue");
+	auto *button2 = linker.addOKButton(false);
+	button2->setText("Continue");
 	resize(340, height());
 
 	connect(useBoolean, SIGNAL(stateChanged(int)), this, SLOT(checkChanged(int)));
 	connect(useMCS, SIGNAL(stateChanged(int)), this, SLOT(checkChanged(int)));
+	connect(button2, SIGNAL(released()), this, SLOT(confirm()));
 }
 
 ChooseTreeDialog::ChooseTreeDialog(QWidget *parent, Editor &editor, int &treeIndex) :
@@ -178,16 +177,25 @@ QDialog(parent), editor(editor), treeIndex(treeIndex)
 	WidgetLinker linker(this, new QVBoxLayout(this));
 	linker.addLayoutItem(new QSpacerItem(0, 20, QSizePolicy::Minimum, QSizePolicy::Maximum));
 	trees = linker.addComboBox();
-	linker.addOKButton();
+	connect(linker.addOKButton(false), SIGNAL(released()), this, SLOT(accept()));
 
 	QList<Tree> &l = editor.getTrees();
 	QString current = editor.getSelection()->getProperties().getName();
-	for (auto tree : l)
-		if (tree.getProperties().getName().compare(current))
-			trees->addItem(tree.getProperties().getName());
+	int i = 0;
+	for (auto &tree : l)
+	{
+		trees->addItem(tree.getProperties().getName());
+		if (!tree.getProperties().getName().compare(current))
+		{
+			auto model = qobject_cast<QStandardItemModel *>(trees->model());
+			i = model->rowCount() - 1;
+			QStandardItem *item = model->item(i);
+			item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
+		}
+	}
 
-	trees->setCurrentIndex(0);
-	treeIndex = 0;
+	trees->setCurrentIndex(i < 1);
+	treeIndex = trees->currentIndex();
 	connect(trees, QOverload<int>::of(&QComboBox::currentIndexChanged),
 	[=](int i) { this->treeIndex = i; });
 }

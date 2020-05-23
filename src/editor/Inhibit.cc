@@ -2,13 +2,8 @@
 #include "VisitorNode.hh"
 #include "EvalVisitor.hh"
 
-
-Inhibit::Inhibit(QString name) : Gate(name)
+Inhibit::Inhibit(QString name,bool keep) : Gate(name,keep)
 {}
-
-Inhibit::Inhibit (Inhibit& cop) : Gate(cop.getProperties().getName()) , condition(cop.getCondition())
-{}
-
 
 Inhibit::~Inhibit()
 {}
@@ -23,10 +18,13 @@ void Inhibit::setCondition(bool condition)
     this->condition = condition;
 }
 
-
 bool Inhibit::check (QList<QString>& errors)
 {
-    if(children.size() != 1)
+    if(children.size() < 1)
+    {
+        errors << prop.getName() + ": There must be 1 input.";
+    }
+    if(children.size() > 1)
     {
         errors << prop.getName() + ": There must be only 1 input.";
     }

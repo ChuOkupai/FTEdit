@@ -3,16 +3,11 @@
 #include "VisitorNode.hh"
 #include "EvalVisitor.hh"
 
-Xor::Xor(QString name) : Gate(name)
+Xor::Xor(QString name,bool keep) : Gate(name,keep)
 {}
-
-Xor::Xor(Xor& cop) : Gate(cop.getProperties().getName())
-{}
-
 
 Xor::~Xor()
 {}
-
 
 bool Xor::check(QList<QString>& errors)
 {
@@ -29,7 +24,6 @@ void Xor::accept(VisitorNode& visitor)
 {
 	visitor.visit(*this);
 }
-
 
 double Xor::accept(EvalVisitor& eval)
 {

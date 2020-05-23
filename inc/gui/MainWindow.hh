@@ -31,6 +31,7 @@ private slots:
 	void cut();
 	void copy();
 	void paste();
+	void clearClipboard();
 		// Add
 		void addAnd();
 		void addInhibit();
@@ -47,6 +48,7 @@ private slots:
 	void removeItem();
 	void detach();
 	void join();
+	void newTransfert();
 	// View
 	void zoomIn();
 	void zoomOut();
@@ -64,14 +66,24 @@ private slots:
 
 	// Change item selection
 	void changeItem();
-	// Check clicked item in explorer
+	// Check new selected item
 	void explorerItemClicked(QTreeWidgetItem *item, int column);
+	// Show context menu
+	void explorerShowContextMenu(const QPoint &pos);
+	void editTreeProperties();
+	void addTree();
+	void removeTree();
+	void removeResult();
+	void removeAllResults();
 
 private:
-	Editor			*editor;
-	bool			modified;
-	NodeItem		*curItem;
-	QList<Result*>	resultsHistory;
+	Editor				*editor;
+	FileManagerSystem	*fileManager;
+	bool				modified;
+	NodeItem			*curItem;
+	QList<Result*>		resultsHistory;
+	int					curTreeRow;
+	int					selectedRow;
 
 	QAction *newAct;
 	QAction *openAct;
@@ -81,6 +93,7 @@ private:
 	QAction *cutAct;
 	QAction *copyAct;
 	QAction *pasteAct;
+	QAction *clearClipboardAct;
 	QAction *addAndAct;
 	QAction *addInhibitAct;
 	QAction *addOrAct;
@@ -97,6 +110,7 @@ private:
 		QAction *removeItemAct;
 		QAction *detachItemAct;
 		QAction *joinItemAct;
+		QAction *newTransfertAct;
 	QAction *zoomInAct;
 	QAction *zoomOutAct;
 	QAction *zoomResetAct;
@@ -108,6 +122,12 @@ private:
 	QAction *evaluateAct;
 	QAction *aboutAct;
 	QAction *aboutQtAct;
+
+	QAction *editTreePropertiesAct;
+	QAction *addTreeAct;
+	QAction *removeTreeAct;
+	QAction *removeResultAct;
+	QAction *removeAllResultsAct;
 
 	QMenu			*childItemsMenu; // for childs (Container + Transfert)
 	QMenu			*itemsMenu; // for gates

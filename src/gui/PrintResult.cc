@@ -1,9 +1,21 @@
+#include "FTEdit_FMS.hh"
 #include "PrintResult.hh"
 #include "WidgetLinker.hh"
 
 void PrintResult::exportResult()
 {
-
+	QString path(QDir::homePath() + "/fault-tree-analysis-" + date + ".csv");
+	path = QFileDialog::getSaveFileName(this, "Export analysis", path, "Comma-separated values (*.csv)");
+	if (path.isEmpty()) return ;
+	FileManagerSystem fms;
+	fms.exportAs(path, *result);
+	if (fms.getErrorMessage().isEmpty())
+		return ;
+	QMessageBox msg(this);
+	msg.setIcon(QMessageBox::Critical);
+	msg.setWindowTitle("Error");
+	msg.setText(fms.getErrorMessage());
+	msg.exec();
 }
 
 void PrintResult::initBoolean(ResultBoolean *res)
@@ -15,7 +27,7 @@ void PrintResult::initBoolean(ResultBoolean *res)
 	for (double p : l)
 	{
 		// Time
-		auto *item = new QTableWidgetItem(QString::number(t));
+		auto item = new QTableWidgetItem(QString::number(t));
 		prb->setItem(i, 0, item);
 
 		// Failure rate
@@ -32,7 +44,7 @@ void PrintResult::initMCS(ResultMCS *res)
 	QList<double> l = res->getProbabilities();
 	QList<QList<QString>> l2 = res->getMCS();
 	QString set;
-	mcs->setRowCount(l.size());
+	mcs->setRowCount(l2.size());
 	for (int i = 0; i < l2.size(); ++i)
 	{
 		// Probability
@@ -45,39 +57,46 @@ void PrintResult::initMCS(ResultMCS *res)
 		mcs->setItem(i, 1, item);
 
 		// Events
-		for (int j = 0; j < l3.size(); ++j)
-			set += " " + l3[j];
+		set = l3.first();
+		for (int j = 1; j < l3.size(); ++j)
+			set += " / " + l3[j];
 		item = new QTableWidgetItem(set);
 		mcs->setItem(i, 2, item);
 		set.clear();
 	}
 }
 
-PrintResult::PrintResult(QWidget *parent, Result *result) :
-QDialog(parent), result(result)
+PrintResult::PrintResult(QWidget *parent, Result *result, QString date) :
+QDialog(parent), result(result), date(date)
 {
 	QStringList header;
-	setWindowTitle("Events list");
+	setWindowTitle("Analysis results - " + date);
 	setWindowIcon(QIcon(":icons/manage.png"));
 	resize(640, 480);
 	auto layout = new QVBoxLayout(this);
-	layout->setMargin(0);
+	layout->setMargin(1);
 	WidgetLinker linker(this, layout);
-	auto *tabs = linker.addTabWidget();
+	auto tabs = linker.addTabWidget();
 	linker.set(tabs);
-	auto *menu = new QMenuBar(this);
-	auto *m = menu->addMenu("&File");
-	auto *exportAct = new QAction("Export...", this);
+	auto menu = new QMenuBar(this);
+	auto m = menu->addMenu("&File");
+	auto exportAct = new QAction("Export...", this);
+	exportAct->setShortcut(QKeySequence("Ctrl+E"));
 	exportAct->setStatusTip("Export data to a file in CSV format");
 	exportAct->setIcon(QIcon(":icons/saveAs.png"));
 	connect(exportAct, &QAction::triggered, this, &PrintResult::exportResult);
 	m->addAction(exportAct);
 	layout->setMenuBar(menu);
+	QVBoxLayout *l;
+	QWidget *w;
 	if (result->getResultBoolean())
 	{
-		linker.set(new QVBoxLayout());
-		prb = linker.addTableWidget();
-		tabs->addTab(prb, QString("Probabilities"));
+		l = new QVBoxLayout;
+		l->setMargin(1);
+		w = new QWidget;
+		w->setLayout(l);
+
+		prb = new QTableWidget(this);
 		prb->setColumnCount(2);
 		header << "Time" << "Failure rate of " + result->getResultBoolean()->getTopEventName();
 		prb->setHorizontalHeaderLabels(header);
@@ -87,13 +106,22 @@ QDialog(parent), result(result)
 		prb->verticalHeader()->setVisible(false);
 		prb->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 		prb->horizontalHeader()->setStretchLastSection(true);
+		l->addWidget(prb);
+		tabs->addTab(w, QString("Probabilities"));
 		initBoolean(result->getResultBoolean());
 	}
 	if (result->getResultMCS())
 	{
-		linker.set(new QVBoxLayout());
-		mcs = linker.addTableWidget();
-		tabs->addTab(mcs, QString("Minimal cuts set"));
+		l = new QVBoxLayout;
+		l->setMargin(1);
+		w = new QWidget;
+		w->setLayout(l);
+
+		auto label = new QLabel;
+		label->setText("TopEvent propability risk: " + QString::number(result->getResultMCS()->getProbabilities().last()));
+		l->addWidget(label);
+
+		mcs = new QTableWidget;
 		mcs->setColumnCount(3);
 		header << "Probability" << "Quantity" << "Events";
 		mcs->setHorizontalHeaderLabels(header);
@@ -101,6 +129,8 @@ QDialog(parent), result(result)
 		mcs->setEditTriggers(QAbstractItemView::NoEditTriggers);
 		mcs->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 		mcs->horizontalHeader()->setStretchLastSection(true);
+		l->addWidget(mcs);
+		tabs->addTab(w, QString("Minimal cuts set"));
 		initMCS(result->getResultMCS());
 	}
 

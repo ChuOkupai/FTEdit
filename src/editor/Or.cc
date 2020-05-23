@@ -3,15 +3,11 @@
 #include "VisitorNode.hh"
 #include "EvalVisitor.hh"
 
-Or::Or(QString name) : Gate(name)
-{}
-
-Or::Or(Or& cop) : Gate(cop.getProperties().getName())
+Or::Or(QString name,bool keep) : Gate(name,keep)
 {}
 
 Or::~Or()
 {}
-
 
 bool Or::check(QList<QString>& errors)
 {

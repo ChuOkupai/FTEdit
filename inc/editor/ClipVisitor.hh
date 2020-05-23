@@ -1,19 +1,17 @@
 #pragma once
 #include "VisitorNode.hh"
-#include <QString>
-class CopyVisitor: public VisitorNode
+class ClipVisitor: public VisitorNode
 {
 private:
     Node* copied;
+    Gate* parent;
 
+    void visitChildren(Gate& gate,Gate* parent);
 public:
-    CopyVisitor();
-    ~CopyVisitor();
+    ClipVisitor();
+    ~ClipVisitor();
     Node* getCopied() const;
-    void  setCopied(Node* n);
  
-    Gate* find(Node* n,QString name);
-
     void visit(And& andgate);
     void visit(Or& orgate);
     void visit(Xor& xorgate);
