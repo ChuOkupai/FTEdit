@@ -110,14 +110,22 @@ bool PropertiesDialog::valid()
 
 void ChooseResultDialog::confirm()
 {
-	if (useBoolean->isChecked() && missionTime->value() > 0.0 && step->value() == 0.0)
+	if (useBoolean->isChecked())
 	{
-		QMessageBox msg(this);
-		msg.setIcon(QMessageBox::Critical);
-		msg.setWindowTitle("Error");
-		msg.setText("The step must be positive.");
-		msg.exec();
-		return ;
+		QString s;
+		if (missionTime->value() > 0.0 && step->value() == 0.0)
+			s = "The step must be positive.";
+		else if (missionTime->value() / step->value() > 1e9)
+			s = "Limit exceeded.";
+		if (!s.isEmpty())
+		{
+			QMessageBox msg(this);
+			msg.setIcon(QMessageBox::Critical);
+			msg.setWindowTitle("Error");
+			msg.setText(s);
+			msg.exec();
+			return ;
+		}
 	}
 	results << new Result(top, useMCS->isChecked(), useBoolean->isChecked(),
 	missionTime->value(), step->value()); // Add new analysis to the list
@@ -126,7 +134,6 @@ void ChooseResultDialog::confirm()
 
 void ChooseResultDialog::checkChanged(int state)
 {
-
 	(void)state;
 	missionTime->setEnabled(useBoolean->isChecked() || useMCS->isChecked());
 	step->setEnabled(useBoolean->isChecked());

@@ -27,11 +27,13 @@ void PrintResult::initBoolean(ResultBoolean *res)
 	for (double p : l)
 	{
 		// Time
-		auto item = new QTableWidgetItem(QString::number(t));
+		auto item = new QTableWidgetItem(QString::number(t, 'g', 2));
+		item->setToolTip(QString::number(t, 'g', 10));
 		prb->setItem(i, 0, item);
 
 		// Failure rate
-		item = new QTableWidgetItem(QString::number(p));
+		item = new QTableWidgetItem(QString::number(p, 'g', 2));
+		item->setToolTip(QString::number(p, 'g', 10));
 		prb->setItem(i, 1, item);
 
 		t += res->getStep();
@@ -48,7 +50,8 @@ void PrintResult::initMCS(ResultMCS *res)
 	for (int i = 0; i < l2.size(); ++i)
 	{
 		// Probability
-		auto *item = new QTableWidgetItem(QString::number(l[i]));
+		auto *item = new QTableWidgetItem(QString::number(l[i], 'g', 2));
+		item->setToolTip(QString::number(l[i], 'g', 10));
 		mcs->setItem(i, 0, item);
 
 		// Quantity
@@ -118,7 +121,8 @@ QDialog(parent), result(result), date(date)
 		w->setLayout(l);
 
 		auto label = new QLabel;
-		label->setText("TopEvent propability risk: " + QString::number(result->getResultMCS()->getProbabilities().last()));
+		label->setText("TopEvent propability risk: " + QString::number(result->getResultMCS()->getProbabilities().last(), 'e', 4));
+		label->setToolTip(QString::number(result->getResultMCS()->getProbabilities().last(), 'f', 10));
 		l->addWidget(label);
 
 		mcs = new QTableWidget;

@@ -3,14 +3,22 @@
 DoubleSpinBox::DoubleSpinBox(QWidget *parent) :
 QDoubleSpinBox(parent)
 {
-	setDecimals(16);
-	setSingleStep(0.1);
+	setDecimals(10);
+	setSingleStep(0.01);
+	setAccelerated(true);
 }
 
-QString DoubleSpinBox::textFromValue(double val) const
+QString DoubleSpinBox::textFromValue(double d) const
 {
-	QLocale locale;
-	return (locale.toString(val, 'g', 16));
+	if (d < 0.000000000001)
+		d = 0.0;
+	QString s(QLocale::system().toString(d, 'e', 10));
+	int start = s.indexOf(QLocale::system().decimalPoint()) + 2, end = s.indexOf('e'),
+	i = end - 1;
+	while (i > start && s[i] == '0')
+		--i;
+	i += s[i] != '0';
+	return (s.remove(i, end - i));
 }
 
 WidgetLinker::WidgetLinker(QWidget *parent, QBoxLayout *layout) :
