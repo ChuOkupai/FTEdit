@@ -1,6 +1,6 @@
 #include <iostream>
 #include <type_traits>
-#include <QDebug>
+#include <QLocale>
 #include "SaveVisitor.hh"
 #include "FileManagerSystem.hh"
 
@@ -129,7 +129,6 @@ void SaveVisitor::visit( Constant &constdistrib )
 
 	QDomElement val = dom.createElement("float");
 	val.setAttribute("value", doubleToString(constdistrib.getValue()));
-	qDebug() << doubleToString(0.00001);
 	distr.appendChild(val);
 	dom.documentElement().appendChild(distr);
 }
