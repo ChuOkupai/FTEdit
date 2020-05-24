@@ -360,8 +360,8 @@ void MainWindow::about()
 	QMessageBox about(this);
 	about.setWindowIcon(QIcon(":icons/about.png"));
 	about.setWindowTitle("About FTEdit");
-	about.setText("FTEdit is an open source editor fault tree analysis tool.<br><br>"
-	"License: GPLv3<br>Source code is available on "
+	about.setText("FTEdit is an open source fault tree editor with risk analysis tools.<br><br>"
+	"License: GPLv3<br>Version: 1.0<br><br>Source code and documentation is available on "
 	"<a href='https://github.com/ChuOkupai/FTEdit'>GitHub</a><br>");
 	about.exec();
 }

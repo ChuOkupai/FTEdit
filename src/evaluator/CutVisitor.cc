@@ -62,8 +62,8 @@ void CutVisitor::visit(VotingOR& vorgate)
 
 void CutVisitor::visit(Inhibit& inhibgate)
 {
-    Event* cond = new Event("conditon " + inhibgate.getProperties().getName());
-    Constant* proba = new Constant("proba " + inhibgate.getProperties().getName());
+    Event* cond = new Event("condition of " + inhibgate.getProperties().getName());
+    Constant* proba = new Constant("probability of " + inhibgate.getProperties().getName());
     proba->setValue(inhibgate.getCondition()==true);
     cond->setDistribution(proba);
     Container* condition = new Container(cond);

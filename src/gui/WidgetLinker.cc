@@ -6,14 +6,15 @@ QDoubleSpinBox(parent)
 	setDecimals(10);
 	setSingleStep(0.01);
 	setAccelerated(true);
+	setLocale(QLocale("C"));
 }
 
 QString DoubleSpinBox::textFromValue(double d) const
 {
 	if (d < 0.000000000001)
 		d = 0.0;
-	QString s(QLocale::system().toString(d, 'e', 10));
-	int start = s.indexOf(QLocale::system().decimalPoint()) + 2, end = s.indexOf('e'),
+	QString s(locale().toString(d, 'e', 10));
+	int start = s.indexOf(locale().decimalPoint()) + 2, end = s.indexOf('e'),
 	i = end - 1;
 	while (i > start && s[i] == '0')
 		--i;
