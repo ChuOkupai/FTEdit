@@ -121,6 +121,7 @@ void MainWindow::open()
 		{
 			auto t = new QTreeWidgetItem(trees);
 			t->setText(0, (i ? list[i].getProperties().getName() : " * " + list[i].getProperties().getName()));
+			t->setToolTip(0, list[i].getProperties().getDesc());
 			trees->addChild(t);
 		}
 		editor->setSelection(&list.first());
@@ -547,6 +548,7 @@ void MainWindow::editTreeProperties()
 		treeItem->setText(0, " * " + tree->getProperties().getName());
 	else
 		treeItem->setText(0, tree->getProperties().getName());
+	treeItem->setToolTip(0, tree->getProperties().getDesc());
 	setEnabledButton();
 }
 
