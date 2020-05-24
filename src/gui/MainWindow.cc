@@ -542,7 +542,10 @@ void MainWindow::editTreeProperties()
 {
 	modified = true;
 	auto tree = &editor->getTrees()[selectedRow];
-	PropertiesDialog(this, *editor, &tree->getProperties()).exec();
+	PropertiesDialog win(this, *editor, &tree->getProperties());
+	win.setWindowTitle("Edit Tree");
+	WidgetLinker(&win, (QBoxLayout*)win.layout()).addOKButton();
+	win.exec();
 	auto treeItem = trees->child(selectedRow);
 	if (curTreeRow == selectedRow)
 		treeItem->setText(0, " * " + tree->getProperties().getName());
@@ -550,6 +553,7 @@ void MainWindow::editTreeProperties()
 		treeItem->setText(0, tree->getProperties().getName());
 	treeItem->setToolTip(0, tree->getProperties().getDesc());
 	setEnabledButton();
+	scene->update();
 }
 
 void MainWindow::addTree()
