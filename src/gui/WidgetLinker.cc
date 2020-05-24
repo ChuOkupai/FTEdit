@@ -159,6 +159,7 @@ void ListWidget::contextMenuEvent(QContextMenuEvent *event)
 	}
 	QMenu menu;
 	QAction *act = menu.addAction(select ? "Clear" : "Clear All");
+	act->setIcon(QIcon(":icons/remove.png"));
 	if (!count()) act->setEnabled(false);
 	if (menu.exec(event->globalPos()))
 	{

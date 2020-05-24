@@ -12,9 +12,10 @@ Node::Node(), event(event)
 
 Container::~Container()
 {
-	if(this->event)
+	if(event)
 	{
-		event->setDistribution(nullptr);
+		if (event->getProperties().getRefCount() < 2)
+			event->setDistribution(nullptr);
 		event->getProperties().decrementRefCount();
 	}
 }
