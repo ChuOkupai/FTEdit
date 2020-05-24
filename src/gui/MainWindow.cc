@@ -359,6 +359,11 @@ void MainWindow::evaluate()
 		results->setExpanded(true);
 }
 
+void MainWindow::documentation()
+{
+	QDesktopServices::openUrl(QUrl("https://github.com/ChuOkupai/FTEdit/wiki"));
+}
+
 void MainWindow::about()
 {
 	QMessageBox about(this);
@@ -749,6 +754,12 @@ void MainWindow::createActions()
 	aboutAct->setIcon(QIcon(":icons/about.png"));
 	connect(aboutAct, &QAction::triggered, this, &MainWindow::about);
 
+	documentationAct = new QAction("Documentation", this);
+	documentationAct->setShortcuts(QKeySequence::HelpContents);
+	documentationAct->setStatusTip("Show the user manual (requires an active internet connection)");
+	documentationAct->setIcon(QIcon(":icons/zoomReset.png"));
+	connect(documentationAct, &QAction::triggered, this, &MainWindow::documentation);
+
 	aboutQtAct = new QAction("About Qt", this);
 	aboutQtAct->setStatusTip("About Qt");
 	aboutQtAct->setIcon(QIcon(":icons/about.png"));
@@ -889,6 +900,7 @@ void MainWindow::createMenus()
 	m->addAction(evaluateAct);
 
 	m = menuBar()->addMenu("&Help");
+	m->addAction(documentationAct);
 	m->addAction(aboutAct);
 	m->addAction(aboutQtAct);
 
