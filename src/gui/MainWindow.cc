@@ -28,6 +28,7 @@ MainWindow::MainWindow() : editor(nullptr), fileManager(nullptr), modified(false
 	auto explorerLayout = new QHBoxLayout(horizontalLayout);
 	explorerLayout->setContentsMargins(0, 0, 0, 0);
 	explorer = new QTreeWidget(horizontalLayout);
+	explorer->setStyleSheet("QTreeWidget { font-size: " + QString::number(1.1 * fontInfo().pointSize()) + "pt; }");
 	explorer->headerItem()->setText(0, "Project Explorer");
 	explorer->setContextMenuPolicy(Qt::CustomContextMenu);
 	explorerLayout->addWidget(explorer);
@@ -353,6 +354,8 @@ void MainWindow::evaluate()
 	auto *resultItem = new QTreeWidgetItem(results);
 	results->addChild(resultItem);
 	resultItem->setText(0, QDateTime::currentDateTime().toString("yyyy-MM-dd HH'h'mm'm'ss's'"));
+	if (results->childCount() == 1)
+		results->setExpanded(true);
 }
 
 void MainWindow::about()

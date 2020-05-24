@@ -10,6 +10,7 @@ private:
 
 public:
 	DoubleSpinBox(QWidget *parent = nullptr);
+	static QString toStringNotFilled(double d, char f = 'g', int prec = 6);
 };
 
 class WidgetLinker

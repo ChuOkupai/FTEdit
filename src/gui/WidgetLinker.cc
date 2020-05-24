@@ -3,22 +3,31 @@
 DoubleSpinBox::DoubleSpinBox(QWidget *parent) :
 QDoubleSpinBox(parent)
 {
-	setDecimals(10);
+	setDecimals(12);
 	setSingleStep(0.01);
 	setAccelerated(true);
 	setLocale(QLocale("C"));
+	connect(this, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+	[=](double d){ this->setToolTip(toStringNotFilled(d, 'f', 12)); });
 }
 
 QString DoubleSpinBox::textFromValue(double d) const
 {
-	if (d < 0.000000000001)
-		d = 0.0;
-	QString s(locale().toString(d, 'e', 10));
-	int start = s.indexOf(locale().decimalPoint()) + 2, end = s.indexOf('e'),
+	return (toStringNotFilled(d, 'e', 12));
+}
+
+QString DoubleSpinBox::toStringNotFilled(double d, char f, int prec)
+{
+	QLocale l("C");
+	QString s(l.toString(d, f, prec));
+	int start = s.indexOf(l.decimalPoint()) + 2, end = s.indexOf('e'), i;
+	if (end < 0) end = s.size();
 	i = end - 1;
 	while (i > start && s[i] == '0')
 		--i;
 	i += s[i] != '0';
+	if (s[end] == 'e' && s[end + 2] == '0')
+		s.remove(end + 2, 1); // e+0x
 	return (s.remove(i, end - i));
 }
 
