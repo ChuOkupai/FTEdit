@@ -115,7 +115,7 @@ void ChooseResultDialog::confirm()
 		QString s;
 		if (missionTime->value() > 0.0 && step->value() == 0.0)
 			s = "The step must be positive.";
-		else if (missionTime->value() / step->value() > 1e9)
+		else if (missionTime->value() / step->value() > 1e6)
 			s = "Limit exceeded.";
 		if (!s.isEmpty())
 		{
