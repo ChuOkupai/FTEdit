@@ -96,20 +96,18 @@ int FileManagerSystem::save(Editor* editor)
 	for(Tree &tree : editor->getTrees())
 	{
 		Properties &treeprop = tree.getProperties();
-		QDomElement treepropelem = domref.createElement("attributes");
-		
 		treeroot = domref.createElement("define-fault-tree");
 		
-		svisitor.writeProperties(treeroot, treepropelem, treeprop);
+		svisitor.writeNameLabel(treeroot, treeprop);
 		if(tree.getTop())
 		{
+			QDomElement treepropelem = domref.createElement("attributes");
 			treetop = domref.createElement("attribute");
 			treetop.setAttribute("name", "top-event");
 			treetop.setAttribute("value", tree.getTop()->getProperties().getName());
 			treepropelem.appendChild(treetop);
+			treeroot.appendChild(treepropelem);
 		}
-		treeroot.appendChild(treepropelem);
-
 		svisitor.setTreeElem(treeroot);//set tree root for SaveVisitor
 
 		QList<Gate*> lgates = treegatemap.values(&tree);
@@ -137,6 +135,7 @@ int FileManagerSystem::exportAs(QString path, Result &result)
 	if(!file.open(QIODevice::WriteOnly))
 	{
 		errorMessage = "Failed to open the file in write mode";
+		file.close();
 		return -1;
 	}
 	QTextStream saveStream(&file);
@@ -146,6 +145,7 @@ int FileManagerSystem::exportAs(QString path, Result &result)
 
 	if(resmcs)
 	{
+		saveStream << "TopEvent propability risk:," << doubleToString(resmcs->getProbabilities().last()) << '\n';
 		saveStream << "Probability,Quantity,Events" << '\n';
 		QList<double> proMcs = resmcs->getProbabilities();
 		QList<QList<QString>> cs = resmcs->getMCS();
@@ -153,7 +153,7 @@ int FileManagerSystem::exportAs(QString path, Result &result)
 		
 		for(int i=0; i < m; i++)
 		{
-			saveStream << proMcs[i] <<','<<cs[i].size()<<',';
+			saveStream << doubleToString(proMcs[i]) <<','<< cs[i].size()<<',';
 			QList<QString> &l2 = cs[i];
 			saveStream << l2.first();
 			for(int j = 1; j < l2.size(); ++j)
@@ -175,7 +175,7 @@ int FileManagerSystem::exportAs(QString path, Result &result)
 		double ctime = 0;
 		for(double r : proB)
 		{
-			saveStream << ctime << "," << r <<'\n';
+			saveStream << doubleToString(ctime) << "," << doubleToString(r) <<'\n';
 			ctime+=mstep;
 		}
 	}

@@ -61,6 +61,8 @@ private slots:
 	void showEvents();
 	// Analysis
 	void evaluate();
+	// Documentation
+	void documentation();
 	// Help
 	void about();
 
@@ -120,6 +122,7 @@ private:
 	QAction *distributionsAct;
 	QAction *eventsAct;
 	QAction *evaluateAct;
+	QAction *documentationAct;
 	QAction *aboutAct;
 	QAction *aboutQtAct;
 

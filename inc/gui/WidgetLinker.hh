@@ -5,10 +5,12 @@ class DoubleSpinBox : public QDoubleSpinBox
 {
 	Q_OBJECT
 
+private:
+	QString textFromValue(double d) const;
+
 public:
 	DoubleSpinBox(QWidget *parent = nullptr);
-
-	QString textFromValue(double val) const;
+	static QString toStringNotFilled(double d, char f = 'g', int prec = 6);
 };
 
 class WidgetLinker

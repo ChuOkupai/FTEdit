@@ -28,6 +28,7 @@ MainWindow::MainWindow() : editor(nullptr), fileManager(nullptr), modified(false
 	auto explorerLayout = new QHBoxLayout(horizontalLayout);
 	explorerLayout->setContentsMargins(0, 0, 0, 0);
 	explorer = new QTreeWidget(horizontalLayout);
+	explorer->setStyleSheet("QTreeWidget { font-size: " + QString::number(1.1 * fontInfo().pointSize()) + "pt; }");
 	explorer->headerItem()->setText(0, "Project Explorer");
 	explorer->setContextMenuPolicy(Qt::CustomContextMenu);
 	explorerLayout->addWidget(explorer);
@@ -120,6 +121,7 @@ void MainWindow::open()
 		{
 			auto t = new QTreeWidgetItem(trees);
 			t->setText(0, (i ? list[i].getProperties().getName() : " * " + list[i].getProperties().getName()));
+			t->setToolTip(0, list[i].getProperties().getDesc());
 			trees->addChild(t);
 		}
 		editor->setSelection(&list.first());
@@ -353,6 +355,13 @@ void MainWindow::evaluate()
 	auto *resultItem = new QTreeWidgetItem(results);
 	results->addChild(resultItem);
 	resultItem->setText(0, QDateTime::currentDateTime().toString("yyyy-MM-dd HH'h'mm'm'ss's'"));
+	if (results->childCount() == 1)
+		results->setExpanded(true);
+}
+
+void MainWindow::documentation()
+{
+	QDesktopServices::openUrl(QUrl("https://github.com/ChuOkupai/FTEdit/wiki"));
 }
 
 void MainWindow::about()
@@ -360,8 +369,8 @@ void MainWindow::about()
 	QMessageBox about(this);
 	about.setWindowIcon(QIcon(":icons/about.png"));
 	about.setWindowTitle("About FTEdit");
-	about.setText("FTEdit is an open source editor fault tree analysis tool.<br><br>"
-	"License: GPLv3<br>Source code is available on "
+	about.setText("FTEdit is an open source fault tree editor with risk analysis tools.<br><br>"
+	"License: GPLv3<br>Version: 1.0<br><br>Source code and documentation is available on "
 	"<a href='https://github.com/ChuOkupai/FTEdit'>GitHub</a><br>");
 	about.exec();
 }
@@ -538,13 +547,18 @@ void MainWindow::editTreeProperties()
 {
 	modified = true;
 	auto tree = &editor->getTrees()[selectedRow];
-	PropertiesDialog(this, *editor, &tree->getProperties()).exec();
+	PropertiesDialog win(this, *editor, &tree->getProperties());
+	win.setWindowTitle("Edit Tree");
+	WidgetLinker(&win, (QBoxLayout*)win.layout()).addOKButton();
+	win.exec();
 	auto treeItem = trees->child(selectedRow);
 	if (curTreeRow == selectedRow)
 		treeItem->setText(0, " * " + tree->getProperties().getName());
 	else
 		treeItem->setText(0, tree->getProperties().getName());
+	treeItem->setToolTip(0, tree->getProperties().getDesc());
 	setEnabledButton();
+	scene->update();
 }
 
 void MainWindow::addTree()
@@ -740,6 +754,12 @@ void MainWindow::createActions()
 	aboutAct->setIcon(QIcon(":icons/about.png"));
 	connect(aboutAct, &QAction::triggered, this, &MainWindow::about);
 
+	documentationAct = new QAction("Documentation", this);
+	documentationAct->setShortcuts(QKeySequence::HelpContents);
+	documentationAct->setStatusTip("Show the user manual (requires an active internet connection)");
+	documentationAct->setIcon(QIcon(":icons/zoomReset.png"));
+	connect(documentationAct, &QAction::triggered, this, &MainWindow::documentation);
+
 	aboutQtAct = new QAction("About Qt", this);
 	aboutQtAct->setStatusTip("About Qt");
 	aboutQtAct->setIcon(QIcon(":icons/about.png"));
@@ -880,6 +900,7 @@ void MainWindow::createMenus()
 	m->addAction(evaluateAct);
 
 	m = menuBar()->addMenu("&Help");
+	m->addAction(documentationAct);
 	m->addAction(aboutAct);
 	m->addAction(aboutQtAct);
 

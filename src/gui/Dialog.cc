@@ -110,14 +110,22 @@ bool PropertiesDialog::valid()
 
 void ChooseResultDialog::confirm()
 {
-	if (useBoolean->isChecked() && missionTime->value() > 0.0 && step->value() == 0.0)
+	if (useBoolean->isChecked())
 	{
-		QMessageBox msg(this);
-		msg.setIcon(QMessageBox::Critical);
-		msg.setWindowTitle("Error");
-		msg.setText("The step must be positive.");
-		msg.exec();
-		return ;
+		QString s;
+		if (missionTime->value() > 0.0 && step->value() == 0.0)
+			s = "The step must be positive.";
+		else if (missionTime->value() / step->value() > 1e6)
+			s = "Limit exceeded.";
+		if (!s.isEmpty())
+		{
+			QMessageBox msg(this);
+			msg.setIcon(QMessageBox::Critical);
+			msg.setWindowTitle("Error");
+			msg.setText(s);
+			msg.exec();
+			return ;
+		}
 	}
 	results << new Result(top, useMCS->isChecked(), useBoolean->isChecked(),
 	missionTime->value(), step->value()); // Add new analysis to the list
@@ -126,7 +134,6 @@ void ChooseResultDialog::confirm()
 
 void ChooseResultDialog::checkChanged(int state)
 {
-
 	(void)state;
 	missionTime->setEnabled(useBoolean->isChecked() || useMCS->isChecked());
 	step->setEnabled(useBoolean->isChecked());
@@ -148,17 +155,17 @@ ChooseResultDialog::ChooseResultDialog(QWidget *parent, Gate *top, QList<Result*
 	useBoolean->setToolTip("Use Boolean algebra to calculate the probabilities of failure of the top event");
 	useMCS = linker.addCheckBox("Find MCS");
 	useMCS->setToolTip("Calculate the minimal cuts sets and their probability of failure with MOCUS");
-	linker.addLabel("Mission time :");
+	linker.addLabel("Mission time :")->setToolTip("Maximum operating time");;
 	missionTime = linker.addDoubleSpinBox();
-	missionTime->setToolTip("Maximum operating time");
 	missionTime->setSuffix(" s");
 	missionTime->setRange(0, std::numeric_limits<double>::max());
+	missionTime->setValue(0);
 	missionTime->setEnabled(false);
-	linker.addLabel("Step :");
+	linker.addLabel("Step :")->setToolTip("Time between each calculation");
 	step = linker.addDoubleSpinBox();
-	step->setToolTip("Time between each calculation");
 	step->setSuffix(" s");
 	step->setRange(0, std::numeric_limits<double>::max());
+	missionTime->setValue(0);
 	step->setEnabled(false);
 	auto *button2 = linker.addOKButton(false);
 	button2->setText("Continue");

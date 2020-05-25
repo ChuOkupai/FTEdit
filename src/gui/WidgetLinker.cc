@@ -3,14 +3,32 @@
 DoubleSpinBox::DoubleSpinBox(QWidget *parent) :
 QDoubleSpinBox(parent)
 {
-	setDecimals(16);
-	setSingleStep(0.1);
+	setDecimals(12);
+	setSingleStep(0.01);
+	setAccelerated(true);
+	setLocale(QLocale("C"));
+	connect(this, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+	[=](double d){ this->setToolTip(toStringNotFilled(d, 'f', 12)); });
 }
 
-QString DoubleSpinBox::textFromValue(double val) const
+QString DoubleSpinBox::textFromValue(double d) const
 {
-	QLocale locale;
-	return (locale.toString(val, 'g', 16));
+	return (toStringNotFilled(d, 'e', 12));
+}
+
+QString DoubleSpinBox::toStringNotFilled(double d, char f, int prec)
+{
+	QLocale l("C");
+	QString s(l.toString(d, f, prec));
+	int start = s.indexOf(l.decimalPoint()) + 2, end = s.indexOf('e'), i;
+	if (end < 0) end = s.size();
+	i = end - 1;
+	while (i > start && s[i] == '0')
+		--i;
+	i += s[i] != '0';
+	if (s[end] == 'e' && s[end + 2] == '0')
+		s.remove(end + 2, 1); // e+0x
+	return (s.remove(i, end - i));
 }
 
 WidgetLinker::WidgetLinker(QWidget *parent, QBoxLayout *layout) :
@@ -150,6 +168,7 @@ void ListWidget::contextMenuEvent(QContextMenuEvent *event)
 	}
 	QMenu menu;
 	QAction *act = menu.addAction(select ? "Clear" : "Clear All");
+	act->setIcon(QIcon(":icons/remove.png"));
 	if (!count()) act->setEnabled(false);
 	if (menu.exec(event->globalPos()))
 	{

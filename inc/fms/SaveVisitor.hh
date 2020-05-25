@@ -12,6 +12,7 @@ class SaveVisitor : public VisitorDistribution, public VisitorNode
 		void writeTypeDistrib(QDomElement &node, QString type);
 		void writeChildren(QDomElement &node, Gate& gate);
 		void writeGate(Gate& gate, QString type);
+		void writeKeep(QDomElement &propelem, Properties& prop);
 	public :
 		SaveVisitor();
 		~SaveVisitor();
@@ -28,5 +29,8 @@ class SaveVisitor : public VisitorDistribution, public VisitorNode
 		void visit( Weibull &weibulldistrib );
 		void visit( Container &container );
 		void visit( Event &event );
-		void writeProperties(QDomElement &elem, QDomElement &propelem, Properties& prop);
+		void writeNameLabel(QDomElement &elem, Properties& prop);
+		
 };
+
+QString doubleToString(double d);

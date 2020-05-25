@@ -1,6 +1,8 @@
 #include <iostream>
 #include <type_traits>
+#include <QLocale>
 #include "SaveVisitor.hh"
+#include "FileManagerSystem.hh"
 
 template<typename Base, typename T>
 inline bool instanceof(const T* a) {
@@ -15,7 +17,7 @@ void SaveVisitor::setTreeElem(QDomElement elem) { treeElem = elem; }
 
 QDomDocument& SaveVisitor::getDomFile() { return dom; }
 
-void SaveVisitor::writeProperties(QDomElement &elem, QDomElement &propelem, Properties& prop)
+void SaveVisitor::writeNameLabel(QDomElement &elem, Properties& prop)
 {
 	elem.setAttribute("name", prop.getName());
 	QDomElement tag, attrs;
@@ -25,8 +27,11 @@ void SaveVisitor::writeProperties(QDomElement &elem, QDomElement &propelem, Prop
 		tag.appendChild(dom.createTextNode(prop.getDesc()));
 		elem.appendChild(tag);
 	}
+}
 
-	tag = dom.createElement("attribute");
+void SaveVisitor::writeKeep(QDomElement &propelem, Properties& prop)
+{
+	QDomElement tag = dom.createElement("attribute");
 	tag.setAttribute("name", "keep");
 	tag.setAttribute("value", prop.getKeep() ? "true" : "false");
 	propelem.appendChild(tag);
@@ -70,9 +75,7 @@ void SaveVisitor::writeGate(Gate& gate, QString type)
 {
 	QDomElement rootgate = dom.createElement("define-gate");
 	Properties& prop = gate.getProperties();
-	QDomElement propelem = dom.createElement("attributes");
-	writeProperties(rootgate, propelem, prop);
-	rootgate.appendChild(propelem);
+	writeNameLabel(rootgate, prop);
 	QDomElement node = dom.createElement(type);
 	rootgate.appendChild(node);
 	writeChildren(node, gate);
@@ -89,9 +92,7 @@ void SaveVisitor::visit( VotingOR &vorgate )
 { 
 	QDomElement rootgate = dom.createElement("define-gate");
 	Properties& prop = vorgate.getProperties();
-	QDomElement propelem = dom.createElement("attributes");
-	writeProperties(rootgate, propelem, prop);
-	rootgate.appendChild(propelem);
+	writeNameLabel(rootgate, prop);
 	QDomElement node = dom.createElement("atleast");
 	node.setAttribute("min", vorgate.getK());
 	rootgate.appendChild(node);
@@ -103,9 +104,7 @@ void SaveVisitor::visit( Inhibit &inhibgate )
 {
 	QDomElement rootgate = dom.createElement("define-gate");
 	Properties& prop = inhibgate.getProperties();
-	QDomElement propelem = dom.createElement("attributes");
-	writeProperties(rootgate, propelem, prop);
-	rootgate.appendChild(propelem);
+	writeNameLabel(rootgate, prop);
 	QDomElement node = dom.createElement("and");
 	QDomElement tmp;
 	tmp = dom.createElement("constant");
@@ -123,12 +122,13 @@ void SaveVisitor::visit( Constant &constdistrib )
 	distr.setAttribute("name", prop.getName());
 
 	QDomElement propelem = dom.createElement("attributes");
-	writeProperties(distr, propelem, prop);
+	writeNameLabel(distr, prop);
+	writeKeep(propelem, prop);
 	writeTypeDistrib(propelem, "const");
 	distr.appendChild(propelem);
 
 	QDomElement val = dom.createElement("float");
-	val.setAttribute("value", QString::number(constdistrib.getValue(),'g',16));
+	val.setAttribute("value", doubleToString(constdistrib.getValue()));
 	distr.appendChild(val);
 	dom.documentElement().appendChild(distr);
 }
@@ -141,12 +141,13 @@ void SaveVisitor::visit( Exponential &expdistrib )
 	distr.setAttribute("name", prop.getName());
 
 	QDomElement propelem = dom.createElement("attributes");
-	writeProperties(distr, propelem, prop);
+	writeNameLabel(distr, prop);
+	writeKeep(propelem, prop);
 	writeTypeDistrib(propelem, "exp");
 	distr.appendChild(propelem);
 
 	QDomElement val = dom.createElement("float");
-	val.setAttribute("value", QString::number(expdistrib.getLambda(),'g',16));
+	val.setAttribute("value", doubleToString(expdistrib.getValue()));
 	distr.appendChild(val);
 	dom.documentElement().appendChild(distr);
 }
@@ -156,16 +157,17 @@ void SaveVisitor::visit( Weibull &weibulldistrib )
 	QDomElement distr = dom.createElement("define-parameter");
 	Properties& prop = weibulldistrib.getProperties();
 	QDomElement propelem = dom.createElement("attributes");
-	writeProperties(distr, propelem, prop);
+	writeNameLabel(distr, prop);
+	writeKeep(propelem, prop);
 	writeTypeDistrib(propelem, "weibull");
 	distr.appendChild(propelem);
 
 	QDomElement val;
 	val = dom.createElement("float");
-	val.setAttribute("value", QString::number(weibulldistrib.getScale(),'g',16));
+	val.setAttribute("value", doubleToString(weibulldistrib.getScale()));
 	distr.appendChild(val);
 	val = dom.createElement("float");
-	val.setAttribute("value", QString::number(weibulldistrib.getShape(),'g',16));
+	val.setAttribute("value", doubleToString(weibulldistrib.getShape()));
 	distr.appendChild(val);
 	dom.documentElement().appendChild(distr);
 }
@@ -176,7 +178,8 @@ void SaveVisitor::visit( Event &event )
 	Properties& prop = event.getProperties(); 
 	tag = dom.createElement("define-basic-event");
 	QDomElement propelem = dom.createElement("attributes");
-	writeProperties(tag, propelem, prop);
+	writeNameLabel(tag, prop);
+	writeKeep(propelem, prop);
 	tag.appendChild(propelem);
 	
 	// wrtie parameter if any
@@ -192,3 +195,15 @@ void SaveVisitor::visit( Event &event )
 
 void SaveVisitor::visit( Transfert &transfertgate ) { (void)transfertgate; }
 void SaveVisitor::visit( Container &container ) { (void)container; }
+
+QString doubleToString(double d)
+{
+	QLocale loc("C");
+	QString s(loc.toString(d, 'f', 12));
+	int start = s.indexOf(loc.decimalPoint()) + 2, end = s.size(), i = end - 1;
+	while (i > start && s[i] == '0')
+		--i;
+	i += s[i] != '0';
+	return (s.remove(i, end - i));
+}
+

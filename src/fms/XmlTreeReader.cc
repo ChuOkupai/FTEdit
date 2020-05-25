@@ -49,7 +49,6 @@ void XmlTreeReader::readTree(QDomElement &elem)
 {
 	QList<QDomNodeList> lgates;
 	QString name, type, topevt;
-	bool keep = false;
 	
 	name = elem.attribute("name").trimmed();
 	if(!e->isUnique(name)) throw -1;
@@ -62,14 +61,13 @@ void XmlTreeReader::readTree(QDomElement &elem)
 		if(attr.tagName() != "attribute") throw -1;
 		QString attrname = attr.attribute("name").trimmed();
 		if(attrname.isEmpty()) throw -1;
-		if(attrname == "keep") keep = attr.attribute("value").trimmed() == "true";
 		if(attrname == "top-event") topevt = attr.attribute("value").trimmed();
 	}
 	
 	e->getTrees() << Tree(name);
 	Tree &t = e->getTrees().last();
 	t.getProperties().setDesc(elem.namedItem("label").toElement().text().trimmed());
-	t.getProperties().setKeep(keep);
+	t.getProperties().setKeep(true);
 
 	//visit des gate pour les créer
 	QDomElement elmgate = elem.namedItem("define-gate").toElement();
@@ -193,7 +191,6 @@ void XmlTreeReader::readGateChilds(Gate *g, QDomNodeList list)
 Gate* XmlTreeReader::readGateParams(QDomElement &elem, QList<QDomNodeList>& lelems)
 {
 	Gate* g = nullptr;
-	bool keep = false;
 	QString type;
 	
 	QString name = elem.attribute("name").trimmed();
@@ -207,7 +204,6 @@ Gate* XmlTreeReader::readGateParams(QDomElement &elem, QList<QDomNodeList>& lele
 		if(attr.tagName() != "attribute") throw -1;
 		QString attrname = attr.attribute("name").trimmed();
 		if(attrname.isEmpty()) throw -1;
-		if(attrname == "keep") keep = attr.attribute("value").trimmed() == "true";
 	}
 	
 	//get Gate Type
@@ -230,7 +226,7 @@ Gate* XmlTreeReader::readGateParams(QDomElement &elem, QList<QDomNodeList>& lele
 	}
 
 	if(!g) throw -1;
-	g->getProperties().setKeep(keep);
+	g->getProperties().setKeep(true);
 	g->getProperties().setDesc(elem.namedItem("label").toElement().text().trimmed());
 	
 	return g;
