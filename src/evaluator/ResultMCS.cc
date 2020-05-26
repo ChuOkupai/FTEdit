@@ -96,7 +96,7 @@ ResultMCS::ResultMCS(Gate* top,double missionTime,double step) : Evaluator(top,m
 
         if(i%2==0)/*p=s1-s2+s3-0.5s4*/
         {
-            if(i==klimit-1 && mcs.size()>klimit-1)/*quand on a trop de coupes minimales >4, on prend que S1,S2,S3 et moitie de S4*/
+            if(i==klimit-1 && mcs.size()>4)/*quand on a trop de coupes minimales >4, on prend que S1,S2,S3 et moitie de S4*/
             {                                   /*pour obtenir un resultat approché*/
                 p -= s/2;
             }
@@ -107,7 +107,7 @@ ResultMCS::ResultMCS(Gate* top,double missionTime,double step) : Evaluator(top,m
         }
         else
         {
-            if(i==klimit-1 && mcs.size()>klimit-1)
+            if(i==klimit-1 && mcs.size()>4)
             {
                 p += s/2;
             }
