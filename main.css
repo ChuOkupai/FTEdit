@@ -1,6 +1,9 @@
 
 body{
     background-color: #DAD5DA;
+    color: #66170C;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(rgb(153, 148, 153),rgb(185, 171, 185));
 }
 
 header{
@@ -9,26 +12,41 @@ header{
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    border: 3px black groove;
+    color: #3B0201;
+    border: 6px #3B0201 solid;
     border-radius: 5px;
     padding: 1%;
     margin: 1%;
+    background: linear-gradient(rgb(153, 148, 153),rgb(185, 171, 185));
 }
 
+.main{
+    border: 6px #3B0201 solid;
+    border-radius: 5px;
+    padding: 0 0px 30px 0px;
+    margin: 12px 12px 12px 12px;
+    text-align: center;
+    background: linear-gradient(#70AE6E,#82AC9F);
+    
+
+
+}
 .cont{
     display: flex;
+    
     flex-direction: row;
     justify-content: space-around;
     align-items: center;
     width: 1370px;
-   
-    padding: 1%;
+    
+    padding: 12px 12px 12px 12px;
     margin: 1%;
 }
 
 .el:nth-child(1){
     width: auto;
     background-color: #82AC9F;
+    border: 6px #70AE6E solid;
     border-radius: 5px;
     padding: 1px 0.5px 2px 1.5px;
 }
@@ -41,18 +59,70 @@ header{
     width: auto;
 }
 
-h2,h3{
+
+section h3{
+    background-color: #BEEE62;
+    border-radius: 5px;
+    padding: 5px;
+    margin : 0px;
     align-content: center;
     text-align: center;
+    background: linear-gradient(#BEEE62,white);
 }
 
-section{
-    border: 3px black groove;
+section h2{
+    background-color: #BEEE62;
     border-radius: 5px;
-    padding: 1%;
-    margin: 1%;
+    padding: 5px;
+    margin : 0px;
+    align-content: center;
     text-align: center;
+    background: linear-gradient(#BEEE62,white);
 }
+
+
+section section{
+    border: 6px #1B383B solid;
+    border-radius: 5px;
+    padding: 0 0px 30px 0px;
+    margin: 12px 12px 12px 12px;
+    text-align: center;
+    background: linear-gradient(#366467,#BEEE62); 
+}
+
+footer {
+    border: 6px #1B383B solid;
+    border-radius: 5px;
+    padding: 0 0px 0px 0px;
+    margin: 12px 12px 12px 12px;
+    text-align: center;
+    background: linear-gradient(#366467,#BEEE62);
+}
+
+
+footer h2{
+    background-color: #BEEE62;
+    border-radius: 5px;
+    padding: 5px 10px 20px 5px;
+    margin : 0px;
+    align-content: center;
+    text-align: center;
+    background: linear-gradient(#BEEE62,white);
+}
+
+footer h3{
+    background-color: #386137;
+    border-radius: 5px;
+    padding: 5px;
+    margin : 0px;
+    align-content: center;
+    text-align: center;
+    background: linear-gradient(#386137,white);
+}
+
+
+
+
 
 
 
