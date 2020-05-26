@@ -100,7 +100,10 @@ ResultMCS::ResultMCS(Gate* top,double missionTime,double step) : Evaluator(top,m
             {                                   /*pour obtenir un resultat approché*/
                 p -= s/2;
             }
-            p -= s;
+            else{
+                p -= s;
+            }
+
         }
         else
         {
@@ -108,11 +111,20 @@ ResultMCS::ResultMCS(Gate* top,double missionTime,double step) : Evaluator(top,m
             {
                 p += s/2;
             }
-            p += s;/*proba de top*/
+            else{
+                 p += s;/*proba de top*/
+            }
+
         }
 
     }
-    probabilities << p;/*probabilities.last() = proba de top*/
+    if(p>1){
+        probabilities << 1;
+    }
+    else{
+        probabilities << p;/*probabilities.last() = proba de top*/
+    }
+
 
 
 
