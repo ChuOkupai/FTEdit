@@ -1,0 +1,47 @@
+
+header{
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 3px black groove;
+    border-radius: 3px;
+    padding: 1%;
+    margin: 1%;
+}
+
+.cont{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    width: 1370px;
+   
+    padding: 1%;
+    margin: 1%;
+}
+
+.el:nth-child(1){
+    width: auto;
+}
+
+.el:nth-child(2){
+    width: auto;
+}
+
+h2,h3{
+    align-content: center;
+    text-align: center;
+}
+
+section{
+    border: 3px black groove;
+    border-radius: 3px;
+    padding: 1%;
+    margin: 1%;
+}
+
+
+
+
