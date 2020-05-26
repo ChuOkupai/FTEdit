@@ -710,7 +710,7 @@ void MainWindow::createActions()
 	connect(zoomOutAct, &QAction::triggered, this, &MainWindow::zoomOut);
 
 	zoomResetAct = new QAction("Reset Zoom", this);
-	zoomResetAct->setShortcut(Qt::Key_Control | Qt::Key_Equal);
+	zoomResetAct->setShortcut(QKeySequence("Ctrl+="));
 	zoomResetAct->setStatusTip("Reset Zoom");
 	zoomResetAct->setIcon(QIcon(":icons/zoomReset.png"));
 	connect(zoomResetAct, &QAction::triggered, this, &MainWindow::zoomReset);
