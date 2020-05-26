@@ -176,7 +176,6 @@ void XmlTreeReader::readGateChilds(Gate *g, QDomNodeList list)
 					Transfert* transfert = new Transfert();
 					transfert->attach(g);
 					transtreeMap.insert(transfert, name);
-					break;
 				}
 			}
 		}
