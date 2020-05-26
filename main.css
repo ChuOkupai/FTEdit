@@ -1,4 +1,8 @@
 
+body{
+    background-color: #DAD5DA;
+}
+
 header{
     
     display: flex;
@@ -6,7 +10,7 @@ header{
     justify-content: center;
     align-items: center;
     border: 3px black groove;
-    border-radius: 3px;
+    border-radius: 5px;
     padding: 1%;
     margin: 1%;
 }
@@ -24,6 +28,13 @@ header{
 
 .el:nth-child(1){
     width: auto;
+    background-color: #82AC9F;
+    border-radius: 5px;
+    padding: 1px 0.5px 2px 1.5px;
+}
+
+.el:nth-child(3){
+    width: auto;
 }
 
 .el:nth-child(2){
@@ -37,7 +48,7 @@ h2,h3{
 
 section{
     border: 3px black groove;
-    border-radius: 3px;
+    border-radius: 5px;
     padding: 1%;
     margin: 1%;
     text-align: center;
